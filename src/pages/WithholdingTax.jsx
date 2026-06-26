@@ -32,7 +32,7 @@ export default function WithholdingTax({ navigate }) {
   return (
     <div>
       <section className="page-hero">
-        <div className="hero-badge">FBR 2024-25 · 18 Categories · Filer vs Non-Filer</div>
+        <div className="hero-badge">FY 2026-27 · 18 Categories · Filer vs Non-Filer</div>
         <h1>Withholding Tax Calculator Pakistan 2024</h1>
         <p>Calculate withholding tax (WHT) on contracts, rent, bank profit, dividends, imports, property and more. Separate rates for filers and non-filers.</p>
       </section>
@@ -88,15 +88,15 @@ export default function WithholdingTax({ navigate }) {
                 <tbody>
                   {[
                     ["Contracts", "7.5%", "15%"],
-                    ["Services", "8%", "16%"],
-                    ["Dividends", "15%", "30%"],
-                    ["Rent (Commercial)", "15%", "30%"],
-                    ["Bank Profit / Interest", "15%", "35%"],
-                    ["Imports", "5%", "8%"],
-                    ["Property Sale", "3%", "6%"],
-                    ["Exports", "1%", "1%"],
-                    ["Prize / Lottery", "25%", "25%"],
-                    ["Cash Withdrawal (>50K)", "0.1%", "0.1%"],
+                      ["Services", "8%", "16%"],
+                      ["Dividends", "15%", "30%"],
+                      ["Rent (Commercial)", "15%", "30%"],
+                      ["Bank Profit / Interest", "20%", "40%"],
+                      ["Imports", "5%", "8%"],
+                      ["Property Sale", "3%", "6%"],
+                      ["Exports", "1%", "1%"],
+                      ["Prize / Lottery", "15%", "30%"],
+                      ["Cash Withdrawal (>50K)", "0%", "0.8%"]
                   ].map((r, i) => <tr key={i}><td>{r[0]}</td><td>{r[1]}</td><td style={{ color: "var(--red-600)" }}>{r[2]}</td></tr>)}
                 </tbody>
               </table>
