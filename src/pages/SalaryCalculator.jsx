@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AdSlot from "../components/AdSlot";
+// import AdSlot from "../components/AdSlot";
 import { fmt, calcIncomeTax } from "../utils/taxUtils";
 
 export default function SalaryCalculator({ navigate }) {
@@ -52,8 +52,8 @@ export default function SalaryCalculator({ navigate }) {
   return (
     <div>
       <section className="page-hero">
-        <div className="hero-badge">Net Take-Home · EOBI · PF · 2024-25</div>
-        <h1>Salary Calculator Pakistan 2024-25</h1>
+        <div className="hero-badge">Net Take-Home · EOBI · PF · 2026-27</div>
+        <h1>Salary Calculator Pakistan 2026-27</h1>
         <p>Calculate your exact monthly take-home salary after income tax, EOBI, SESSI/PESSI and Provident Fund deductions.</p>
       </section>
 
@@ -178,7 +178,7 @@ export default function SalaryCalculator({ navigate }) {
             )}
           </div>
 
-          <AdSlot size="300x250" />
+          {/* <AdSlot size="300x250" /> */}
 
           <div className="info-card">
             <h4>📌 Deduction Notes</h4>
@@ -200,9 +200,9 @@ export default function SalaryCalculator({ navigate }) {
         </div>
       </div>
 
-      <div className="container" style={{ padding: "24px 20px" }}>
+      {/* <div className="container" style={{ padding: "24px 20px" }}>
         <AdSlot size="responsive" />
-      </div>
+      </div> */}
     </div>
   );
 }

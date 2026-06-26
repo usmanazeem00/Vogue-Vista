@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AdSlot from "../components/AdSlot";
+// import AdSlot from "../components/AdSlot";
 import { fmt } from "../utils/taxUtils";
 
 const BANK_RATES = [
@@ -180,7 +180,7 @@ export default function BankInterest({ navigate }) {
             )}
           </div>
 
-          <AdSlot size="300x250" />
+          {/* <AdSlot size="300x250" /> */}
 
           <div className="info-card">
             <h4>📌 Bank WHT Rates 2026</h4>
@@ -202,10 +202,10 @@ export default function BankInterest({ navigate }) {
           </div>
         </div>
       </div>
-
+{/* 
       <div className="container" style={{ padding: "24px 20px" }}>
         <AdSlot size="responsive" />
-      </div>
+      </div> */}
     </div>
   );
 }

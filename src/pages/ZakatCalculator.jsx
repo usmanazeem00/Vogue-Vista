@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AdSlot from "../components/AdSlot";
+// import AdSlot from "../components/AdSlot";
 import { fmt, NISAB_SILVER_PKR, NISAB_GOLD_PKR, ZAKAT_RATE } from "../utils/taxUtils";
 
 // ─── MUST be outside ZakatCalculator so React doesn't remount on every keystroke ───
@@ -162,7 +162,7 @@ export default function ZakatCalculator({ navigate }) {
             )}
           </div>
 
-          <AdSlot size="300x250" />
+          {/* <AdSlot size="300x250" /> */}
 
           <div className="nisab-box">
             <h4>⚖️ Nisab Thresholds 2026</h4>
@@ -182,10 +182,10 @@ export default function ZakatCalculator({ navigate }) {
           </div>
         </div>
       </div>
-
+{/* 
       <div className="container" style={{ padding: "24px 20px" }}>
         <AdSlot size="responsive" />
-      </div>
+      </div> */}
     </div>
   );
 }

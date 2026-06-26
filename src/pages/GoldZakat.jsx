@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AdSlot from "../components/AdSlot";
+// import AdSlot from "../components/AdSlot";
 import { fmt, GOLD_RATE_PER_GRAM, NISAB_GOLD_GRAMS, ZAKAT_RATE } from "../utils/taxUtils";
 
 const TOLA_TO_GRAM = 11.664;
@@ -192,7 +192,7 @@ export default function GoldZakat({ navigate }) {
             )}
           </div>
 
-          <AdSlot size="300x250" />
+          {/* <AdSlot size="300x250" /> */}
 
           <div className="nisab-box">
             <h4>⚖️ Gold Nisab</h4>
@@ -219,9 +219,9 @@ export default function GoldZakat({ navigate }) {
         </div>
       </div>
 
-      <div className="container" style={{ padding: "24px 20px" }}>
+      {/* <div className="container" style={{ padding: "24px 20px" }}>
         <AdSlot size="responsive" />
-      </div>
+      </div> */}
     </div>
   );
 }

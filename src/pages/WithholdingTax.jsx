@@ -18,16 +18,28 @@ export default function WithholdingTax({ navigate }) {
   const allCats = WHT_CATEGORIES;
 
   const calculate = () => {
-    const cat = allCats[parseInt(form.category)];
-    const amount = parseFloat(form.amount.replace(/,/g, "")) || 0;
-    if (!cat.rate) {
-      setResult({ error: true, msg: "This category requires a separate calculation. Use the Income Tax calculator for salary WHT." });
-      return;
-    }
-    const wht = amount * cat.rate;
-    const net = amount - wht;
-    setResult({ cat, amount, wht, net, rate: cat.rate });
-  };
+  const cat = allCats[parseInt(form.category)];
+  const amount = parseFloat(form.amount.replace(/,/g, "")) || 0;
+
+  if (cat.rate === null) {
+    setResult({
+      error: true,
+      msg: "This category requires a separate calculation. Use the Income Tax calculator for salary WHT."
+    });
+    return;
+  }
+
+  const wht = amount * cat.rate;
+  const net = amount - wht;
+
+  setResult({
+    cat,
+    amount,
+    wht,
+    net,
+    rate: cat.rate
+  });
+};
 
   return (
     <div>
@@ -60,9 +72,12 @@ export default function WithholdingTax({ navigate }) {
               <label>Transaction Category</label>
               <select value={form.category} onChange={e => set("category", e.target.value)}>
                 {allCats.map((c, i) => (
-                  <option key={i} value={i}>
-                    {c.label} {c.rate ? `— ${(c.rate * 100).toFixed(1)}%` : "— See Income Tax"}
-                  </option>
+                    <option key={i} value={i}>
+                      {c.label}{" "}
+                      {c.rate !== null
+                        ? `— ${(c.rate * 100).toFixed(1)}%`
+                        : "— See Income Tax"}
+                    </option>
                 ))}
               </select>
             </div>

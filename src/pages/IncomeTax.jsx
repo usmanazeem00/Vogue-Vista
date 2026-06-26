@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AdSlot from "../components/AdSlot";
+// import AdSlot from "../components/AdSlot";
 import {
   fmt, fmtPlain, calcIncomeTax, getSlabs, getActiveSlab,
   TAX_YEARS, DEFAULT_TAX_YEAR
@@ -211,7 +211,7 @@ export default function IncomeTax({ navigate }) {
             )}
           </div>
 
-          <AdSlot size="300x250" />
+          {/* <AdSlot size="300x250" /> */}
 
           <div className="info-card">
             <h4>📌 Important Notes</h4>
@@ -235,9 +235,9 @@ export default function IncomeTax({ navigate }) {
         </div>
       </div>
 
-      <div className="container" style={{ padding: "24px 20px" }}>
+      {/* <div className="container" style={{ padding: "24px 20px" }}>
         <AdSlot size="responsive" />
-      </div>
+      </div> */}
     </div>
   );
 }

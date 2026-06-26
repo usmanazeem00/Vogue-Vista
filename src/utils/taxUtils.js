@@ -146,7 +146,7 @@ export const WHT_CATEGORIES = [
   { id: "export",                   label: "Export Proceeds (Sec 154)",            rate: 0.01   },
   { id: "freelance_export",         label: "IT/Freelance Exports (Sec 154A)",      rate: 0.0025 }, // 0.25% PSEB-registered
   { id: "prize",                    label: "Prize / Lottery / Winnings",           rate: 0.25   },
-  { id: "cash_withdrawal_filer",    label: "Cash Withdrawal >50K — Filer",        rate: 0.0015 }, // 0.15%
+  { id: "cash_withdrawal_filer",    label: "Cash Withdrawal >50K — Filer",        rate: 0.0 }, // 0.15%
   { id: "cash_withdrawal_nonfiler", label: "Cash Withdrawal >50K — Non-Filer",    rate: 0.006  }, // 0.60%
   { id: "property_buy_filer",       label: "Property Purchase — Filer (TY2027)",  rate: 0.0125 }, // 1.25% new
   { id: "property_buy_nonfiler",    label: "Property Purchase — Non-Filer",       rate: 0.025  },

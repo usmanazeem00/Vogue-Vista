@@ -1,5 +1,5 @@
 import React from "react";
-import AdSlot from "../components/AdSlot";
+//import AdSlot from "../components/AdSlot";
 
 export default function About({ navigate }) {
   return (
@@ -107,10 +107,10 @@ export default function About({ navigate }) {
           </button>
         </div>
       </div>
-
+{/* 
       <div className="container" style={{ padding: "0 20px 40px" }}>
         <AdSlot size="responsive" />
-      </div>
+      </div> */}
     </div>
   );
 }

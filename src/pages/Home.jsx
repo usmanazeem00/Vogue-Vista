@@ -49,7 +49,7 @@ export default function Home({ navigate }) {
       </section>
 
       {/* ── TOP AD ── */}
-      <div className="container">
+      {/* <div className="container">
         <AdSlot size="responsive" className="ad-slot-728" />
       </div>
 
@@ -127,9 +127,9 @@ export default function Home({ navigate }) {
       </section>
 
       {/* ── BOTTOM AD ── */}
-      <div className="container" style={{ paddingBottom: 48 }}>
+      {/* <div className="container" style={{ paddingBottom: 48 }}>
         <AdSlot size="responsive" />
-      </div>
+      </div> */}
     </div>
   );
 }
