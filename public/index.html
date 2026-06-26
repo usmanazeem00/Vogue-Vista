@@ -1,25 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <meta charset="utf-8" />
-  <link rel="icon" href="./Images/logo.png" />
-  <link href='https://fonts.googleapis.com/css?family=Outfit' rel='stylesheet'>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Web site created using create-react-app" />
+  <meta name="theme-color" content="#0f5132" />
+
+  <!-- Primary SEO Meta Tags -->
+  <title>Pakistan Tax & Zakat Calculator 2026-27 | Free FBR Income Tax, Zakat, Salary</title>
+  <meta name="description" content="Free Pakistan tax calculators for 2026-27: Income Tax (FBR slabs), Zakat on cash/gold/silver, Salary net pay, Bank profit and Withholding Tax. Accurate, fast, no signup." />
+  <meta name="keywords" content="pakistan income tax calculator, zakat calculator pakistan, gold zakat calculator, salary calculator pakistan, withholding tax pakistan, FBR tax 2026, bank profit calculator pakistan, nisab 2026" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="PK Tax Calc" />
+  <link rel="canonical" href="https://pktaxcalc.com/" />
+
+  <!-- Open Graph (Facebook, WhatsApp) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pktaxcalc.com/" />
+  <meta property="og:title" content="Pakistan Tax & Zakat Calculator 2026-27" />
+  <meta property="og:description" content="Free calculators for Income Tax, Zakat, Salary and Bank Profit in Pakistan. Based on Finance Bill 2026. No signup required." />
+  <meta property="og:image" content="https://pktaxcalc.com/og-image.png" />
+  <meta property="og:locale" content="en_PK" />
+  <meta property="og:site_name" content="PK Tax Calc" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Pakistan Tax & Zakat Calculator 2026-27" />
+  <meta name="twitter:description" content="Free Pakistan tax and Zakat calculators. Income Tax, Salary, Gold Zakat, Bank Profit & more." />
+  <meta name="twitter:image" content="https://pktaxcalc.com/og-image.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇵🇰</text></svg>" />
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-  <title>Crescent Cyber</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+
+  <!-- =====================================================
+    GOOGLE ADSENSE
+    Replace ca-pub-XXXXXXXXXXXXXXXX with your Publisher ID
+    Get it from: https://www.google.com/adsense/
+  ====================================================== -->
+  <!--
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+    crossorigin="anonymous"></script>
+  -->
+
+  <!-- Structured Data: WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "PK Tax Calc",
+    "url": "https://pktaxcalc.com",
+    "description": "Free Pakistan tax and Zakat calculators for FY 2026-27",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://pktaxcalc.com/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Structured Data: Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "PK Tax Calc",
+    "url": "https://pktaxcalc.com",
+    "logo": "https://pktaxcalc.com/logo.png",
+    "sameAs": []
+  }
+  </script>
+
+  <!-- Structured Data: WebApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Pakistan Income Tax Calculator 2026-27",
+    "url": "https://pktaxcalc.com/income-tax",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "PKR"
+    },
+    "featureList": [
+      "Income Tax Calculator",
+      "Zakat Calculator",
+      "Gold Zakat Calculator",
+      "Silver Zakat Calculator",
+      "Bank Profit Calculator",
+      "Salary Calculator",
+      "Withholding Tax Calculator"
+    ]
+  }
+  </script>
+
+  <!-- Google Analytics placeholder -->
+  <!-- Replace G-XXXXXXXXXX with your Measurement ID -->
+  <!--
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  -->
+
+  <style>
+    /* Critical inline CSS for fast first paint */
+    body { margin: 0; background: #f8fafc; font-family: 'Segoe UI', system-ui, sans-serif; }
+    #root { min-height: 100vh; }
+    .initial-loader {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; flex-direction: column; gap: 16px;
+      background: #0f5132; color: white;
+    }
+    .initial-loader .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
 <body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
+  <noscript>
+    <div style="font-family:sans-serif;padding:40px;text-align:center;background:#0f5132;color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column">
+      <h1>🇵🇰 PK Tax Calc</h1>
+      <p>Pakistan Tax &amp; Zakat Calculator requires JavaScript to be enabled in your browser.</p>
+      <p>Please enable JavaScript and reload the page.</p>
+    </div>
+  </noscript>
 
-  <!-- Move the script tag to the end of the body -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <div id="root">
+    <div class="initial-loader">
+      <div style="font-size:3rem">🇵🇰</div>
+      <div class="spinner"></div>
+      <div style="font-size:0.9rem;opacity:0.7">Loading PK Tax Calc...</div>
+    </div>
+  </div>
 </body>
 </html>

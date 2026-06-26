@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import New from './New.tsx';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux'; // Import the Provider
 import store from './store'; // Assuming you have a Redux store
+import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -13,7 +13,7 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
-        <New />
+        <App />
       </Provider>
     </BrowserRouter>
   </React.StrictMode>,
