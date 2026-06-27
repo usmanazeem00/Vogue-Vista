@@ -13,6 +13,7 @@ export default function Contact() {
       alert("Please fill in your name, email and message.");
       return;
     }
+    
     const subjectLabels = {
       general: "General Enquiry",
       error: "Calculation Error Report",
