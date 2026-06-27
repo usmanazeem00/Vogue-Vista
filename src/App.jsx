@@ -12,6 +12,12 @@ import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Blogs from "./pages/blogs/Blogs";
+import IncomeTaxSlabs2026 from "./pages/blogs/IncomeTaxSlabs2026";
+import BecomeFiler from "./pages/blogs/BecomeFiler";
+import TaxReturnDeadline from "./pages/blogs/TaxReturnDeadline";
+import ZakatGuide from "./pages/blogs/ZakatGuide";
+import SalaryTaxGuide from "./pages/blogs/SalaryTaxGuide";
 import "./App.css";
 
 const routes = {
@@ -26,6 +32,12 @@ const routes = {
   "/about": { component: About, title: "About PK Tax Calc | Pakistan Tax Calculator", desc: "Learn about PK Tax Calc — Pakistan's free, tax and Zakat calculator based on Finance Bill 2026. Our mission, data sources and commitment to accuracy." },
   "/contact": { component: Contact, title: "Contact Us | PK Tax Calc", desc: "Contact PK Tax Calc for questions, error reports or feature suggestions. Pakistan tax and Zakat calculator support." },
   "/privacy-policy": { component: PrivacyPolicy, title: "Privacy Policy | PK Tax Calc", desc: "Privacy Policy for PK Tax Calc. How we handle your data, cookies and Google AdSense advertising." },
+  "/blogs": { component: Blogs, title: "PK Tax Calc Blog | Guides & Resources", desc: "Latest articles about income tax, FBR updates, salary tax, withholding tax and financial guides in Pakistan." },
+  "/blog/income-tax-slabs-2026": { component: IncomeTaxSlabs2026, title: "Income Tax Slabs Pakistan FY 2026-27 | FBR Guide", desc: "Complete breakdown of the new FBR tax slabs for FY 2026-27. Income tax rates and brackets for salaried and business individuals in Pakistan." },
+  "/blog/become-filer": { component: BecomeFiler, title: "How to Become a Filer in Pakistan", desc: "Everything you need to know about ATL registration." },
+  "/blog/tax-return-deadline": { component: TaxReturnDeadline, title: "Tax Return Deadline in Pakistan", desc: "Important dates and penalties for late filing." },
+  "/blog/zakat-guide": { component: ZakatGuide, title: "Zakat on Gold, Cash and Savings", desc: "Complete guide to calculating your annual Zakat." },
+  "/blog/salary-tax-guide": { component: SalaryTaxGuide, title: "How to Calculate Salary Tax in Pakistan", desc: "Learn how employers calculate monthly and annual salary tax." }
 };
 
 export default function App() {

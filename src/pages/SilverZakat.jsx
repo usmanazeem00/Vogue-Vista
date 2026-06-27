@@ -106,8 +106,8 @@ export default function SilverZakat({ navigate }) {
 
           {/* <AdSlot size="300x250" /> */}
 
-          <div className="nisab-box">
-            <h4>⚖️ Silver Nisab 2026</h4>
+          <div className="nisab-box" style = {{background: "linear-gradient(135deg, #caced2 0%, #838383 100%)" }}>
+            <h4 style={{ color: "black" }}>⚖️ Silver Nisab</h4>
             <div className="nisab-grid">
               <div className="nisab-item"><span className="nisab-val">52.5</span><span className="nisab-lbl">Tola</span></div>
               <div className="nisab-item"><span className="nisab-val">612g</span><span className="nisab-lbl">Grams</span></div>

@@ -8,6 +8,7 @@ const navItems = [
   { label: "Bank Profit", path: "/bank-interest" },
   { label: "Salary", path: "/salary" },
   { label: "WHT", path: "/withholding-tax" },
+  { label: "Blog", path: "/blogs" },
 ];
 
 export default function Navbar({ navigate, currentPath }) {

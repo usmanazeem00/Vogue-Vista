@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://pktaxcalc.com/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://pktaxcalc.com/income-tax</loc><changefreq>yearly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://pktaxcalc.com/zakat</loc><changefreq>yearly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://pktaxcalc.com/gold-zakat</loc><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://pktaxcalc.com/silver-zakat</loc><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://pktaxcalc.com/bank-interest</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://pktaxcalc.com/salary</loc><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://pktaxcalc.com/withholding-tax</loc><changefreq>yearly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://pktaxcalc.com/about</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://pktaxcalc.com/contact</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://pktaxcalc.com/privacy-policy</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://pktaxcalc.com/blog</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+</urlset>

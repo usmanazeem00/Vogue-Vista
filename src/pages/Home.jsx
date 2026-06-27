@@ -79,9 +79,9 @@ export default function Home({ navigate }) {
       </section>
 
       {/* ── MID AD ── */}
-      <div className="container">
+      {/* <div className="container">
         <AdSlot size="responsive" />
-      </div>
+      </div> */}
 
       {/* ── FEATURES STRIP ── */}
       <section className="features-strip">
@@ -101,6 +101,67 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
+<section className="calc-grid-section">
+  <div className="section-eyebrow">
+    Learn & Save Taxes
+  </div>
+
+  <h2 className="section-title">
+    Latest Tax Guides
+  </h2>
+
+  <p className="section-desc">
+    Learn about income tax, FBR filing, Zakat and financial planning in Pakistan.
+  </p>
+
+  <div className="calc-grid">
+    {[
+      {
+        title: "Income Tax Slabs Pakistan FY 2026-27",
+        path: "/blog/income-tax-slabs-2026"
+      },
+      {
+        title: "How to Become a Filer in Pakistan",
+        path: "/blog/become-filer"
+      },
+      {
+        title: "How to Calculate Salary Tax",
+        path: "/blog/salary-tax-guide"
+      }
+    ].map(blog => (
+      <article
+        key={blog.path}
+        className="calc-tile"
+        onClick={() => navigate(blog.path)}
+      >
+        <div className="tile-icon">📝</div>
+
+        <h3>{blog.title}</h3>
+
+        <p>
+          Read our complete guide and examples.
+        </p>
+
+        <div className="tile-arrow">
+          Read article →
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <div style={{ marginTop: 32, textAlign: "center" }}>
+    <button
+      className="btn-calc"
+      style={{
+        width: "auto",
+        padding: "14px 28px"
+      }}
+      onClick={() => navigate("/blogs")}
+    >
+      View All Articles
+    </button>
+  </div>
+</section>
       {/* ── FAQ ── */}
       <section className="faq-section">
         <div className="faq-inner">

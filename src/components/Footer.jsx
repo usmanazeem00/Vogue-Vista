@@ -39,7 +39,33 @@ export default function Footer({ navigate }) {
               <li><button onClick={() => window.open("https://iris.fbr.gov.pk", "_blank")}>IRIS Portal</button></li>
             </ul>
           </div>
+                  <div className="footer-col">
+  <h5>Resources</h5>
+  <ul>
+    <li>
+      <button onClick={() => navigate("/blogs")}>
+        Blog
+      </button>
+    </li>
+    <li>
+      <button onClick={() => navigate("/blog/income-tax-slabs-2026")}>
+        Income Tax Slabs
+      </button>
+    </li>
+    <li>
+      <button onClick={() => navigate("/blog/become-filer")}>
+        Become a Filer
+      </button>
+    </li>
+    <li>
+      <button onClick={() => navigate("/blog/zakat-guide")}>
+        Zakat Guide
+      </button>
+    </li>
+  </ul>
+</div>
         </div>
+
         <div className="footer-bottom">
           <p>© 2026 PK Tax Calc. All calculations for FY 2026-27.</p>
           <p style={{ color: "var(--ink-500)", fontSize: "0.75rem" }}>
