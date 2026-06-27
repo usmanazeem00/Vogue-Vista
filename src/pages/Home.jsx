@@ -90,7 +90,7 @@ export default function Home({ navigate }) {
             { icon:"✅", h:"Accurate Tax Slabs",   p:"All slabs from Finance Bill 2026. Updated within 24 hrs of every budget announcement." },
             { icon:"🔒", h:"Fully Private",   p:"Calculations run in your browser. Your income figures are never transmitted or stored." },
             { icon:"📱", h:"Mobile First",    p:"Works perfectly on phones — because most Pakistanis calculate on the go." },
-            { icon:"🆓", h:"Always Free",     p:"No subscription, no sign-up, no paywall. Supported by Google AdSense." },
+            { icon:"🆓", h:"Always Free",     p:"No subscription, no sign-up, no paywall." },
           ].map(f => (
             <div className="feature-item" key={f.h}>
               <div className="feature-icon">{f.icon}</div>

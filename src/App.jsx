@@ -31,7 +31,7 @@ const routes = {
   "/withholding-tax": { component: WithholdingTax, title: "Withholding Tax Calculator Pakistan 2026 | FBR WHT", desc: "Calculate withholding tax on contracts, rent, imports, bank profits and more under Pakistan tax law 2026." },
   "/about": { component: About, title: "About PK Tax Calc | Pakistan Tax Calculator", desc: "Learn about PK Tax Calc — Pakistan's free, tax and Zakat calculator based on Finance Bill 2026. Our mission, data sources and commitment to accuracy." },
   "/contact": { component: Contact, title: "Contact Us | PK Tax Calc", desc: "Contact PK Tax Calc for questions, error reports or feature suggestions. Pakistan tax and Zakat calculator support." },
-  "/privacy-policy": { component: PrivacyPolicy, title: "Privacy Policy | PK Tax Calc", desc: "Privacy Policy for PK Tax Calc. How we handle your data, cookies and Google AdSense advertising." },
+  "/privacy-policy": { component: PrivacyPolicy, title: "Privacy Policy | PK Tax Calc", desc: "Privacy Policy for PK Tax Calc. How we handle your data, and cookies." },
   "/blogs": { component: Blogs, title: "PK Tax Calc Blog | Guides & Resources", desc: "Latest articles about income tax, FBR updates, salary tax, withholding tax and financial guides in Pakistan." },
   "/blog/income-tax-slabs-2026": { component: IncomeTaxSlabs2026, title: "Income Tax Slabs Pakistan FY 2026-27 | FBR Guide", desc: "Complete breakdown of the new FBR tax slabs for FY 2026-27. Income tax rates and brackets for salaried and business individuals in Pakistan." },
   "/blog/become-filer": { component: BecomeFiler, title: "How to Become a Filer in Pakistan", desc: "Everything you need to know about ATL registration." },

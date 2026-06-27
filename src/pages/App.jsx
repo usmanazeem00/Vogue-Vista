@@ -25,7 +25,7 @@ const routes = {
   "/withholding-tax": { component: WithholdingTax, title: "Withholding Tax Calculator Pakistan 2026 | FBR WHT", desc: "Calculate withholding tax on contracts, rent, imports, bank profits and more under Pakistan tax law 2026." },
   "/about": { component: About, title: "About PK Tax Calc | Pakistan Tax Calculator", desc: "Learn about PK Tax Calc — Pakistan's free, tax and Zakat calculator based on Finance Bill 2026. Our mission, data sources and commitment to accuracy." },
   "/contact": { component: Contact, title: "Contact Us | PK Tax Calc", desc: "Contact PK Tax Calc for questions, error reports or feature suggestions. Pakistan tax and Zakat calculator support." },
-  "/privacy-policy": { component: PrivacyPolicy, title: "Privacy Policy | PK Tax Calc", desc: "Privacy Policy for PK Tax Calc. How we handle your data, cookies and Google AdSense advertising." },
+  "/privacy-policy": { component: PrivacyPolicy, title: "Privacy Policy | PK Tax Calc", desc: "Privacy Policy for PK Tax Calc. How we handle your data, and cookies." },
 };
 
 export default function App() {

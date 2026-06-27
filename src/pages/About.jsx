@@ -51,7 +51,7 @@ export default function About({ navigate }) {
               ["📖 FBR Source Data", "All income tax slabs and withholding tax rates are taken directly from the FBR Finance Act and Income Tax Ordinance 2001 (as amended). We update figures every year after the Federal Budget."],
               ["☪️ Islamic Finance Standards", "Zakat calculations follow the Hanafi school of thought, which is the most widely followed in Pakistan. We clearly note where scholarly opinions differ (e.g., on gold jewellery)."],
               ["🔒 Your Privacy First", "Every calculation runs entirely in your browser. We never see, store or transmit your income or asset figures. No account is required."],
-              ["⚡ Always Free", "PK Tax Calc is and will remain free to use. The site is supported by display advertising (Google AdSense). No paywalls, no premium features, no subscriptions."],
+              ["⚡ Always Free", "PK Tax Calc is and will remain free to use. No paywalls, no premium features, no subscriptions."],
             ].map(([title, desc]) => (
               <div key={title} style={{ display: "flex", gap: 16 }}>
                 <div style={{ fontSize: "1.3rem", flexShrink: 0, marginTop: 2 }}>{title.split(" ")[0]}</div>
