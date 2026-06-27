@@ -35,9 +35,10 @@ export default function Footer({ navigate }) {
               <li><button onClick={() => navigate("/about")}>About Us</button></li>
               <li><button onClick={() => navigate("/contact")}>Contact Us</button></li>
               <li><button onClick={() => navigate("/privacy-policy")}>Privacy Policy</button></li>
-              <li><button onClick={() => window.open("https://fbr.gov.pk", "_blank")}>FBR Website</button></li>
-              <li><button onClick={() => window.open("https://iris.fbr.gov.pk", "_blank")}>IRIS Portal</button></li>
+              {/* <li><button onClick={() => window.open("https://fbr.gov.pk", "_blank")}>FBR Website</button></li>
+              <li><button onClick={() => window.open("https://iris.fbr.gov.pk", "_blank")}>IRIS Portal</button></li> */}
             </ul>
+            
           </div>
                   <div className="footer-col">
   <h5>Resources</h5>
