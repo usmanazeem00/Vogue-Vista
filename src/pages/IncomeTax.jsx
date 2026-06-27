@@ -146,7 +146,7 @@ setTimeout(() => {
 
           {/* Tax Slabs Table */}
           <div className="calc-card fade-in" style={{ marginTop: 24 }}>
-            <h2>FBR Tax Slabs {yearLabel} — {form.incomeType === "salaried" ? "Salaried" : "Business"}</h2>
+            <h2>Tax Slabs {yearLabel} — {form.incomeType === "salaried" ? "Salaried" : "Business"}</h2>
             <div style={{ overflowX: "auto" }}>
               <table className="slab-table">
                 <thead>
