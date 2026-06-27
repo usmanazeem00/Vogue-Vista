@@ -15,8 +15,8 @@ import Footer from "./components/Footer";
 import "./App.css";
 
 const routes = {
-  "/": { component: Home, title: "Pakistan Tax & Zakat Calculator 2026-27 | Free FBR Tools", desc: "Free online calculators for Income Tax, Zakat, Gold Zakat, Bank Profit, Salary and more for Pakistan. Based on Pakistan Finance Bill 2026 tax slabs." },
-  "/income-tax": { component: IncomeTax, title: "Income Tax Calculator Pakistan 2026-27 | FBR Slabs", desc: "Calculate your income tax for FY 2026-27 based on FBR Finance Bill 2026 slabs. Accurate tax for salaried individuals and business owners in Pakistan." },
+  "/": { component: Home, title: "Pakistan Tax & Zakat Calculator 2026-27 | Free Tax Calculation Tools", desc: "Free online calculators for Income Tax, Zakat, Gold Zakat, Bank Profit, Salary and more for Pakistan. Based on Pakistan Finance Bill 2026 tax slabs." },
+  "/income-tax": { component: IncomeTax, title: "Income Tax Calculator Pakistan 2026-27 | Tax Slabs", desc: "Calculate your income tax for FY 2026-27 based on FBR Finance Bill 2026 slabs. Accurate tax for salaried individuals and business owners in Pakistan." },
   "/zakat": { component: ZakatCalculator, title: "Zakat Calculator Pakistan 2026 | Cash & Assets", desc: "Calculate Zakat on cash, savings, and assets using the latest Nisab threshold in Pakistan. Simple and accurate Zakat calculator." },
   "/gold-zakat": { component: GoldZakat, title: "Gold Zakat Calculator Pakistan 2026 | Grams & Tola", desc: "Calculate Zakat on gold jewellery and coins using today's gold rate. Accurate Nisab-based Zakat calculation for gold in Pakistan." },
   "/silver-zakat": { component: SilverZakat, title: "Silver Zakat Calculator Pakistan 2026 | Nisab", desc: "Calculate Zakat on silver using current silver rates and Nisab threshold. Free silver Zakat calculator for Pakistan." },
