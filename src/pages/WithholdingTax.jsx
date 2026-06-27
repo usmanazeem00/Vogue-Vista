@@ -45,7 +45,7 @@ export default function WithholdingTax({ navigate }) {
     <div>
       <section className="page-hero">
         <div className="hero-badge">FY 2026-27 · 18 Categories · Filer vs Non-Filer</div>
-        <h1>Withholding Tax Calculator Pakistan 2024</h1>
+        <h1>Withholding Tax Calculator Pakistan 2026</h1>
         <p>Calculate withholding tax (WHT) on contracts, rent, bank profit, dividends, imports, property and more. Separate rates for filers and non-filers.</p>
       </section>
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 // import AdSlot from "../components/AdSlot";
 import {
   fmt, fmtPlain, calcIncomeTax, getSlabs, getActiveSlab,
@@ -14,25 +14,49 @@ export default function IncomeTax({ navigate }) {
     taxYear: DEFAULT_TAX_YEAR,
   });
   const [result, setResult] = useState(null);
-
+  const resultRef = useRef(null);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  const calculate = () => {
-    let annual = parseFloat(form.income.replace(/,/g, "")) || 0;
-    const other = parseFloat(form.otherIncome.replace(/,/g, "")) || 0;
-    if (form.period === "monthly") annual = annual * 12;
-    annual += other;
+const calculate = () => {
+  let annual = parseFloat(form.income.replace(/,/g, "")) || 0;
+  const other = parseFloat(form.otherIncome.replace(/,/g, "")) || 0;
 
-    const isSalaried = form.incomeType === "salaried";
-    const tax = calcIncomeTax(annual, isSalaried, form.taxYear);
-    const activeSlab = getActiveSlab(annual, isSalaried, form.taxYear);
-    const effectiveRate = annual > 0 ? (tax / annual) * 100 : 0;
-    const monthly = annual / 12;
-    const monthlyTax = tax / 12;
-    const netAnnual = annual - tax;
+  if (form.period === "monthly") annual = annual * 12;
+  annual += other;
 
-    setResult({ annual, tax, effectiveRate, activeSlab, monthly, monthlyTax, netAnnual, isSalaried });
-  };
+  const isSalaried = form.incomeType === "salaried";
+  const tax = calcIncomeTax(annual, isSalaried, form.taxYear);
+  const activeSlab = getActiveSlab(annual, isSalaried, form.taxYear);
+  const effectiveRate = annual > 0 ? (tax / annual) * 100 : 0;
+  const monthly = annual / 12;
+  const monthlyTax = tax / 12;
+  const netAnnual = annual - tax;
+
+  setResult({
+    annual,
+    tax,
+    effectiveRate,
+    activeSlab,
+    monthly,
+    monthlyTax,
+    netAnnual,
+    isSalaried,
+  });
+
+setTimeout(() => {
+  if (window.innerWidth <= 768 && resultRef.current) {
+    const y =
+      resultRef.current.getBoundingClientRect().top +
+      window.pageYOffset -
+      80;
+
+    window.scrollTo({
+      top: y,
+      behavior: "smooth",
+    });
+  }
+}, 100);
+};
 
   const slabs = getSlabs(form.incomeType === "salaried", form.taxYear);
   const yearLabel = TAX_YEARS.find(y => y.id === form.taxYear)?.label || "";
@@ -160,7 +184,7 @@ export default function IncomeTax({ navigate }) {
 
         {/* Sidebar */}
         <div className="sidebar">
-          <div className="result-panel fade-in-delay">
+          <div className="result-panel fade-in-delay" ref={resultRef}>
             {result ? (
               <>
                 <div className="result-header">

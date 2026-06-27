@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef} from "react";
 // import AdSlot from "../components/AdSlot";
 import { fmt, calcIncomeTax } from "../utils/taxUtils";
 
@@ -14,6 +14,7 @@ export default function SalaryCalculator({ navigate }) {
     province: "punjab",
   });
   const [result, setResult] = useState(null);
+  const resultRef = useRef(null);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -47,6 +48,19 @@ export default function SalaryCalculator({ navigate }) {
       eobiEmployee, eobiEmployer, pfAmount, sessiEmployee,
       totalDeductions, netSalary
     });
+setTimeout(() => {
+  if (window.innerWidth <= 768 && resultRef.current) {
+    const y =
+      resultRef.current.getBoundingClientRect().top +
+      window.pageYOffset -
+      80;
+
+    window.scrollTo({
+      top: y,
+      behavior: "smooth",
+    });
+  }
+}, 100);
   };
 
   return (
@@ -154,7 +168,7 @@ export default function SalaryCalculator({ navigate }) {
         </div>
 
         <div className="sidebar">
-          <div className="result-panel fade-in-delay">
+          <div className="result-panel fade-in-delay" ref={resultRef}>
             {result ? (
               <>
                 <div className="result-header">

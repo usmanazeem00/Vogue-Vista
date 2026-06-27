@@ -73,7 +73,7 @@ export default function Footer({ navigate }) {
             {" · "}
             <button onClick={() => navigate("/contact")} style={{ background: "none", border: "none", color: "var(--ink-400)", fontSize: "0.75rem", cursor: "pointer" }}>Contact</button>
             {" · "}
-            Data sourced from FBR Finance Bill 2026
+            Data sourced from FY Bill 2026-2027 and publications. Not affiliated with FBR or any government body.
           </p>
         </div>
       </div>

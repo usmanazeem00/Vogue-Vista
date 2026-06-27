@@ -23,7 +23,7 @@ export default function Contact() {
     const mailBody = encodeURIComponent(
       `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
     );
-    window.location.href = `mailto:contact@pktaxcalc.com?subject=${mailSubject}&body=${mailBody}`;
+    window.location.href = `mailto:hello.pktaxcalc@gmail.com?subject=${mailSubject}&body=${mailBody}`;
     setSent(true);
   };
 
@@ -42,7 +42,7 @@ export default function Contact() {
             <h2 style={{ fontFamily: "var(--font-display)", marginBottom: 12 }}>Message Ready to Send</h2>
             <p style={{ color: "var(--slate-500)", marginBottom: 24 }}>
               Your email client should have opened with the message pre-filled.
-              If it didn't open, email us directly at <strong>contact@pktaxcalc.com</strong>
+              If it didn't open, email us directly at <strong>hello.pktaxcalc@gmail.com</strong>
             </p>
             <button className="btn-calc" style={{ width: "auto", padding: "12px 32px" }}
               onClick={() => setSent(false)}>Send Another Message</button>
@@ -98,8 +98,8 @@ export default function Contact() {
 
             <p style={{ fontSize: "0.8rem", color: "var(--slate-400)", marginTop: 12, textAlign: "center" }}>
               This will open your email client. Alternatively, email us at{" "}
-              <a href="mailto:contact@pktaxcalc.com" style={{ color: "var(--green-600)" }}>
-                contact@pktaxcalc.com
+              <a href="mailto:hello.pktaxcalc@gmail.com" style={{ color: "var(--green-600)" }}>
+                hello.pktaxcalc@gmail.com
               </a>
             </p>
           </div>
@@ -110,8 +110,8 @@ export default function Contact() {
           <div className="info-card">
             <h4>📧 Email</h4>
             <p>
-              <a href="mailto:contact@pktaxcalc.com" style={{ color: "var(--green-600)", fontWeight: 600 }}>
-                contact@pktaxcalc.com
+              <a href="mailto:hello.pktaxcalc@gmail.com" style={{ color: "var(--green-600)", fontWeight: 600 }}>
+                hello.pktaxcalc@gmail.com
               </a>
               <br />We typically respond within 24-48 hours.
             </p>
