@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef} from "react";
 // import AdSlot from "../components/AdSlot";
 import { fmt, GOLD_RATE_PER_GRAM, NISAB_GOLD_GRAMS, ZAKAT_RATE } from "../utils/taxUtils";
 
@@ -13,6 +13,7 @@ export default function GoldZakat({ navigate }) {
     otherAssets: "",
   });
   const [result, setResult] = useState(null);
+  const resultRef = useRef(null);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -33,6 +34,19 @@ export default function GoldZakat({ navigate }) {
     const goldZakat = zakatDue ? goldValue * ZAKAT_RATE : 0;
 
     setResult({ grams, pure24kGrams, goldValue, totalZakatable, nisabValue, zakatDue, zakat, goldZakat, rate });
+    setTimeout(() => {
+  if (window.innerWidth <= 768 && resultRef.current) {
+    const y =
+      resultRef.current.getBoundingClientRect().top +
+      window.pageYOffset -
+      80;
+
+    window.scrollTo({
+      top: y,
+      behavior: "smooth",
+    });
+  }
+}, 100);
   };
 
   return (
@@ -137,7 +151,7 @@ export default function GoldZakat({ navigate }) {
         </div>
 
         <div className="sidebar">
-          <div className="result-panel fade-in-delay">
+          <div className="result-panel fade-in-delay" ref={resultRef}>
             {result ? (
               <>
                 <div className="result-header" style={{ background: "linear-gradient(135deg, #92400e 0%, #b45309 100%)" }}>

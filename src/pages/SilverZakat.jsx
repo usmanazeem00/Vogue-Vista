@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 // import AdSlot from "../components/AdSlot";
 import { fmt, SILVER_RATE_PER_GRAM, NISAB_SILVER_GRAMS, ZAKAT_RATE } from "../utils/taxUtils";
 
@@ -8,7 +8,7 @@ const RATE = 260; // Rs/gram default
 export default function SilverZakat({ navigate }) {
   const [form, setForm] = useState({ unit: "grams", quantity: "", customRate: "", otherAssets: "" });
   const [result, setResult] = useState(null);
-
+  const resultRef = useRef(null);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const calculate = () => {
@@ -22,6 +22,19 @@ export default function SilverZakat({ navigate }) {
     const zakatDue = total >= nisabValue;
     const zakat = zakatDue ? total * ZAKAT_RATE : 0;
     setResult({ grams, silverValue, total, nisabValue, zakatDue, zakat, rate });
+    setTimeout(() => {
+  if (window.innerWidth <= 768 && resultRef.current) {
+    const y =
+      resultRef.current.getBoundingClientRect().top +
+      window.pageYOffset -
+      80;
+
+    window.scrollTo({
+      top: y,
+      behavior: "smooth",
+    });
+  }
+}, 100);
   };
 
   return (
@@ -82,7 +95,7 @@ export default function SilverZakat({ navigate }) {
         </div>
 
         <div className="sidebar">
-          <div className="result-panel fade-in-delay">
+          <div className="result-panel fade-in-delay" ref={resultRef}>
             {result ? (
               <>
                 <div className="result-header" style={{ background: "linear-gradient(135deg, #475569 0%, #64748b 100%)" }}>

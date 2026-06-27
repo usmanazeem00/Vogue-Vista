@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useRef} from "react";
 // import AdSlot from "../components/AdSlot";
 import { fmt, NISAB_SILVER_PKR, NISAB_GOLD_PKR, ZAKAT_RATE } from "../utils/taxUtils";
 
@@ -37,6 +37,7 @@ const EMPTY_FORM = {
 export default function ZakatCalculator({ navigate }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [result, setResult] = useState(null);
+ const resultRef = useRef(null);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -50,6 +51,19 @@ export default function ZakatCalculator({ navigate }) {
     const zakatDue = netAssets >= nisab;
     const zakat = zakatDue ? netAssets * ZAKAT_RATE : 0;
     setResult({ assets, liabilities, netAssets, nisab, zakatDue, zakat });
+    setTimeout(() => {
+        if (window.innerWidth <= 768 && resultRef.current) {
+          const y =
+            resultRef.current.getBoundingClientRect().top +
+            window.pageYOffset -
+            80;
+
+          window.scrollTo({
+            top: y,
+            behavior: "smooth",
+          });
+        }
+      }, 100);
   };
 
   return (
@@ -129,7 +143,7 @@ export default function ZakatCalculator({ navigate }) {
         </div>
 
         <div className="sidebar">
-          <div className="result-panel fade-in-delay">
+          <div className="result-panel fade-in-delay" ref={resultRef}>
             {result ? (
               <>
                 <div className="result-header"

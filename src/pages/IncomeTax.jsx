@@ -8,7 +8,7 @@ import {
 export default function IncomeTax({ navigate }) {
   const [form, setForm] = useState({
     incomeType: "salaried",
-    period: "annual",
+    period: "monthly",
     income: "",
     otherIncome: "",
     taxYear: DEFAULT_TAX_YEAR,
@@ -104,8 +104,8 @@ setTimeout(() => {
               <div className="form-group">
                 <label>Income Period</label>
                 <select value={form.period} onChange={e => set("period", e.target.value)}>
-                  <option value="annual">Annual (Yearly)</option>
                   <option value="monthly">Monthly</option>
+                  <option value="annual">Annual (Yearly)</option>
                 </select>
               </div>
               <div className="form-group">
@@ -189,8 +189,8 @@ setTimeout(() => {
               <>
                 <div className="result-header">
                   <h3>Your Tax Summary</h3>
-                  <div className="result-main-amount">{fmt(result.tax)}</div>
-                  <div className="result-main-label">Annual Income Tax</div>
+                  <div className="result-main-amount">{form.period === "monthly" ? fmt(result.monthlyTax) : fmt(result.tax)}</div>
+                  <div className="result-main-label">{form.period === "monthly" ? "Monthly Income Tax" : "Annual Income Tax"}</div>
                 </div>
                 <div className="result-body">
                   <div className="result-row">
