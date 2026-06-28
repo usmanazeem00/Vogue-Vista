@@ -9,6 +9,8 @@ const calcs = [
   { icon: "🏦", title: "Bank Profit",            path: "/bank-interest",type:"bank",  badge: "All Banks",    desc: "Calculate profit on savings & term deposits for HBL, MCB, UBL, Meezan and more. WHT included." },
   { icon: "💼", title: "Salary Calculator",      path: "/salary",      type: "salary",badge: "Net Pay",      desc: "Your exact take-home after income tax, EOBI, SESSI and provident fund. Monthly + annual view." },
   { icon: "📋", title: "Withholding Tax",        path: "/withholding-tax",type:"wht", badge: "23 Categories",desc: "WHT on contracts, rent, dividends, property, exports, freelance and more — filer vs non-filer." },
+  { icon: "📱", title: "SIM Load Tax",           path: "/sim-load-tax", type: "sim",   badge: "Mobile Recharge", desc: "Calculate mobile load tax in Pakistan including advance tax and service tax for Jazz, Zong, Ufone and Telenor." },
+
 ];
 
 const faqs = [
