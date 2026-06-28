@@ -4,12 +4,12 @@ import AdSlot from "../components/AdSlot";
 const calcs = [
   { icon: "🧾", title: "Income Tax Calculator", path: "/income-tax", type: "tax",   badge: "FBR 2026-27", desc: "Calculate your annual income tax based on Finance Bill 2026 slabs. Covers salaried & business income." },
   { icon: "☪️", title: "Zakat Calculator",       path: "/zakat",       type: "zakat", badge: "Nisab 2026",   desc: "Zakat on cash, savings, stocks, gold, silver and receivables — with Nisab check included." },
+  { icon: "📱", title: "SIM Load Tax",           path: "/sim-load-tax", type: "sim",   badge: "Mobile Recharge", desc: "Calculate mobile load tax in Pakistan including advance tax and service tax for Jazz, Zong, Ufone and Telenor." },
+  { icon: "💼", title: "Salary Calculator",      path: "/salary",      type: "salary",badge: "Net Pay",      desc: "Your exact take-home after income tax, EOBI, SESSI and provident fund. Monthly + annual view." },
   { icon: "🥇", title: "Gold Zakat",             path: "/gold-zakat",  type: "gold",  badge: "Live Rate",    desc: "Zakat on gold jewellery, coins and bars. Supports 24K, 22K, 21K, 18K purity in grams or tola." },
   { icon: "🥈", title: "Silver Zakat",           path: "/silver-zakat",type: "silver",badge: "Live Rate",    desc: "Calculate Zakat on silver with current Sarafa rate. Uses the most conservative Nisab threshold." },
   { icon: "🏦", title: "Bank Profit",            path: "/bank-interest",type:"bank",  badge: "All Banks",    desc: "Calculate profit on savings & term deposits for HBL, MCB, UBL, Meezan and more. WHT included." },
-  { icon: "💼", title: "Salary Calculator",      path: "/salary",      type: "salary",badge: "Net Pay",      desc: "Your exact take-home after income tax, EOBI, SESSI and provident fund. Monthly + annual view." },
   { icon: "📋", title: "Withholding Tax",        path: "/withholding-tax",type:"wht", badge: "23 Categories",desc: "WHT on contracts, rent, dividends, property, exports, freelance and more — filer vs non-filer." },
-  { icon: "📱", title: "SIM Load Tax",           path: "/sim-load-tax", type: "sim",   badge: "Mobile Recharge", desc: "Calculate mobile load tax in Pakistan including advance tax and service tax for Jazz, Zong, Ufone and Telenor." },
 
 ];
 
