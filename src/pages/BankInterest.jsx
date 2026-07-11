@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 // import AdSlot from "../components/AdSlot";
 import { fmt } from "../utils/taxUtils";
 
@@ -20,6 +20,7 @@ const BANK_RATES = [
   { name: "Custom Rate", rate: null },
 ];
 export default function BankInterest({ navigate }) {
+  const resultRef = useRef(null);
   const [form, setForm] = useState({
     bankPreset: "0",
     principal: "",
@@ -61,6 +62,18 @@ export default function BankInterest({ navigate }) {
     const effectiveRate = P > 0 ? (netProfit / P / (months / 12)) * 100 : 0;
 
     setResult({ P, grossProfit, wht, netProfit, totalAmount, months, whtRate, effectiveRate, r });
+    setTimeout(() => {
+  if (window.innerWidth <= 768 && resultRef.current) {
+    const y =
+      resultRef.current.getBoundingClientRect().top +
+      window.pageYOffset -
+      80;
+
+    window.scrollTo({
+      top: y,
+      behavior: "smooth",
+    });}
+}, 100);
   };
 
   return (
@@ -156,7 +169,7 @@ export default function BankInterest({ navigate }) {
         </div>
 
         <div className="sidebar">
-          <div className="result-panel fade-in-delay">
+          <div className="result-panel fade-in-delay" ref={resultRef}>
             {result ? (
               <>
                 <div className="result-header" style={{ background: "linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%)" }}>

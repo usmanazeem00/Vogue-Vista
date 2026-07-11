@@ -48,8 +48,9 @@ export default function IncomeTax({ navigate }) {
         "@type": "WebPage",
         "@id": "https://pktaxcalc.com/income-tax",
         "url": "https://pktaxcalc.com/income-tax",
-        "name": "Income Tax Calculator Pakistan 2026-27 | FBR Tax Slabs",
-        "description": "Calculate your income tax for FY 2026-27 based on FBR Finance Bill 2026 slabs. Accurate tax for salaried individuals and business owners in Pakistan.",
+        "name": "Income Tax Calculator Pakistan 2026-27 (Free) | FBR Slabs",
+        "description": "Free income tax calculator for Pakistan FY 2026-27. Enter your salary or business income and get your exact tax instantly, based on official FBR Finance Bill 2026 slabs.",
+        "dateModified": "2026-07-11",
         "isPartOf": { "@id": "https://pktaxcalc.com" },
         "breadcrumb": {
           "@type": "BreadcrumbList",
@@ -127,17 +128,40 @@ export default function IncomeTax({ navigate }) {
   return (
     <div>
       <Helmet>
-        <title>Income Tax Calculator Pakistan 2026-27 | FBR Tax Slabs</title>
-        <meta name="description" content="Calculate your income tax for FY 2026-27 based on FBR Finance Bill 2026 slabs. Accurate tax for salaried individuals and business owners in Pakistan." />
+        <title>Income Tax Calculator Pakistan 2026-27 (Free) | FBR Slabs</title>
+        <meta name="description" content="Free income tax calculator for Pakistan FY 2026-27. Enter your salary or business income and get your exact tax instantly, based on official FBR Finance Bill 2026 slabs." />
         <link rel="canonical" href="https://pktaxcalc.com/income-tax" />
-        <meta property="og:title" content="Income Tax Calculator Pakistan 2026-27 | FBR Tax Slabs" />
+        <meta property="og:title" content="Income Tax Calculator Pakistan 2026-27 (Free) | FBR Slabs" />
         <meta property="og:description" content="Calculate your income tax for FY 2026-27 based on FBR Finance Bill 2026 slabs. Free, accurate, no signup required." />
         <meta property="og:url" content="https://pktaxcalc.com/income-tax" />
         <meta property="og:type" content="website" />
-        <meta name="twitter:title" content="Income Tax Calculator Pakistan 2026-27 | FBR Tax Slabs" />
+        <meta name="twitter:title" content="Income Tax Calculator Pakistan 2026-27 (Free) | FBR Slabs" />
         <meta name="twitter:description" content="Calculate your Pakistan income tax instantly. FBR Finance Bill 2026 slabs, salaried and business income." />
         <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
       </Helmet>
+
+      {/* Visible breadcrumb — helps users and mirrors the schema above */}
+      <nav aria-label="Breadcrumb" className="breadcrumb-nav">
+        <a href="#" onClick={(e) => { e.preventDefault(); navigate("/"); }}>Home</a>
+        <span aria-hidden="true"> / </span>
+        <span>Income Tax Calculator</span>
+      </nav>
+
+      <style>{`
+        .breadcrumb-nav {
+          background: var(--brand-dark, #0e3b2c);
+          padding: 10px 24px;
+          font-size: 0.85rem;
+          color: rgba(255, 255, 255, 0.65);
+        }
+        .breadcrumb-nav a {
+          color: rgba(255, 255, 255, 0.85);
+          text-decoration: none;
+        }
+        .breadcrumb-nav a:hover {
+          text-decoration: underline;
+        }
+      `}</style>
 
       <section className="page-hero">
         <div className="page-hero-inner">
@@ -329,6 +353,44 @@ export default function IncomeTax({ navigate }) {
           </div>
         </div>
       </div>
+
+      {/* ── Extra unique content: depth for ranking, not just a bare calculator ── */}
+      <section className="calc-grid-section">
+        <div className="section-eyebrow">How It Works</div>
+        <h2 className="section-title">How Income Tax Is Calculated in Pakistan</h2>
+        <p className="section-desc">
+          Pakistan uses a progressive income tax system: your income is split
+          across brackets, and each bracket is taxed at its own rate — not
+          your whole income at the top rate. FBR publishes separate slab
+          tables for salaried individuals and for business/self-employed
+          taxpayers, with salaried rates generally lower at the same income
+          level.
+        </p>
+
+        <h3 style={{ marginTop: 24 }}>Salaried vs. business income</h3>
+        <p className="section-desc">
+          If more than 75% of your taxable income comes from salary, you're
+          taxed under the salaried slabs, which employers apply automatically
+          through monthly withholding. Business and self-employed income is
+          assessed under a separate, generally steeper, slab table and is
+          typically settled through annual filing rather than monthly
+          deduction.
+        </p>
+
+        <h3 style={{ marginTop: 24 }}>What Finance Bill 2026 changed</h3>
+        <p className="section-desc">
+          The FY 2026-27 budget reduced rates across most brackets above Rs
+          2.2 million, introduced a new 32% bracket for income between Rs 5.6
+          million and Rs 7 million, and abolished the 9% surcharge that
+          previously applied above Rs 10 million — the calculator above
+          reflects these changes automatically when you select TY2027.
+        </p>
+
+        <p className="reviewed-note" style={{ marginTop: 20, fontSize: "0.85rem", opacity: 0.7 }}>
+          Last reviewed: July 2026, against Finance Bill 2026 and FBR's published slab tables.
+          This tool gives an estimate for planning purposes and isn't a substitute for professional tax advice.
+        </p>
+      </section>
     </div>
   );
 }

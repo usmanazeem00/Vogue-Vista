@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import AdSlot from "../components/AdSlot";
+import { fmt, calcIncomeTax, DEFAULT_TAX_YEAR } from "../utils/taxUtils";
 
 const calcs = [
   { icon: "🧾", title: "Income Tax Calculator", path: "/income-tax", type: "tax",   badge: "FBR 2026-27", desc: "Calculate your annual income tax based on Finance Bill 2026 slabs. Covers salaried & business income." },
@@ -10,7 +12,7 @@ const calcs = [
   { icon: "🥈", title: "Silver Zakat",           path: "/silver-zakat",type: "silver",badge: "Live Rate",    desc: "Calculate Zakat on silver with current Sarafa rate. Uses the most conservative Nisab threshold." },
   { icon: "🏦", title: "Bank Profit",            path: "/bank-interest",type:"bank",  badge: "All Banks",    desc: "Calculate profit on savings & term deposits for HBL, MCB, UBL, Meezan and more. WHT included." },
   { icon: "📋", title: "Withholding Tax",        path: "/withholding-tax",type:"wht", badge: "23 Categories",desc: "WHT on contracts, rent, dividends, property, exports, freelance and more — filer vs non-filer." },
-
+  { icon: "💻", title: "Freelancer Tax",         path: "/freelancer-tax", type: "freelancer", badge: "Section 154A", desc: "Calculate your Upwork, Fiverr and Payoneer tax — PSEB 0.25% vs non-PSEB 1%, plus local client income." },
 ];
 
 const faqs = [
@@ -31,13 +33,91 @@ const faqs = [
 export default function Home({ navigate }) {
   const [openFaq, setOpenFaq] = useState(null);
 
+  // ── Quick upfront income tax calculator (homepage) ──
+  const [qIncome, setQIncome] = useState("");
+  const [qPeriod, setQPeriod] = useState("monthly");
+  const [qType, setQType] = useState("salaried");
+  const [qResult, setQResult] = useState(null);
+
+  const quickCalculate = () => {
+    let annual = parseFloat(String(qIncome).replace(/,/g, "")) || 0;
+    if (qPeriod === "monthly") annual = annual * 12;
+    const isSalaried = qType === "salaried";
+    const tax = calcIncomeTax(annual, isSalaried, DEFAULT_TAX_YEAR);
+    const monthlyTax = tax / 12;
+    const netAnnual = annual - tax;
+    setQResult({ annual, tax, monthlyTax, netAnnual });
+  };
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://pktaxcalc.com/#website",
+        url: "https://pktaxcalc.com/",
+        name: "PkTaxCalc — Pakistan Tax & Zakat Calculators",
+        description:
+          "Free income tax, Zakat, salary and withholding tax calculators for Pakistan, updated for FY 2026-27.",
+        potentialAction: {
+          "@type": "SearchAction",
+          target: "https://pktaxcalc.com/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://pktaxcalc.com/",
+        url: "https://pktaxcalc.com/",
+        name: "Pakistan Tax & Zakat Calculators 2026-27 | Free & Instant | PkTaxCalc",
+        description:
+          "Calculate income tax, Zakat, salary deductions and withholding tax in Pakistan instantly. Updated for FY 2026-27 and Finance Bill 2026. 100% free, no signup.",
+        isPartOf: { "@id": "https://pktaxcalc.com/#website" }
+      },
+      {
+        "@type": "ItemList",
+        itemListElement: calcs.map((c, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: c.title,
+          url: `https://pktaxcalc.com${c.path}`
+        }))
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a }
+        }))
+      }
+    ]
+  };
+
   return (
     <div>
-      {/* ── HERO ── */}
+      <Helmet>
+        <title>Pakistan Tax & Zakat Calculators 2026-27 | Free & Instant | PkTaxCalc</title>
+        <meta
+          name="description"
+          content="Calculate income tax, Zakat, salary and withholding tax in Pakistan instantly. Updated for FY 2026-27 & Finance Bill 2026. 100% free, no signup, no ads on results."
+        />
+        <link rel="canonical" href="https://pktaxcalc.com/" />
+        <meta property="og:title" content="Pakistan Tax & Zakat Calculators 2026-27 | Free & Instant" />
+        <meta
+          property="og:description"
+          content="Income tax, Zakat, salary and withholding tax calculators for Pakistan — updated for FY 2026-27. Free, instant, no signup."
+        />
+        <meta property="og:url" content="https://pktaxcalc.com/" />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
+      </Helmet>
+
+      {/* ── HERO (single H1 lives here) ── */}
       <section className="home-hero">
         <div className="home-hero-inner">
           <div className="hero-pill">Finance Bill 2026 · Official Slabs · Free</div>
-          <h1>Pakistan's Free<br /><em>Tax & Zakat</em> Calculators</h1>
+          <h1>Pakistan's Free Tax & Zakat Calculators — FY 2026-27</h1>
           <p>Accurate income tax, Zakat, salary and withholding tax calculations for FY 2026-27. No account required.</p>
           <div className="hero-stats">
             {[["7","Calculators"],["2.5%","Zakat Rate"],["FY 26-27","Tax Year"],["100%","Free"]].map(([v,l]) => (
@@ -50,15 +130,119 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
+      {/* ── UPFRONT QUICK CALCULATOR — no click-through needed ── */}
+      <section className="calc-layout" style={{ marginTop: -20 }}>
+        <div>
+          <div className="calc-card fade-in">
+            <h2>Quick Income Tax Calculator</h2>
+            <p className="section-desc" style={{ marginTop: -8, marginBottom: 16 }}>
+              Enter your salary below to see your tax instantly — no need to open another page.
+            </p>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Income Period</label>
+                <select value={qPeriod} onChange={(e) => setQPeriod(e.target.value)}>
+                  <option value="monthly">Monthly</option>
+                  <option value="annual">Annual (Yearly)</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>{qType === "salaried" ? "Gross Salary" : "Business Income"} (Rs)</label>
+                <div className="input-prefix">
+                  <span>Rs</span>
+                  <input
+                    type="number"
+                    placeholder={qPeriod === "monthly" ? "e.g. 150,000" : "e.g. 1,800,000"}
+                    value={qIncome}
+                    onChange={(e) => setQIncome(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Taxpayer Type</label>
+              <div className="radio-group">
+                {[["salaried", "👔 Salaried"], ["business", "🏪 Business / Self-Employed"]].map(([v, l]) => (
+                  <label key={v} className="radio-option">
+                    <input
+                      type="radio"
+                      name="qIncomeType"
+                      value={v}
+                      checked={qType === v}
+                      onChange={() => setQType(v)}
+                    />
+                    {l}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <button className="btn-calc" onClick={quickCalculate}>Calculate Tax →</button>
+            <button
+              className="btn-reset"
+              onClick={() => { setQIncome(""); setQResult(null); }}
+            >
+              Reset
+            </button>
+
+            <p style={{ marginTop: 14 }}>
+              Need monthly slab breakdowns, EOBI/SESSI deductions, or multiple tax years?{" "}
+              <a href="#" onClick={(e) => { e.preventDefault(); navigate("/income-tax"); }}>
+                Open the full Income Tax Calculator →
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <div className="sidebar">
+          <div className="result-panel fade-in-delay">
+            {qResult ? (
+              <>
+                <div className="result-header">
+                  <h3>Estimated Tax</h3>
+                  <div className="result-main-amount">
+                    {qPeriod === "monthly" ? fmt(qResult.monthlyTax) : fmt(qResult.tax)}
+                  </div>
+                  <div className="result-main-label">
+                    {qPeriod === "monthly" ? "Monthly Income Tax" : "Annual Income Tax"}
+                  </div>
+                </div>
+                <div className="result-body">
+                  <div className="result-row">
+                    <span className="label">Gross Annual Income</span>
+                    <span className="value">{fmt(qResult.annual)}</span>
+                  </div>
+                  <div className="result-row tax-row">
+                    <span className="label">Annual Tax</span>
+                    <span className="value">{fmt(qResult.tax)}</span>
+                  </div>
+                  <div className="result-row highlight">
+                    <span className="label">Net Annual Income</span>
+                    <span className="value">{fmt(qResult.netAnnual)}</span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="result-placeholder">
+                <div className="icon">🧾</div>
+                <p>Enter your salary and click Calculate to see your estimated tax.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* ── TOP AD ── */}
       {/* <div className="container">
         <AdSlot size="responsive" className="ad-slot-728" />
-      </div>
+      </div> */}
 
       {/* ── CALC GRID ── */}
       <section className="calc-grid-section">
         <div className="section-eyebrow">All Calculators</div>
-        <h2 className="section-title">What do you want to calculate?</h2>
+        <h2 className="section-title">What else do you want to calculate?</h2>
         <p className="section-desc">Free, private and accurate. Results appear instantly in your browser — nothing is stored.</p>
         <div className="calc-grid">
           {calcs.map(c => (
@@ -103,67 +287,37 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
-<section className="calc-grid-section">
-  <div className="section-eyebrow">
-    Learn & Save Taxes
-  </div>
+      <section className="calc-grid-section">
+        <div className="section-eyebrow">Learn & Save Taxes</div>
+        <h2 className="section-title">Latest Tax Guides</h2>
+        <p className="section-desc">Learn about income tax, FBR filing, Zakat and financial planning in Pakistan.</p>
 
-  <h2 className="section-title">
-    Latest Tax Guides
-  </h2>
-
-  <p className="section-desc">
-    Learn about income tax, FBR filing, Zakat and financial planning in Pakistan.
-  </p>
-
-  <div className="calc-grid">
-    {[
-      {
-        title: "Income Tax Slabs Pakistan FY 2026-27",
-        path: "/blog/income-tax-slabs-2026"
-      },
-      {
-        title: "How to Become a Filer in Pakistan",
-        path: "/blog/become-filer"
-      },
-      {
-        title: "How to Calculate Salary Tax",
-        path: "/blog/salary-tax-guide"
-      }
-    ].map(blog => (
-      <article
-        key={blog.path}
-        className="calc-tile"
-        onClick={() => navigate(blog.path)}
-      >
-        <div className="tile-icon">📝</div>
-
-        <h3>{blog.title}</h3>
-
-        <p>
-          Read our complete guide and examples.
-        </p>
-
-        <div className="tile-arrow">
-          Read article →
+        <div className="calc-grid">
+          {[
+            { title: "Income Tax Slabs Pakistan FY 2026-27", path: "/blog/income-tax-slabs-2026" },
+            { title: "How to Become a Filer in Pakistan", path: "/blog/become-filer" },
+            { title: "How to Calculate Salary Tax", path: "/blog/salary-tax-guide" }
+          ].map(blog => (
+            <article key={blog.path} className="calc-tile" onClick={() => navigate(blog.path)}>
+              <div className="tile-icon">📝</div>
+              <h3>{blog.title}</h3>
+              <p>Read our complete guide and examples.</p>
+              <div className="tile-arrow">Read article →</div>
+            </article>
+          ))}
         </div>
-      </article>
-    ))}
-  </div>
 
-  <div style={{ marginTop: 32, textAlign: "center" }}>
-    <button
-      className="btn-calc"
-      style={{
-        width: "auto",
-        padding: "14px 28px"
-      }}
-      onClick={() => navigate("/blogs")}
-    >
-      View All Articles
-    </button>
-  </div>
-</section>
+        <div style={{ marginTop: 32, textAlign: "center" }}>
+          <button
+            className="btn-calc"
+            style={{ width: "auto", padding: "14px 28px" }}
+            onClick={() => navigate("/blogs")}
+          >
+            View All Articles
+          </button>
+        </div>
+      </section>
+
       {/* ── FAQ ── */}
       <section className="faq-section">
         <div className="faq-inner">
