@@ -169,9 +169,9 @@ export default function FreelancerTax({ navigate }) {
         <span>Freelancer Tax Calculator</span>
       </nav>
 
-      <style>{`
+     <style>{`
         .breadcrumb-nav {
-          background: transparent;
+          background: var(--brand-dark, #0e3b2c);
           padding: 10px 24px;
           font-size: 0.85rem;
           color: rgba(255, 255, 255, 0.65);
@@ -182,22 +182,6 @@ export default function FreelancerTax({ navigate }) {
         }
         .breadcrumb-nav a:hover {
           text-decoration: underline;
-        }
-        .ftr-badge {
-          display: inline-block;
-          margin-top: 8px;
-          padding: 4px 12px;
-          border-radius: 999px;
-          font-size: 0.78rem;
-          font-weight: 600;
-        }
-        .ftr-badge.qualifies {
-          background: #1f8a5f;
-          color: #fff;
-        }
-        .ftr-badge.no-qualify {
-          background: #b5522f;
-          color: #fff;
         }
       `}</style>
 
