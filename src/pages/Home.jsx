@@ -120,7 +120,7 @@ export default function Home({ navigate }) {
           <h1>Pakistan's Free Tax & Zakat Calculators — FY 2026-27</h1>
           <p>Accurate income tax, Zakat, salary and withholding tax calculations for FY 2026-27. No account required.</p>
           <div className="hero-stats">
-            {[["7","Calculators"],["2.5%","Zakat Rate"],["FY 26-27","Tax Year"],["100%","Free"]].map(([v,l]) => (
+            {[["9","Calculators"],["2.5%","Zakat Rate"],["FY 26-27","Tax Year"],["100%","Free"]].map(([v,l]) => (
               <div className="hero-stat" key={l}>
                 <span className="stat-val">{v}</span>
                 <span className="stat-lbl">{l}</span>
