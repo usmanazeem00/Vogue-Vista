@@ -7,7 +7,7 @@ export default function About({ navigate }) {
       <section className="page-hero">
         <div className="hero-badge">About Us</div>
         <h1>About PK Tax Calc</h1>
-        <p>Pakistan's free, accurate and FBR-compliant tax and Zakat calculator.</p>
+        <p>Pakistan's free, accurate and Updated tax and Zakat calculator.</p>
       </section>
 
       <div style={{ maxWidth: 860, margin: "40px auto", padding: "0 20px 80px" }}>
