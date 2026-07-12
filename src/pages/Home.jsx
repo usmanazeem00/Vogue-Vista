@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import AdSlot from "../components/AdSlot";
 import { fmt, calcIncomeTax, DEFAULT_TAX_YEAR } from "../utils/taxUtils";
@@ -38,6 +38,9 @@ export default function Home({ navigate }) {
   const [qPeriod, setQPeriod] = useState("monthly");
   const [qType, setQType] = useState("salaried");
   const [qResult, setQResult] = useState(null);
+  const resultRef = useRef(null);
+
+
 
   const quickCalculate = () => {
     let annual = parseFloat(String(qIncome).replace(/,/g, "")) || 0;
@@ -46,7 +49,14 @@ export default function Home({ navigate }) {
     const tax = calcIncomeTax(annual, isSalaried, DEFAULT_TAX_YEAR);
     const monthlyTax = tax / 12;
     const netAnnual = annual - tax;
-    setQResult({ annual, tax, monthlyTax, netAnnual });
+    const monthly = netAnnual / 12;
+    setQResult({ annual, tax, monthlyTax, netAnnual,monthly });
+        setTimeout(() => {
+      if (window.innerWidth <= 768 && resultRef.current) {
+        const y = resultRef.current.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    }, 100);
   };
 
   const structuredData = {
@@ -197,7 +207,7 @@ export default function Home({ navigate }) {
         </div>
 
         <div className="sidebar">
-          <div className="result-panel fade-in-delay">
+          <div className="result-panel fade-in-delay" ref={resultRef}>
             {qResult ? (
               <>
                 <div className="result-header">
@@ -210,6 +220,10 @@ export default function Home({ navigate }) {
                   </div>
                 </div>
                 <div className="result-body">
+                    <div className="result-row highlight">
+                    <span className="label">Monthly Income After Tax</span>
+                    <span className="value">{fmt(qResult.monthly)}</span>
+                  </div>
                   <div className="result-row">
                     <span className="label">Gross Annual Income</span>
                     <span className="value">{fmt(qResult.annual)}</span>
