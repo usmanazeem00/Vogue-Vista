@@ -15,7 +15,7 @@ import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Blogs from "./pages/Blogs";
+import Blogs from "./pages/blogs/Blogs";
 import IncomeTaxSlabs2026 from "./pages/blogs/IncomeTaxSlabs2026";
 import BecomeFiler from "./pages/blogs/BecomeFiler";
 import TaxReturnDeadline from "./pages/blogs/TaxReturnDeadline";
