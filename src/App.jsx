@@ -31,6 +31,36 @@ const routes = {
   "/about": { component: About, title: "About PK Tax Calc | Pakistan Tax Calculator", desc: "Learn about PK Tax Calc — Pakistan's free, tax and Zakat calculator based on Finance Bill 2026. Our mission, data sources and commitment to accuracy." },
   "/contact": { component: Contact, title: "Contact Us | PK Tax Calc", desc: "Contact PK Tax Calc for questions, error reports or feature suggestions. Pakistan tax and Zakat calculator support." },
   "/privacy-policy": { component: PrivacyPolicy, title: "Privacy Policy | PK Tax Calc", desc: "Privacy Policy for PK Tax Calc. How we handle your data, and cookies." },
+  "/blogs": {
+    component: Blogs,
+    title: "Pakistan Tax Blog 2026 | Guides & Resources | PK Tax Calc",
+    desc: "Latest articles about income tax, salary tax, withholding tax and financial guides in Pakistan.",
+  },
+  "/blog/income-tax-slabs-2026": {
+    component: IncomeTaxSlabs2026,
+    title: "Income Tax Slabs Pakistan FY 2026-27 | Complete FBR Guide",
+    desc: "Complete breakdown of FBR tax slabs for FY 2026-27. Income tax rates and brackets for salaried and business individuals in Pakistan.",
+  },
+  "/blog/become-filer": {
+    component: BecomeFiler,
+    title: "How to Become a Tax Filer in Pakistan 2026 | ATL Guide",
+    desc: "Step-by-step guide to registering on FBR IRIS and joining the Active Taxpayer List. Benefits of becoming a filer in Pakistan.",
+  },
+  "/blog/tax-return-deadline": {
+    component: TaxReturnDeadline,
+    title: "Tax Return Deadline Pakistan 2026 | FBR Filing Dates",
+    desc: "Important FBR tax return dates, deadlines and penalties for late filing in Pakistan for FY 2026-27.",
+  },
+  "/blog/zakat-guide": {
+    component: ZakatGuide,
+    title: "Zakat on Gold, Cash and Savings Pakistan 2026 | Complete Guide",
+    desc: "Complete guide to calculating your annual Zakat on gold, silver, cash, savings and business assets in Pakistan.",
+  },
+  "/blog/salary-tax-guide": {
+    component: SalaryTaxGuide,
+    title: "How to Calculate Salary Tax in Pakistan 2026-27 | Guide",
+    desc: "Learn how employers deduct monthly salary tax and how to calculate your annual income tax liability in Pakistan.",
+  },
 };
 
 export default function App() {
