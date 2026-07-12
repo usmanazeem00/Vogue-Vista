@@ -15,6 +15,12 @@ import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Blogs from "./pages/Blogs";
+import IncomeTaxSlabs2026 from "./pages/blogs/IncomeTaxSlabs2026";
+import BecomeFiler from "./pages/blogs/BecomeFiler";
+import TaxReturnDeadline from "./pages/blogs/TaxReturnDeadline";
+import ZakatGuide from "./pages/blogs/ZakatGuide";
+import SalaryTaxGuide from "./pages/blogs/SalaryTaxGuide";
 import "./App.css";
 
 const routes = {
