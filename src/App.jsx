@@ -21,6 +21,10 @@ import BecomeFiler from "./pages/blogs/BecomeFiler";
 import TaxReturnDeadline from "./pages/blogs/TaxReturnDeadline";
 import ZakatGuide from "./pages/blogs/ZakatGuide";
 import SalaryTaxGuide from "./pages/blogs/SalaryTaxGuide";
+import VehicleTokenTax2026 from "./pages/blogs/VehicleTokenTax2026";
+import LateFilingPenalties2026 from "./pages/blogs/LateFilingPenalties2026";
+import FilerVsNonFiler from "./pages/blogs/FilerVsNonFiler";
+import WhtCashWithdrawal2026 from "./pages/blogs/WhtCashWithdrawal2026";
 import "./App.css";
 
 const routes = {
@@ -66,6 +70,26 @@ const routes = {
     component: SalaryTaxGuide,
     title: "How to Calculate Salary Tax in Pakistan 2026-27 | Guide",
     desc: "Learn how employers deduct monthly salary tax and how to calculate your annual income tax liability in Pakistan.",
+  },
+  "/blog/vehicle-token-tax-2026": {
+    component: VehicleTokenTax2026,
+    title: "Vehicle Token Tax Pakistan 2026 | Rates by Engine Capacity",
+    desc: "Vehicle token tax Pakistan 2026: FBR advance tax rates on registration, transfer, and annual motor vehicle tax by engine capacity.",
+  },
+  "/blog/late-filing-penalties-2026": {
+    component: LateFilingPenalties2026,
+    title: "Late Filing Penalties & ATL Surcharge Pakistan 2026",
+    desc: "What happens if you miss the tax return deadline in Pakistan: Section 182 late filing penalty and the 2026 ATL surcharge.",
+  },
+  "/blog/filer-vs-non-filer": {
+    component: FilerVsNonFiler,
+    title: "Filer vs Non-Filer in Pakistan | Full Comparison 2026",
+    desc: "Filer vs non-filer in Pakistan explained: withholding tax rate differences on banking, vehicles, property and prizes.",
+  },
+  "/blog/wht-cash-withdrawal-2026": {
+    component: WhtCashWithdrawal2026,
+    title: "Withholding Tax on Cash Withdrawal Pakistan 2026 | Section 231AB",
+    desc: "Cash withdrawal tax in Pakistan 2026: Section 231AB rate, the Rs 50,000 daily threshold, and filer vs non-filer impact.",
   },
 };
 

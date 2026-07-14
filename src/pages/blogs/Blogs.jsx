@@ -22,6 +22,26 @@ const blogs = [
     path: "/blog/tax-return-deadline"
   },
   {
+    title: "Late Filing Penalties & ATL Surcharge 2026",
+    desc: "What missing the deadline actually costs, and how to fix it.",
+    path: "/blog/late-filing-penalties-2026"
+  },
+  {
+    title: "Filer vs Non-Filer in Pakistan",
+    desc: "Full rate comparison across banking, vehicles, and prizes.",
+    path: "/blog/filer-vs-non-filer"
+  },
+  {
+    title: "Vehicle Token Tax Pakistan 2026",
+    desc: "Motor vehicle tax rates by engine capacity, explained.",
+    path: "/blog/vehicle-token-tax-2026"
+  },
+  {
+    title: "Withholding Tax on Cash Withdrawal 2026",
+    desc: "Section 231AB rate, threshold, and filer savings.",
+    path: "/blog/wht-cash-withdrawal-2026"
+  },
+  {
     title: "Zakat on Gold, Cash & Savings",
     desc: "Learn how to calculate your Zakat correctly.",
     path: "/blog/zakat-guide"

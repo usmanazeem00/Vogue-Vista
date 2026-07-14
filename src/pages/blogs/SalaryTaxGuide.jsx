@@ -1,167 +1,176 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 
-export default function SalaryTaxGuide() {
+export default function SalaryTaxGuide({ navigate }) {
+  const pageUrl = "https://pktaxcalc.com/blog/salary-tax-guide";
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I calculate salary tax in Pakistan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Find your annual taxable salary, match it to the correct FY 2026-27 FBR slab, then apply that slab's fixed amount plus the percentage on income exceeding the slab's starting threshold. Divide by 12 for your monthly deduction."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is a monthly salary of Rs 50,000 taxable in Pakistan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Rs 50,000 per month equals Rs 600,000 annually, which falls within the tax-free threshold for FY 2026-27. No income tax is deducted at this level."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who withholds salary tax in Pakistan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Employers are legally required to withhold income tax from salary at source before paying the employee, based on the applicable FBR slab for that tax year."
+        }
+      }
+    ]
+  };
+
   return (
     <>
+      <Helmet>
+        <title>How to Calculate Salary Tax in Pakistan (FY 2026-27 Examples)</title>
+        <meta
+          name="description"
+          content="Step-by-step guide to calculating salary tax in Pakistan for FY 2026-27, with worked examples for common salary levels and the current FBR slabs."
+        />
+        <link rel="canonical" href={pageUrl} />
+        <meta property="og:title" content="How to Calculate Salary Tax in Pakistan" />
+        <meta
+          property="og:description"
+          content="Step-by-step salary tax calculation examples using the FY 2026-27 FBR slabs."
+        />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:type" content="article" />
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+      </Helmet>
+
       <section className="page-hero">
         <div className="page-hero-inner">
           <div className="hero-badge">Salary Tax Guide</div>
           <h1>How to Calculate Salary Tax in Pakistan</h1>
           <p>
-            Learn how employers calculate monthly and annual income tax on
-            salaries in Pakistan and understand your take-home pay.
+            A step-by-step walkthrough for working out your monthly income tax deduction under the
+            FY 2026-27 FBR slabs, with worked examples.
           </p>
         </div>
       </section>
 
       <div className="container" style={{ padding: "60px 24px" }}>
         <div className="calc-card">
-          <h2>What is Salary Tax?</h2>
-
+          <h2>Step 1: Find Your Annual Taxable Salary</h2>
           <p>
-            Salary tax is the income tax deducted from an employee's salary
-            according to the income tax slabs announced by the Government of
-            Pakistan and administered by the Federal Board of Revenue (FBR).
-            Employers are responsible for calculating and deducting tax every
-            month and depositing it with the FBR on behalf of their employees.
+            Multiply your gross monthly salary by 12. This is your annual taxable income before
+            allowable deductions.
           </p>
+        </div>
 
+        <div className="calc-card">
+          <h2>Step 2: Match It to the Correct Slab</h2>
           <p>
-            Understanding how salary tax works can help you estimate your
-            monthly deductions, plan your finances, and verify whether the tax
-            deducted by your employer is accurate.
+            Compare your annual salary against the{" "}
+            <a
+              href="/blog/income-tax-slabs-2026"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/blog/income-tax-slabs-2026");
+              }}
+            >
+              FY 2026-27 income tax slabs
+            </a>{" "}
+            to find your bracket. Income up to Rs 600,000 a year is tax-free.
           </p>
+        </div>
 
-          <h2 style={{ marginTop: 40 }}>
-            Step 1: Calculate Your Annual Gross Salary
-          </h2>
-
+        <div className="calc-card">
+          <h2>Step 3: Apply the Slab Formula</h2>
           <p>
-            The first step is to determine your total annual salary before any
-            deductions. This usually includes:
+            Each slab has a fixed base amount plus a percentage applied only to income above that
+            slab's starting threshold — not your whole salary. Two worked examples:
           </p>
+          <p>
+            <strong>Example A — Rs 100,000/month (Rs 1,200,000/year):</strong> Falls in the Rs
+            600,000–1,200,000 slab. Tax = 1% × (1,200,000 − 600,000) = Rs 6,000/year, or Rs 500/month.
+          </p>
+          <p>
+            <strong>Example B — Rs 250,000/month (Rs 3,000,000/year):</strong> Falls in the Rs
+            2,200,000–3,200,000 slab. Tax = Rs 116,000 + 20% × (3,000,000 − 2,200,000) = Rs 276,000/year,
+            or Rs 23,000/month.
+          </p>
+        </div>
 
-          <ul style={{ paddingLeft: 20, marginTop: 15 }}>
-            <li>Basic salary</li>
-            <li>House rent allowance</li>
-            <li>Medical allowance</li>
-            <li>Bonuses and incentives</li>
-            <li>Other taxable allowances and benefits</li>
+        <div className="calc-card">
+          <h2>Step 4: Check for Filer vs Non-Filer Impact</h2>
+          <p>
+            Salary tax withholding is the same for filers and non-filers under FY 2026-27 rules.
+            However, active filers get lower withholding on bank transactions, vehicle purchases,
+            and property dealings — worth understanding if you haven't{" "}
+            <a
+              href="/blog/become-filer"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/blog/become-filer");
+              }}
+            >
+              registered as a filer
+            </a>{" "}
+            yet.
+          </p>
+        </div>
+
+        <div className="calc-card">
+          <h2>Skip the Manual Math</h2>
+          <p>
+            Prefer an instant answer? Our{" "}
+            <a
+              href="/salary"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/salary");
+              }}
+            >
+              <strong>Salary Tax Calculator</strong>
+            </a>{" "}
+            applies the current FY 2026-27 slabs automatically and shows your monthly tax and
+            take-home pay.
+          </p>
+        </div>
+
+        <div className="calc-card">
+          <h2>Related Guides</h2>
+          <ul className="related-links">
+            <li>
+              <a
+                href="/blog/income-tax-slabs-2026"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/blog/income-tax-slabs-2026");
+                }}
+              >
+                Income Tax Slabs Pakistan FY 2026-27
+              </a>
+            </li>
+            <li>
+              <a
+                href="/blog/tax-return-deadline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/blog/tax-return-deadline");
+                }}
+              >
+                Tax Return Last Date 2026 Pakistan
+              </a>
+            </li>
           </ul>
-
-          <p style={{ marginTop: 15 }}>
-            <strong>Formula:</strong> Monthly Gross Salary × 12 = Annual Gross
-            Salary
-          </p>
-
-          <h2 style={{ marginTop: 40 }}>
-            Step 2: Find the Applicable Tax Slab
-          </h2>
-
-          <p>
-            Pakistan follows a progressive tax system, which means higher income
-            levels are taxed at higher rates. Once your annual salary is known,
-            it is matched against the latest FBR tax slabs to determine the tax
-            payable.
-          </p>
-
-          <p>
-            Different tax rates apply to different portions of your income, so
-            only the amount that falls within a particular slab is taxed at that
-            slab's rate.
-          </p>
-
-          <h2 style={{ marginTop: 40 }}>
-            Step 3: Calculate Annual Income Tax
-          </h2>
-
-          <p>
-            After determining the applicable tax slabs, your annual income tax
-            is calculated by applying the prescribed rates to the taxable
-            portions of your income.
-          </p>
-
-          <p>
-            The final amount represents your estimated income tax liability for
-            the entire tax year.
-          </p>
-
-          <h2 style={{ marginTop: 40 }}>
-            Step 4: Calculate Monthly Tax Deduction
-          </h2>
-
-          <p>
-            Employers generally spread the annual tax liability evenly across
-            the year by deducting one-twelfth of the annual tax amount every
-            month.
-          </p>
-
-          <p style={{ marginTop: 15 }}>
-            <strong>Formula:</strong> Annual Income Tax ÷ 12 = Monthly Tax
-            Deduction
-          </p>
-
-          <h2 style={{ marginTop: 40 }}>
-            Example Calculation
-          </h2>
-
-          <p>
-            Suppose your monthly gross salary is Rs. 200,000.
-          </p>
-
-          <ul style={{ paddingLeft: 20, marginTop: 15 }}>
-            <li>Monthly Gross Salary: Rs. 200,000</li>
-            <li>Annual Gross Salary: Rs. 2,400,000</li>
-            <li>Applicable tax is calculated according to the latest tax slabs.</li>
-            <li>The resulting annual tax is divided by 12.</li>
-          </ul>
-
-          <p style={{ marginTop: 15 }}>
-            The exact tax amount depends on the latest Finance Act and any tax
-            relief measures announced by the government.
-          </p>
-
-          <h2 style={{ marginTop: 40 }}>
-            Factors That Affect Your Salary Tax
-          </h2>
-
-          <ul style={{ paddingLeft: 20, marginTop: 15 }}>
-            <li>Annual salary amount.</li>
-            <li>Latest FBR tax slabs and rates.</li>
-            <li>Tax credits and exemptions, if applicable.</li>
-            <li>Bonuses and additional compensation.</li>
-            <li>Changes in salary during the year.</li>
-          </ul>
-
-          <h2 style={{ marginTop: 40 }}>
-            Why Use a Salary Tax Calculator?
-          </h2>
-
-          <p>
-            A salary tax calculator helps employees instantly estimate their
-            monthly and annual tax liability without manually applying multiple
-            tax slabs. It can also help you compare salary offers and understand
-            your expected take-home salary before accepting a new job.
-          </p>
-
-          <p>
-            Our Pakistan Salary Tax Calculator is regularly updated with the
-            latest FBR tax rates and provides quick and accurate tax estimates
-            in just a few seconds.
-          </p>
-
-          <div
-            style={{
-              marginTop: 35,
-              padding: "20px",
-              background: "#f8fafc",
-              borderRadius: "12px",
-            }}
-          >
-            <strong>Tip:</strong> If you receive bonuses, annual increments, or
-            allowances during the year, your employer may adjust your monthly
-            tax deductions to ensure the correct annual tax is collected.
-          </div>
         </div>
       </div>
     </>
