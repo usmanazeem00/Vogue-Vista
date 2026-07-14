@@ -16,9 +16,9 @@
   <url><loc>https://pktaxcalc.com/sim-load-tax</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
   <url><loc>https://pktaxcalc.com/blog/become-filer</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://pktaxcalc.com/blog/zakat-guide</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://pktaxcalc.com/blog/salary-tax-guide</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://pktaxcalc.com/blog/tax-return-deadline</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://pktaxcalc.com/blog/income-tax-slabs-2026</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://pktaxcalc.com/blog/salary-tax-guide</loc><lastmod>2026-07-15</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://pktaxcalc.com/blog/tax-return-deadline</loc><lastmod>2026-07-15</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://pktaxcalc.com/blog/income-tax-slabs-2026</loc><lastmod>2026-07-15</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://pktaxcalc.com/blog/late-filing-penalties-2026</loc><lastmod>2026-07-15</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://pktaxcalc.com/blog/filer-vs-non-filer</loc><lastmod>2026-07-15</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://pktaxcalc.com/blog/vehicle-token-tax-2026</loc><lastmod>2026-07-15</lastmod><changefreq>yearly</changefreq><priority>0.6</priority></url>
