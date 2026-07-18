@@ -11,6 +11,7 @@ import WithholdingTax from "./pages/WithholdingTax";
 import SimLoadTax from "./pages/SimLoadTax";
 import FreelancerTax from "./pages/FreelancerTax";
 import About from "./pages/About";
+import PrizeBondTax from "./pages/PrizeBondTax";
 import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Navbar from "./components/Navbar";
@@ -41,6 +42,7 @@ const routes = {
   "/sim-load-tax": { component: SimLoadTax, title: "Mobile Load Tax Calculator Pakistan 2026 | Jazz, Zong, Ufone, Telenor", desc: "Find out exactly how much balance you get after tax on a Jazz, Zong, Ufone or Telenor recharge in Pakistan. Free, instant, updated for 2026." },
   "/freelancer-tax": { component: FreelancerTax, title: "Freelancer Tax Calculator Pakistan 2026-27 | Upwork, Fiverr, Payoneer", desc: "Free freelancer tax calculator for Pakistan FY 2026-27. Calculate your Section 154A tax on Upwork, Fiverr, Payoneer and Wise income — PSEB (0.25%) vs non-PSEB (1%) rates." },
   "/about": { component: About, title: "About PK Tax Calc | Pakistan Tax Calculator", desc: "Learn about PK Tax Calc — Pakistan's free, tax and Zakat calculator based on Finance Bill 2026. Our mission, data sources and commitment to accuracy." },
+  "/prize-bond-tax": { component: PrizeBondTax, title: "Prize Bond Tax Calculator Pakistan 2026", desc: "Calculate prize bond tax for filers and non-filers in Pakistan." },
   "/contact": { component: Contact, title: "Contact Us | PK Tax Calc", desc: "Contact PK Tax Calc for questions, error reports or feature suggestions. Pakistan tax and Zakat calculator support." },
   "/privacy-policy": { component: PrivacyPolicy, title: "Privacy Policy | PK Tax Calc", desc: "Privacy Policy for PK Tax Calc. How we handle your data, and cookies." },
   "/blogs": {
