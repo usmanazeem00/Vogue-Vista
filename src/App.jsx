@@ -25,6 +25,8 @@ import VehicleTokenTax2026 from "./pages/blogs/VehicleTokenTax2026";
 import LateFilingPenalties2026 from "./pages/blogs/LateFilingPenalties2026";
 import FilerVsNonFiler from "./pages/blogs/FilerVsNonFiler";
 import WhtCashWithdrawal2026 from "./pages/blogs/WhtCashWithdrawal2026";
+import SalaryDeductionBreakdown from "./pages/blogs/Salarydeductionbreakdown";
+import ZakatOnProvidentFundEobi from "./pages/blogs/Zakatonprovidentfundeobi";
 import "./App.css";
 
 const routes = {
@@ -91,6 +93,17 @@ const routes = {
     title: "Withholding Tax on Cash Withdrawal Pakistan 2026 | Section 231AB",
     desc: "Cash withdrawal tax in Pakistan 2026: Section 231AB rate, the Rs 50,000 daily threshold, and filer vs non-filer impact.",
   },
+  "/blog/salary-deduction-breakdown": {
+    component: SalaryDeductionBreakdown,
+    title: "Salary Breakdown Pakistan 2026-27 | Tax + EOBI + PF + SESSI",
+    desc: "See every deduction on one payslip, with worked examples at 3 salary levels.",
+  },
+  "/blog/zakat-on-provident-fund-eobi": {
+    component: ZakatOnProvidentFundEobi,
+    title: "Is Provident Fund or EOBI Money Subject to Zakat? | Pakistan 2026",
+    desc: "Whether locked-in retirement savings count toward your Zakat, and when that changes.",
+  },
+
 };
 
 export default function App() {

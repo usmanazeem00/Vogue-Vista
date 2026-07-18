@@ -15,6 +15,12 @@ const calcs = [
   { icon: "💻", title: "Freelancer Tax",         path: "/freelancer-tax", type: "freelancer", badge: "Section 154A", desc: "Calculate your Upwork, Fiverr and Payoneer tax — PSEB 0.25% vs non-PSEB 1%, plus local client income." },
 ];
 
+const blogPosts = [
+  { title: "Income Tax Slabs Pakistan FY 2026-27", path: "/blog/income-tax-slabs-2026" },
+  { title: "How to Become a Filer in Pakistan", path: "/blog/become-filer" },
+  { title: "How to Calculate Salary Tax", path: "/blog/salary-tax-guide" }
+];
+
 const faqs = [
   { q: "What is the income tax threshold in Pakistan for 2026-27?",
     a: "Income up to Rs 600,000 per year remains fully exempt. Finance Bill 2026 then applies reduced progressive rates: 1% up to 1.2m, 11% up to 2.2m, 20% up to 3.2m, 25% up to 4.1m, 29% up to 5.6m, 32% up to 7m, and 35% above 7m. The 9% surcharge on income above Rs 10 million has been fully abolished." },
@@ -40,7 +46,12 @@ export default function Home({ navigate }) {
   const [qResult, setQResult] = useState(null);
   const resultRef = useRef(null);
 
-
+  // Helper to keep SPA navigation working while still rendering a real
+  // <a href> so crawlers can discover and follow the link.
+  const go = (path) => (e) => {
+    e.preventDefault();
+    navigate(path);
+  };
 
   const quickCalculate = () => {
     let annual = parseFloat(String(qIncome).replace(/,/g, "")) || 0;
@@ -79,9 +90,9 @@ export default function Home({ navigate }) {
         "@type": "WebPage",
         "@id": "https://pktaxcalc.com/",
         url: "https://pktaxcalc.com/",
-        name: "Pakistan Tax & Zakat Calculators 2026-27 | Free & Instant | PkTaxCalc",
+        name: "Pakistan Tax & Zakat Calculators 2026-27 | PkTaxCalc",
         description:
-          "Calculate income tax, Zakat, salary deductions and withholding tax in Pakistan instantly. Updated for FY 2026-27 and Finance Bill 2026. 100% free, no signup.",
+          "Free calculators for income tax, Zakat, salary and withholding tax in Pakistan — updated for FY 2026-27. No signup needed.",
         isPartOf: { "@id": "https://pktaxcalc.com/#website" }
       },
       {
@@ -107,21 +118,46 @@ export default function Home({ navigate }) {
   return (
     <div>
       <Helmet>
-        <title>Pakistan Tax & Zakat Calculators 2026-27 | Free & Instant | PkTaxCalc</title>
+        <title>Pakistan Tax & Zakat Calculators 2026-27 | PkTaxCalc</title>
         <meta
           name="description"
-          content="Calculate income tax, Zakat, salary and withholding tax in Pakistan instantly. Updated for FY 2026-27 & Finance Bill 2026. 100% free, no signup, no ads on results."
+          content="Free calculators for income tax, Zakat, salary and withholding tax in Pakistan — updated for FY 2026-27. No signup needed."
         />
         <link rel="canonical" href="https://pktaxcalc.com/" />
-        <meta property="og:title" content="Pakistan Tax & Zakat Calculators 2026-27 | Free & Instant" />
+        <meta property="og:title" content="Pakistan Tax & Zakat Calculators 2026-27 | PkTaxCalc" />
         <meta
           property="og:description"
-          content="Income tax, Zakat, salary and withholding tax calculators for Pakistan — updated for FY 2026-27. Free, instant, no signup."
+          content="Free calculators for income tax, Zakat, salary and withholding tax in Pakistan — updated for FY 2026-27."
         />
         <meta property="og:url" content="https://pktaxcalc.com/" />
         <meta property="og:type" content="website" />
         <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
       </Helmet>
+
+      {/* Scoped override to bring the hero down to a reasonable size without
+          touching the shared stylesheet (which may set .home-hero elsewhere) */}
+      <style>{`
+        .home-hero {
+          padding: 40px 20px 28px !important;
+          min-height: 0 !important;
+        }
+        .home-hero-inner h1 {
+          font-size: clamp(1.5rem, 4vw, 2.1rem) !important;
+          line-height: 1.25 !important;
+          margin-bottom: 10px !important;
+        }
+        .home-hero-inner p {
+          font-size: 1rem !important;
+          margin-bottom: 18px !important;
+        }
+        .hero-stats {
+          margin-top: 16px !important;
+          gap: 12px !important;
+        }
+        .hero-stat .stat-val {
+          font-size: 1.3rem !important;
+        }
+      `}</style>
 
       {/* ── HERO (single H1 lives here) ── */}
       <section className="home-hero">
@@ -199,7 +235,7 @@ export default function Home({ navigate }) {
 
             <p style={{ marginTop: 14 }}>
               Need monthly slab breakdowns, EOBI/SESSI deductions, or multiple tax years?{" "}
-              <a href="#" onClick={(e) => { e.preventDefault(); navigate("/income-tax"); }}>
+              <a href="/income-tax" onClick={go("/income-tax")}>
                 Open the full Income Tax Calculator →
               </a>
             </p>
@@ -260,20 +296,18 @@ export default function Home({ navigate }) {
         <p className="section-desc">Free, private and accurate. Results appear instantly in your browser — nothing is stored.</p>
         <div className="calc-grid">
           {calcs.map(c => (
-            <article
+            <a
               key={c.path}
+              href={c.path}
               className={`calc-tile ${c.type}`}
-              onClick={() => navigate(c.path)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={e => e.key === "Enter" && navigate(c.path)}
+              onClick={go(c.path)}
             >
               <div className="tile-badge">{c.badge}</div>
               <div className="tile-icon">{c.icon}</div>
               <h3>{c.title}</h3>
               <p>{c.desc}</p>
               <div className="tile-arrow">Calculate now →</div>
-            </article>
+            </a>
           ))}
         </div>
       </section>
@@ -282,6 +316,50 @@ export default function Home({ navigate }) {
       {/* <div className="container">
         <AdSlot size="responsive" />
       </div> */}
+
+      {/* ── HOW IT WORKS / WHY TRUST THESE NUMBERS — real content depth ── */}
+      <section className="calc-grid-section">
+        <div className="section-eyebrow">Why PkTaxCalc</div>
+        <h2 className="section-title">Built specifically for Pakistan's FY 2026-27 rules</h2>
+        <p className="section-desc">
+          PkTaxCalc gives salaried employees, business owners, and freelancers
+          in Pakistan a fast way to check their numbers for FY 2026-27 —
+          income tax, Zakat on cash, gold and silver, salary deductions like
+          EOBI and Provident Fund, and withholding tax across more than 20
+          transaction types, all free and with no account required.
+        </p>
+        <p className="section-desc">
+          Most generic salary or tax calculators online are either outdated or
+          built for a different country's tax code. PkTaxCalc is updated
+          directly against Finance Bill 2026, FBR's published slab tables, and
+          the EOBI/PESSI/SESSI contribution rates that actually apply to
+          Pakistani payslips — so the numbers you get match what your employer
+          or FBR would calculate.
+        </p>
+
+        <h3 style={{ marginTop: 24 }}>How the calculators stay current</h3>
+        <p className="section-desc">
+          Every year's federal budget changes income tax slabs, exemption
+          limits, and withholding rates. When Finance Bill 2026 was announced
+          on June 12, 2026, we rebuilt the slab tables the same week —
+          including the new 32% bracket for income between Rs 5.6 million and
+          Rs 7 million, and the removal of the 9% surcharge above Rs 10
+          million. You can still switch back to the prior tax year if you're
+          reconciling an old payslip.
+        </p>
+
+        <h3 style={{ marginTop: 24 }}>Who uses these calculators</h3>
+        <p className="section-desc">
+          Salaried employees use the Salary and Income Tax calculators to
+          check what their employer should be deducting each month. Freelancers
+          on Upwork, Fiverr, and Payoneer use the Freelancer Tax calculator to
+          plan for the PSEB reduced rate. Business owners and landlords use
+          the Withholding Tax calculator across contracts, rent, dividends,
+          and property transactions. And anyone holding cash, gold, silver, or
+          savings uses the Zakat calculators each Ramadan to work out what's
+          due once Nisab is crossed.
+        </p>
+      </section>
 
       {/* ── FEATURES STRIP ── */}
       <section className="features-strip">
@@ -307,28 +385,25 @@ export default function Home({ navigate }) {
         <p className="section-desc">Learn about income tax, FBR filing, Zakat and financial planning in Pakistan.</p>
 
         <div className="calc-grid">
-          {[
-            { title: "Income Tax Slabs Pakistan FY 2026-27", path: "/blog/income-tax-slabs-2026" },
-            { title: "How to Become a Filer in Pakistan", path: "/blog/become-filer" },
-            { title: "How to Calculate Salary Tax", path: "/blog/salary-tax-guide" }
-          ].map(blog => (
-            <article key={blog.path} className="calc-tile" onClick={() => navigate(blog.path)}>
+          {blogPosts.map(blog => (
+            <a key={blog.path} href={blog.path} className="calc-tile" onClick={go(blog.path)}>
               <div className="tile-icon">📝</div>
               <h3>{blog.title}</h3>
               <p>Read our complete guide and examples.</p>
               <div className="tile-arrow">Read article →</div>
-            </article>
+            </a>
           ))}
         </div>
 
         <div style={{ marginTop: 32, textAlign: "center" }}>
-          <button
+          <a
             className="btn-calc"
-            style={{ width: "auto", padding: "14px 28px" }}
-            onClick={() => navigate("/blogs")}
+            style={{ width: "auto", padding: "14px 28px", display: "inline-block", textAlign: "center" }}
+            href="/blogs"
+            onClick={go("/blogs")}
           >
             View All Articles
-          </button>
+          </a>
         </div>
       </section>
 

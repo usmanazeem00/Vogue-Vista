@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 
 const blogs = [
   {
@@ -45,12 +46,42 @@ const blogs = [
     title: "Zakat on Gold, Cash & Savings",
     desc: "Learn how to calculate your Zakat correctly.",
     path: "/blog/zakat-guide"
+  },
+  {
+    title: "Salary Breakdown Pakistan 2026-27: Tax + EOBI + PF + SESSI",
+    desc: "See every deduction on one payslip, with worked examples at 3 salary levels.",
+    path: "/blog/salary-deduction-breakdown"
+  },
+  { title: "Is Provident Fund or EOBI Money Subject to Zakat?", 
+    desc: "Whether locked-in retirement savings count toward your Zakat, and when that changes.", 
+    path: "/blog/zakat-on-provident-fund-eobi" 
   }
 ];
 
 export default function Blogs({ navigate }) {
+  const go = (path) => (e) => {
+    e.preventDefault();
+    navigate(path);
+  };
+
   return (
     <>
+      <Helmet>
+        <title>Tax & Zakat Guides Pakistan 2026-27 | PkTaxCalc Blog</title>
+        <meta
+          name="description"
+          content="Free guides on FBR income tax slabs, filer status, salary deductions, Zakat and more for Pakistan, updated for FY 2026-27."
+        />
+        <link rel="canonical" href="https://pktaxcalc.com/blogs" />
+        <meta property="og:title" content="Tax & Zakat Guides Pakistan 2026-27 | PkTaxCalc Blog" />
+        <meta
+          property="og:description"
+          content="Guides on FBR income tax, filer status, salary deductions, and Zakat for Pakistan — updated for FY 2026-27."
+        />
+        <meta property="og:url" content="https://pktaxcalc.com/blogs" />
+        <meta property="og:type" content="website" />
+      </Helmet>
+
       <section className="page-hero">
         <div className="page-hero-inner">
           <div className="hero-badge">Financial Guides</div>
@@ -65,10 +96,11 @@ export default function Blogs({ navigate }) {
       <div className="calc-grid-section">
         <div className="calc-grid">
           {blogs.map((b) => (
-            <div
+            <a
               key={b.path}
+              href={b.path}
               className="calc-tile"
-              onClick={() => navigate(b.path)}
+              onClick={go(b.path)}
             >
               <div className="tile-icon">📝</div>
               <h3>{b.title}</h3>
@@ -76,7 +108,7 @@ export default function Blogs({ navigate }) {
               <div className="tile-arrow">
                 Read Article →
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>

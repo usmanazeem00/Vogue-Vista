@@ -1,6 +1,18 @@
 import React, { useState,useRef} from "react";
 // import AdSlot from "../components/AdSlot";
+import { Helmet } from "react-helmet-async";
 import { fmt, calcIncomeTax } from "../utils/taxUtils";
+
+const salaryFaqs = [
+  { q: "How is EOBI deducted from salary in Pakistan?",
+    a: "EOBI (Employees' Old-Age Benefits Institution) deducts 1% of wages from the employee, capped at Rs 370/month, while the employer contributes a further 5%, capped at Rs 1,850/month. It applies to most formal-sector employees and funds an old-age pension." },
+  { q: "What is the difference between SESSI and PESSI?",
+    a: "SESSI (Sindh Employees' Social Security Institution) and PESSI (Punjab Employees Social Security Institution) are the same type of social security scheme, just administered separately by province. Both deduct roughly 1% from the employee, funding medical and injury benefits." },
+  { q: "Is Provident Fund contribution mandatory in Pakistan?",
+    a: "Provident Fund isn't mandated by federal law for every employer, but many companies offer it as a retirement benefit, typically matching an employee contribution of 8.33% to 12% of basic salary. The exact percentage depends on your company's policy, not a fixed government rate." },
+  { q: "Are medical and conveyance allowances taxed in Pakistan?",
+    a: "Medical allowance is exempt from income tax up to 10% of basic salary, and conveyance allowance is exempt up to Rs 10,000 per month. Any amount above these limits is added back to taxable income." },
+];
 
 export default function SalaryCalculator({ navigate }) {
   const [form, setForm] = useState({
@@ -14,9 +26,17 @@ export default function SalaryCalculator({ navigate }) {
     province: "punjab",
   });
   const [result, setResult] = useState(null);
+  const [openFaq, setOpenFaq] = useState(null);
   const resultRef = useRef(null);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  // Helper to keep SPA navigation working while still rendering a real <a href>
+  // so crawlers can discover and follow the link.
+  const go = (path) => (e) => {
+    e.preventDefault();
+    navigate(path);
+  };
 
   const calculate = () => {
     const gross = parseFloat(form.grossSalary.replace(/,/g, "")) || 0;
@@ -63,8 +83,84 @@ setTimeout(() => {
 }, 100);
   };
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://pktaxcalc.com/salary",
+        url: "https://pktaxcalc.com/salary",
+        name: "Salary Calculator Pakistan 2026-27 | Net Take-Home Pay",
+        description: "Calculate your net take-home salary in Pakistan after income tax, EOBI, SESSI/PESSI and Provident Fund deductions for FY 2026-27.",
+        breadcrumb: {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://pktaxcalc.com" },
+            { "@type": "ListItem", position: 2, name: "Salary Calculator", item: "https://pktaxcalc.com/salary" }
+          ]
+        }
+      },
+      {
+        "@type": "WebApplication",
+        name: "Pakistan Salary Calculator 2026-27",
+        url: "https://pktaxcalc.com/salary",
+        applicationCategory: "FinanceApplication",
+        operatingSystem: "Any",
+        description: "Free Pakistan salary calculator covering income tax, EOBI, SESSI/PESSI and Provident Fund deductions for FY 2026-27.",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "PKR" }
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: salaryFaqs.map(f => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a }
+        }))
+      }
+    ]
+  };
+
   return (
     <div>
+      <Helmet>
+        <title>Salary Calculator Pakistan 2026-27 | Net Take-Home Pay</title>
+        <meta
+          name="description"
+          content="Calculate your net take-home salary in Pakistan after income tax, EOBI, SESSI/PESSI and Provident Fund deductions for FY 2026-27."
+        />
+        <link rel="canonical" href="https://pktaxcalc.com/salary" />
+        <meta property="og:title" content="Salary Calculator Pakistan 2026-27 | Net Take-Home Pay" />
+        <meta
+          property="og:description"
+          content="Calculate your exact monthly take-home salary after tax, EOBI, SESSI/PESSI and Provident Fund deductions."
+        />
+        <meta property="og:url" content="https://pktaxcalc.com/salary" />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
+      </Helmet>
+
+      <nav aria-label="Breadcrumb" className="breadcrumb-nav">
+        <a href="/" onClick={go("/")}>Home</a>
+        <span aria-hidden="true"> / </span>
+        <span>Salary Calculator</span>
+      </nav>
+
+      <style>{`
+        .breadcrumb-nav {
+          background: var(--brand-dark, #0e3b2c);
+          padding: 10px 24px;
+          font-size: 0.85rem;
+          color: rgba(255, 255, 255, 0.65);
+        }
+        .breadcrumb-nav a {
+          color: rgba(255, 255, 255, 0.85);
+          text-decoration: none;
+        }
+        .breadcrumb-nav a:hover {
+          text-decoration: underline;
+        }
+      `}</style>
+
       <section className="page-hero">
         <div className="hero-badge">Net Take-Home · EOBI · PF · 2026-27</div>
         <h1>Salary Calculator Pakistan 2026-27</h1>
@@ -207,8 +303,8 @@ setTimeout(() => {
           <div className="sidebar-card">
             <h4>Related Calculators</h4>
             <ul className="quick-link-list">
-              <li><button onClick={() => navigate("/income-tax")}>🧾 Income Tax</button></li>
-              <li><button onClick={() => navigate("/withholding-tax")}>📋 Withholding Tax</button></li>
+              <li><a href="/income-tax" onClick={go("/income-tax")}>🧾 Income Tax</a></li>
+              <li><a href="/withholding-tax" onClick={go("/withholding-tax")}>📋 Withholding Tax</a></li>
             </ul>
           </div>
         </div>
@@ -217,6 +313,78 @@ setTimeout(() => {
       {/* <div className="container" style={{ padding: "24px 20px" }}>
         <AdSlot size="responsive" />
       </div> */}
+
+      {/* ── Extra unique content: depth for ranking, not just a bare calculator ── */}
+      <section className="calc-grid-section">
+        <div className="section-eyebrow">How It Works</div>
+        <h2 className="section-title">How Take-Home Salary Is Calculated in Pakistan</h2>
+        <p className="section-desc">
+          Your net salary is your gross pay minus income tax and any
+          applicable social security or retirement deductions. The calculator
+          above starts from your gross monthly salary, subtracts the portion
+          of your medical and conveyance allowances that's tax-exempt to find
+          your taxable income, applies the FBR income tax slabs to that
+          amount, and then deducts EOBI, Provident Fund, and SESSI/PESSI
+          contributions where selected — whatever's left is your take-home
+          pay.
+        </p>
+
+        <h3 style={{ marginTop: 24 }}>Understanding EOBI, PF, and SESSI/PESSI</h3>
+        <p className="section-desc">
+          EOBI (Employees' Old-Age Benefits Institution) deducts 1% of wages
+          from you, capped at Rs 370 a month, with your employer adding a
+          further 5%, capped at Rs 1,850 — this funds a government pension
+          you can draw on retirement. Provident Fund is a separate retirement
+          savings scheme set by your employer's own policy, usually 5–12% of
+          basic salary, matched by the company. SESSI in Sindh and PESSI in
+          Punjab are provincial social security schemes, each deducting
+          roughly 1% of gross salary in exchange for medical and injury
+          benefit coverage.
+        </p>
+
+        <h3 style={{ marginTop: 24 }}>Why medical and conveyance allowances matter</h3>
+        <p className="section-desc">
+          Splitting your gross pay into basic salary plus medical and
+          conveyance allowances can lower your tax bill, because these
+          allowances are partly tax-exempt: medical allowance up to 10% of
+          basic salary, and conveyance up to Rs 10,000 a month. Any amount you
+          receive above these limits gets added back into taxable income, so
+          it's worth checking your payslip breakdown rather than assuming the
+          whole allowance is tax-free.
+        </p>
+
+        <p className="reviewed-note" style={{ marginTop: 20, fontSize: "0.85rem", opacity: 0.7 }}>
+          Last reviewed: July 2026, against Finance Bill 2026, FBR's published
+          slab tables, and current EOBI/PESSI/SESSI contribution rates. This
+          tool gives an estimate for planning purposes and isn't a substitute
+          for professional payroll or tax advice.
+        </p>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="faq-section">
+        <div className="faq-inner">
+          <div className="section-eyebrow">FAQ</div>
+          <h2 className="section-title" style={{ marginBottom: 32 }}>Common questions</h2>
+          {salaryFaqs.map((f, i) => (
+            <div key={i} className="faq-item" itemScope itemType="https://schema.org/Question">
+              <div
+                className={`faq-q${openFaq === i ? " open" : ""}`}
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                itemProp="name"
+              >
+                {f.q}
+                <span className="faq-chevron">▼</span>
+              </div>
+              {openFaq === i && (
+                <div className="faq-a" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
+                  <span itemProp="text">{f.a}</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

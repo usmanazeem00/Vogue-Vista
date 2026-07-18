@@ -17,6 +17,13 @@ export default function IncomeTax({ navigate }) {
   const resultRef = useRef(null);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
+  // Helper to keep SPA navigation working while still rendering a real
+  // <a href> so crawlers can discover and follow the link.
+  const go = (path) => (e) => {
+    e.preventDefault();
+    navigate(path);
+  };
+
   const calculate = () => {
     let annual = parseFloat(form.income.replace(/,/g, "")) || 0;
     const other = parseFloat(form.otherIncome.replace(/,/g, "")) || 0;
@@ -48,8 +55,8 @@ export default function IncomeTax({ navigate }) {
         "@type": "WebPage",
         "@id": "https://pktaxcalc.com/income-tax",
         "url": "https://pktaxcalc.com/income-tax",
-        "name": "Income Tax Calculator Pakistan 2026-27 (Free) | FBR Slabs",
-        "description": "Free income tax calculator for Pakistan FY 2026-27. Enter your salary or business income and get your exact tax instantly, based on official FBR Finance Bill 2026 slabs.",
+        "name": "Income Tax Calculator Pakistan 2026-27 | FBR Slabs",
+        "description": "Free Pakistan income tax calculator for FY 2026-27. Enter your salary or business income and get your exact tax instantly using FBR slabs.",
         "dateModified": "2026-07-11",
         "isPartOf": { "@id": "https://pktaxcalc.com" },
         "breadcrumb": {
@@ -128,21 +135,21 @@ export default function IncomeTax({ navigate }) {
   return (
     <div>
       <Helmet>
-        <title>Income Tax Calculator Pakistan 2026-27 (Free) | FBR Slabs</title>
-        <meta name="description" content="Free income tax calculator for Pakistan FY 2026-27. Enter your salary or business income and get your exact tax instantly, based on official FBR Finance Bill 2026 slabs." />
+        <title>Income Tax Calculator Pakistan 2026-27 | FBR Slabs</title>
+        <meta name="description" content="Free Pakistan income tax calculator for FY 2026-27. Enter your salary or business income and get your exact tax instantly using FBR slabs." />
         <link rel="canonical" href="https://pktaxcalc.com/income-tax" />
-        <meta property="og:title" content="Income Tax Calculator Pakistan 2026-27 (Free) | FBR Slabs" />
+        <meta property="og:title" content="Income Tax Calculator Pakistan 2026-27 | FBR Slabs" />
         <meta property="og:description" content="Calculate your income tax for FY 2026-27 based on FBR Finance Bill 2026 slabs. Free, accurate, no signup required." />
         <meta property="og:url" content="https://pktaxcalc.com/income-tax" />
         <meta property="og:type" content="website" />
-        <meta name="twitter:title" content="Income Tax Calculator Pakistan 2026-27 (Free) | FBR Slabs" />
+        <meta name="twitter:title" content="Income Tax Calculator Pakistan 2026-27 | FBR Slabs" />
         <meta name="twitter:description" content="Calculate your Pakistan income tax instantly. FBR Finance Bill 2026 slabs, salaried and business income." />
         <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
       </Helmet>
 
       {/* Visible breadcrumb — helps users and mirrors the schema above */}
       <nav aria-label="Breadcrumb" className="breadcrumb-nav">
-        <a href="#" onClick={(e) => { e.preventDefault(); navigate("/"); }}>Home</a>
+        <a href="/" onClick={go("/")}>Home</a>
         <span aria-hidden="true"> / </span>
         <span>Income Tax Calculator</span>
       </nav>
@@ -346,9 +353,9 @@ export default function IncomeTax({ navigate }) {
           <div className="sidebar-card">
             <h4>Related Calculators</h4>
             <ul className="quick-link-list">
-              <li><button onClick={() => navigate("/salary")}>💼 Salary &amp; Deductions Calculator</button></li>
-              <li><button onClick={() => navigate("/withholding-tax")}>📋 Withholding Tax Calculator</button></li>
-              <li><button onClick={() => navigate("/zakat")}>☪️ Zakat Calculator</button></li>
+              <li><a href="/salary" onClick={go("/salary")}>💼 Salary &amp; Deductions Calculator</a></li>
+              <li><a href="/withholding-tax" onClick={go("/withholding-tax")}>📋 Withholding Tax Calculator</a></li>
+              <li><a href="/zakat" onClick={go("/zakat")}>☪️ Zakat Calculator</a></li>
             </ul>
           </div>
         </div>
