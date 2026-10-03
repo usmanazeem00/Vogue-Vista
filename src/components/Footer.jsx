@@ -1,80 +1,80 @@
 import React from "react";
+import { Link } from "../lib/nav";
 
-export default function Footer({ navigate }) {
+const columns = [
+  {
+    title: "Tax Calculators",
+    links: [
+      ["/income-tax", "Income Tax Calculator"],
+      ["/salary", "Salary Tax Calculator"],
+      ["/freelancer-tax", "Freelancer Tax"],
+      ["/withholding-tax", "Withholding Tax"],
+      ["/bank-interest", "Bank Profit"],
+      ["/prize-bond-tax", "Prize Bond Tax"],
+      ["/sim-load-tax", "Mobile Load Tax"],
+    ],
+  },
+  {
+    title: "Zakat",
+    links: [
+      ["/zakat", "Zakat Calculator"],
+      ["/gold-zakat", "Gold Zakat"],
+      ["/silver-zakat", "Silver Zakat"],
+      ["/blog/zakat-nisab", "Zakat Nisab 2026"],
+      ["/blog/zakat-guide", "How to Calculate Zakat"],
+    ],
+  },
+  {
+    title: "Tax Guides",
+    links: [
+      ["/blog/income-tax-slabs-2026", "Income Tax Slabs 2026-27"],
+      ["/blog/salary-tax-guide", "Tax on Salary Table"],
+      ["/blog/tax-return-deadline", "Tax Return Last Date"],
+      ["/blog/become-filer", "How to Become a Filer"],
+      ["/blog/filer-vs-non-filer", "Filer vs Non-Filer"],
+      ["/blogs", "All Guides"],
+    ],
+  },
+  {
+    title: "About",
+    links: [
+      ["/about", "About Us"],
+      ["/contact", "Contact Us"],
+      ["/privacy-policy", "Privacy Policy"],
+      ["/terms", "Terms of Use"],
+      ["/disclaimer", "Disclaimer"],
+    ],
+  },
+];
+
+export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
         <div className="disclaimer">
-          ⚠️ <strong>Disclaimer:</strong> This calculator is for informational and educational purposes only. Tax laws change frequently — always verify with FBR's official website or a qualified tax consultant before filing. Zakat calculations are estimates; consult a qualified scholar for your specific situation.
+          ⚠️ <strong>Disclaimer:</strong> PK Tax Calc gives estimates for information and planning only. Tax law changes often — check FBR's official notifications or a qualified tax adviser before filing. Zakat figures are estimates; consult a qualified scholar for your situation. We are an independent website and are not affiliated with FBR or any government body.
         </div>
-        <div className="footer-grid">
+        <div className="footer-grid footer-grid-5">
           <div className="footer-brand">
             <div className="brand-name">🇵🇰 PK Tax Calc</div>
-            <p>Pakistan's free tax and Zakat calculator. Using official Finance Bill 2026 tax slabs. Trusted by thousands of Pakistanis.</p>
+            <p>Free tax and Zakat calculators for Pakistan, with rates checked against the Finance Act 2026 and FBR publications.</p>
           </div>
-          <div className="footer-col">
-            <h5>Calculators</h5>
-            <ul>
-              <li><button onClick={() => navigate("/income-tax")}>Income Tax</button></li>
-              <li><button onClick={() => navigate("/zakat")}>Zakat Calculator</button></li>
-              <li><button onClick={() => navigate("/gold-zakat")}>Gold Zakat</button></li>
-              <li><button onClick={() => navigate("/silver-zakat")}>Silver Zakat</button></li>
-            </ul>
-          </div>
-          <div className="footer-col">
-            <h5>More Tools</h5>
-            <ul>
-              <li><button onClick={() => navigate("/bank-interest")}>Bank Profit</button></li>
-              <li><button onClick={() => navigate("/salary")}>Salary Calculator</button></li>
-              <li><button onClick={() => navigate("/withholding-tax")}>Withholding Tax</button></li>
-            </ul>
-          </div>
-          <div className="footer-col">
-            <h5>Company</h5>
-            <ul>
-              <li><button onClick={() => navigate("/about")}>About Us</button></li>
-              <li><button onClick={() => navigate("/contact")}>Contact Us</button></li>
-              <li><button onClick={() => navigate("/privacy-policy")}>Privacy Policy</button></li>
-              {/* <li><button onClick={() => window.open("https://fbr.gov.pk", "_blank")}>FBR Website</button></li>
-              <li><button onClick={() => window.open("https://iris.fbr.gov.pk", "_blank")}>IRIS Portal</button></li> */}
-            </ul>
-            
-          </div>
-                  <div className="footer-col">
-  <h5>Resources</h5>
-  <ul>
-    <li>
-      <button onClick={() => navigate("/blogs")}>
-        Blog
-      </button>
-    </li>
-    <li>
-      <button onClick={() => navigate("/blog/income-tax-slabs-2026")}>
-        Income Tax Slabs
-      </button>
-    </li>
-    <li>
-      <button onClick={() => navigate("/blog/become-filer")}>
-        Become a Filer
-      </button>
-    </li>
-    <li>
-      <button onClick={() => navigate("/blog/zakat-guide")}>
-        Zakat Guide
-      </button>
-    </li>
-  </ul>
-</div>
+          {columns.map((col) => (
+            <div className="footer-col" key={col.title}>
+              <h5>{col.title}</h5>
+              <ul>
+                {col.links.map(([to, label]) => (
+                  <li key={to}><Link to={to}>{label}</Link></li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
         <div className="footer-bottom">
-          <p>© 2026 PK Tax Calc. All calculations for FY 2026-27.</p>
-          <p style={{ color: "var(--ink-500)", fontSize: "0.75rem" }}>
-            <button onClick={() => navigate("/privacy-policy")} style={{ background: "none", border: "none", color: "var(--ink-400)", fontSize: "0.75rem", cursor: "pointer" }}>Privacy Policy</button>
-            {" · "}
-            <button onClick={() => navigate("/contact")} style={{ background: "none", border: "none", color: "var(--ink-400)", fontSize: "0.75rem", cursor: "pointer" }}>Contact</button>
-            {" · "}
-            Data sourced from FY Bill 2026-2027 and publications. Not affiliated with FBR or any government body.
+          <p>© 2026 PK Tax Calc. Calculations for Tax Year 2027 (FY 2026-27).</p>
+          <p>
+            Rates based on the Finance Act 2026 and FBR publications. Not affiliated with FBR or any government body.
           </p>
         </div>
       </div>

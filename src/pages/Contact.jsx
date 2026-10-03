@@ -40,8 +40,8 @@ export default function Contact() {
         {sent ? (
           <div className="calc-card fade-in" style={{ textAlign: "center", padding: "60px 40px" }}>
             <div style={{ fontSize: "3rem", marginBottom: 20 }}>✅</div>
-            <h2 style={{ fontFamily: "var(--font-display)", marginBottom: 12 }}>Message Ready to Send</h2>
-            <p style={{ color: "var(--slate-500)", marginBottom: 24 }}>
+            <h2 style={{ fontFamily: "var(--font-hero)", marginBottom: 12 }}>Message Ready to Send</h2>
+            <p style={{ color: "var(--ink-500)", marginBottom: 24 }}>
               Your email client should have opened with the message pre-filled.
               If it didn't open, email us directly at <strong>hello.pktaxcalc@gmail.com</strong>
             </p>
@@ -50,7 +50,7 @@ export default function Contact() {
           </div>
         ) : (
           <div className="calc-card fade-in">
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", color: "var(--slate-900)", marginBottom: 24, paddingBottom: 16, borderBottom: "2px solid var(--green-100)" }}>
+            <h2 style={{ fontFamily: "var(--font-hero)", fontSize: "1.2rem", color: "var(--ink)", marginBottom: 24, paddingBottom: 16, borderBottom: "2px solid var(--g-100)" }}>
               Send Us a Message
             </h2>
 
@@ -84,22 +84,22 @@ export default function Contact() {
                 onChange={e => set("message", e.target.value)}
                 style={{
                   width: "100%", padding: "11px 16px",
-                  border: "1.5px solid var(--slate-300)",
-                  borderRadius: "var(--radius-sm)",
-                  fontSize: "0.95rem", color: "var(--slate-800)",
+                  border: "1.5px solid var(--ink-200)",
+                  borderRadius: "var(--r-sm)",
+                  fontSize: "0.95rem", color: "var(--ink-700)",
                   resize: "vertical", fontFamily: "inherit",
                   outline: "none", transition: "border-color 0.15s"
                 }}
-                onFocus={e => e.target.style.borderColor = "var(--green-600)"}
-                onBlur={e => e.target.style.borderColor = "var(--slate-300)"}
+                onFocus={e => e.target.style.borderColor = "var(--g-600)"}
+                onBlur={e => e.target.style.borderColor = "var(--ink-200)"}
               />
             </div>
 
             <button className="btn-calc" onClick={handleSubmit}>Send Message →</button>
 
-            <p style={{ fontSize: "0.8rem", color: "var(--slate-400)", marginTop: 12, textAlign: "center" }}>
+            <p style={{ fontSize: "0.8rem", color: "var(--ink-400)", marginTop: 12, textAlign: "center" }}>
               This will open your email client. Alternatively, email us at{" "}
-              <a href="mailto:hello.pktaxcalc@gmail.com" style={{ color: "var(--green-600)" }}>
+              <a href="mailto:hello.pktaxcalc@gmail.com" style={{ color: "var(--g-600)" }}>
                 hello.pktaxcalc@gmail.com
               </a>
             </p>
@@ -111,7 +111,7 @@ export default function Contact() {
           <div className="info-card">
             <h4>📧 Email</h4>
             <p>
-              <a href="mailto:hello.pktaxcalc@gmail.com" style={{ color: "var(--green-600)", fontWeight: 600 }}>
+              <a href="mailto:hello.pktaxcalc@gmail.com" style={{ color: "var(--g-600)", fontWeight: 600 }}>
                 hello.pktaxcalc@gmail.com
               </a>
               <br />We typically respond within 24-48 hours.

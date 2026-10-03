@@ -1,151 +1,90 @@
 import React from "react";
-import { Helmet } from "react-helmet-async";
+import { Link } from "../../lib/nav";
+import { ArticleLayout, FaqSection, Callout } from "../../components/Content";
+import { ROUTE_META } from "../../routeMeta";
+import { fmt, calcWht } from "../../utils/taxUtils";
 
-export default function WhtCashWithdrawal2026({ navigate }) {
-  const pageUrl = "https://pktaxcalc.com/blog/wht-cash-withdrawal-2026";
+const META = ROUTE_META["/blog/wht-cash-withdrawal-2026"];
+const AMOUNTS = [50000, 76000, 150000, 500000, 1000000];
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What is the withholding tax on cash withdrawal in Pakistan?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Under Section 231AB, banks deduct 0.8% advance tax on aggregate daily cash withdrawals exceeding Rs 50,000 from persons not appearing on the Active Taxpayer List (ATL). Filers pay 0% on cash withdrawals."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Does the cash withdrawal tax apply to filers?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "No. Active filers on the ATL are exempt from this tax regardless of how much they withdraw."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is the Rs 50,000 threshold per withdrawal or per day?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "It's per day, aggregated across all withdrawals and all accounts held by the same person at that bank — not a single-transaction limit."
-        }
-      }
-    ]
-  };
+const faqs = [
+  {
+    q: "What is the tax on cash withdrawal for non-filers in 2026?",
+    a: "0.8% under Section 231AB, charged when the total cash a non-filer withdraws in a day exceeds Rs 50,000. Filers on the Active Taxpayers List pay nothing.",
+  },
+  {
+    q: "Is the 0.8% charged on the whole amount or only above Rs 50,000?",
+    a: "On the whole amount. Once the day's total goes above Rs 50,000, the bank deducts 0.8% of the full total — for example Rs 608 on Rs 76,000.",
+  },
+  {
+    q: "Is the Rs 50,000 limit per transaction or per day?",
+    a: "Per day. Withdrawals are added together across ATM, cheque and counter transactions on the same day, so splitting a withdrawal doesn't avoid the tax.",
+  },
+  {
+    q: "Can I get the cash withdrawal tax back?",
+    a: "Yes, it is an advance tax. If you file your income tax return, the amount shown on your bank's withholding certificate is adjusted against your yearly tax, and refunded if it exceeds what you owe.",
+  },
+];
 
+export default function WhtCashWithdrawal2026() {
   return (
-    <>
-      <Helmet>
-        <title>Withholding Tax on Cash Withdrawal Pakistan 2026 (Section 231AB)</title>
-        <meta
-          name="description"
-          content="Cash withdrawal tax in Pakistan 2026: Section 231AB rate, the Rs 50,000 daily threshold, and how filer status makes this tax disappear entirely."
-        />
-        <link rel="canonical"  href={pageUrl} />
-        <meta property="og:title" content="WHT on Cash Withdrawal Pakistan 2026" />
-        <meta
-          property="og:description"
-          content="Section 231AB cash withdrawal tax explained: rate, threshold, and filer vs non-filer impact."
-        />
-        <meta property="og:url" content={pageUrl} />
-        <meta property="og:type" content="article" />
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
+    <ArticleLayout
+      badge="Banking Tax · Section 231AB"
+      title="Tax on Cash Withdrawal in Pakistan (2026): 0.8% for Non-Filers"
+      intro="Non-filers pay 0.8% on the whole amount when cash withdrawn in a day exceeds Rs 50,000. Filers pay nothing."
+      updated={META.updated}
+      appliesTo="Tax Year 2027"
+      sources={[
+        { label: "Income Tax Ordinance 2001, Section 231AB and First Schedule (Finance Act 2026)" },
+        { label: "Federal Board of Revenue (FBR)", url: "https://www.fbr.gov.pk" },
+      ]}
+      related={[
+        { to: "/blog/filer-vs-non-filer", label: "Filer vs non-filer: all rates" },
+        { to: "/withholding-tax", label: "Withholding tax calculator" },
+        { to: "/blog/become-filer", label: "How to become a filer" },
+      ]}
+    >
+      <Callout>
+        <strong>The rule:</strong> if you're not on the Active Taxpayers List and your cash withdrawals in one day
+        add up to more than Rs 50,000, the bank deducts <strong>0.8% of the full amount</strong>. Filers: 0%.
+      </Callout>
 
-      <section className="page-hero">
-        <div className="page-hero-inner">
-          <div className="hero-badge">Banking Tax</div>
-          <h1>Withholding Tax on Cash Withdrawal in Pakistan (2026)</h1>
-          <p>
-            Non-filers lose <strong>0.8%</strong> on daily cash withdrawals above{" "}
-            <strong>Rs 50,000</strong>. Filers pay nothing.
-          </p>
-        </div>
-      </section>
-
-      <div className="container" style={{ padding: "60px 24px" }}>
-        <div className="calc-card">
-          <h2>The Section 231AB Rule</h2>
-          <p>
-            Every banking company must deduct advance income tax at <strong>0.8%</strong> on the
-            total (aggregate) cash withdrawn by a non-ATL person in a single day, once that total
-            exceeds <strong>Rs 50,000</strong>. This applies across ATM, cheque, and over-the-counter
-            withdrawals combined — not per transaction.
-          </p>
-        </div>
-
-        <div className="calc-card">
-          <h2>Worked Example</h2>
-          <p>
-            A non-filer withdraws Rs 150,000 in a single day across two visits to the bank. Tax
-            applies only to the amount above Rs 50,000: 0.8% × Rs 100,000 = <strong>Rs 800</strong>{" "}
-            deducted. A filer withdrawing the same amount pays <strong>Rs 0</strong>.
-          </p>
-        </div>
-
-        <div className="calc-card">
-          <h2>Who's Exempt</h2>
-          <ul>
-            <li>Active filers on the ATL — 0% regardless of withdrawal amount</li>
-            <li>Federal and provincial governments</li>
-            <li>Foreign diplomats and diplomatic missions in Pakistan</li>
-            <li>Persons holding a Commissioner-issued income tax exemption certificate</li>
-          </ul>
-        </div>
-
-        <div className="calc-card">
-          <h2>This Is Recoverable — If You're a Filer</h2>
-          <p>
-            Tax deducted under Section 231AB is adjustable against your final tax liability when
-            you file your annual return, meaning filers who are wrongly charged can claim it back.
-            Non-filers cannot claim this deduction back since it's designed as a compliance
-            incentive, not a refundable advance.
-          </p>
-          <p>
-            Not registered yet? See{" "}
-            
-              <a href="/blog/become-filer"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate("/blog/become-filer");
-              }}
-            >
-              How to Become a Filer in Pakistan
-            </a>
-            .
-          </p>
-        </div>
-
-        <div className="calc-card">
-          <h2>Related Guides</h2>
-          <ul className="related-links">
-            <li>
-              
-                <a href="/blog/filer-vs-non-filer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate("/blog/filer-vs-non-filer");
-                }}
-              >
-                Filer vs Non-Filer in Pakistan
-              </a>
-            </li>
-            <li>
-              
-                <a href="/blog/vehicle-token-tax-2026"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate("/blog/vehicle-token-tax-2026");
-                }}
-              >
-                Vehicle Token Tax Pakistan 2026
-              </a>
-            </li>
-          </ul>
-        </div>
+      <h2>How much is deducted</h2>
+      <div className="table-wrap">
+        <table className="slab-table">
+          <thead><tr><th>Cash withdrawn in a day</th><th>Filer</th><th>Non-filer</th></tr></thead>
+          <tbody>
+            {AMOUNTS.map((a) => (
+              <tr key={a}><td>{fmt(a)}</td><td>Rs 0</td><td>{fmt(calcWht("cash_withdrawal", a, false).wht)}</td></tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    </>
+      <p>At exactly Rs 50,000 there is no tax — the limit has to be exceeded.</p>
+
+      <h2>Worked example</h2>
+      <p>
+        A non-filer withdraws Rs 30,000 from an ATM in the morning and Rs 120,000 over the counter in the
+        afternoon. The day's total is Rs 150,000, which exceeds Rs 50,000, so the bank deducts 0.8% × 150,000 ={" "}
+        <strong>Rs 1,200</strong>. A filer withdrawing the same amounts pays nothing.
+      </p>
+
+      <h2>Who doesn't pay</h2>
+      <ul>
+        <li>People on the Active Taxpayers List.</li>
+        <li>Federal and provincial governments, and foreign diplomats and missions.</li>
+        <li>Anyone holding an exemption certificate from the Commissioner.</li>
+      </ul>
+
+      <h2>Can it be claimed back?</h2>
+      <p>
+        Yes. Tax under Section 231AB is an advance tax. Banks issue a withholding certificate; enter the amount
+        in your return and it reduces the tax you owe. This is one more reason to{" "}
+        <Link to="/blog/become-filer">become a filer</Link> — you stop paying it in future and recover what was
+        deducted.
+      </p>
+
+      <FaqSection faqs={faqs} title="Cash withdrawal tax questions" />
+    </ArticleLayout>
   );
 }

@@ -1,25 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
-import { Provider } from 'react-redux'; // Import the Provider
-import store from './store'; // Assuming you have a Redux store
 import App from './App';
+import { normalizePath } from './lib/nav';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-
-root.render(
+const container = document.getElementById('root');
+const app = (
   <React.StrictMode>
-    <BrowserRouter>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </BrowserRouter>
-  </React.StrictMode>,
+    <App />
+  </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// Pages are prerendered to static HTML at build time (scripts/prerender.js).
+// Hydrate when the static markup belongs to this URL; otherwise (dev server,
+// or an unknown URL served the home page as a fallback) render from scratch.
+if (container.hasChildNodes() && container.dataset.path === normalizePath(window.location.pathname)) {
+  ReactDOM.hydrateRoot(container, app);
+} else {
+  ReactDOM.createRoot(container).render(app);
+}

@@ -1,50 +1,63 @@
-import React, { useState,useRef } from "react";
-// import AdSlot from "../components/AdSlot";
-import { fmt, SILVER_RATE_PER_GRAM, NISAB_SILVER_GRAMS, ZAKAT_RATE } from "../utils/taxUtils";
+import React, { useState, useRef } from "react";
+import {
+  fmt, SILVER_RATE_PER_TOLA, NISAB_SILVER_GRAMS, ZAKAT_RATE, TOLA_GRAMS,
+  METAL_RATES_DATE, RATES_REVIEWED_ISO,
+} from "../utils/taxUtils";
+import { Link } from "../lib/nav";
+import { FaqSection, RelatedLinks, ReviewNote, ContentSection } from "../components/Content";
 
-const TOLA_TO_GRAM = 11.664;
-const RATE = 260; // Rs/gram default
+const EMPTY = { unit: "tola", quantity: "", rateTola: "", otherAssets: "" };
+const NISAB_TOLA = 52.5;
 
-export default function SilverZakat({ navigate }) {
-  const [form, setForm] = useState({ unit: "grams", quantity: "", customRate: "", otherAssets: "" });
+const faqs = [
+  {
+    q: "What is the silver Nisab in Pakistan today?",
+    a: `Silver Nisab is 52.5 tola (612.36 grams). At the Sarafa rate of ${METAL_RATES_DATE} (Rs ${SILVER_RATE_PER_TOLA.toLocaleString("en-PK")} per tola) it is about ${fmt(NISAB_TOLA * SILVER_RATE_PER_TOLA)}. Multiply 52.5 by today's silver rate per tola for the exact figure.`,
+  },
+  {
+    q: "Why is the silver Nisab used for cash and savings?",
+    a: "Silver Nisab is far lower than gold Nisab, so using it means more people pay Zakat and more reaches those in need. For this reason most scholars in Pakistan advise it whenever wealth is a mix of cash, savings, gold or business stock.",
+  },
+  {
+    q: "How much Zakat is due on 52.5 tola of silver?",
+    a: `2.5% of its value. At Rs ${SILVER_RATE_PER_TOLA.toLocaleString("en-PK")} per tola, 52.5 tola is worth ${fmt(NISAB_TOLA * SILVER_RATE_PER_TOLA)}, so Zakat is about ${fmt(NISAB_TOLA * SILVER_RATE_PER_TOLA * ZAKAT_RATE)}.`,
+  },
+];
+
+export default function SilverZakat() {
+  const [form, setForm] = useState(EMPTY);
   const [result, setResult] = useState(null);
   const resultRef = useRef(null);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const calculate = () => {
     const qty = parseFloat(form.quantity) || 0;
-    const rate = parseFloat(form.customRate) || RATE;
-    const grams = form.unit === "tola" ? qty * TOLA_TO_GRAM : qty;
-    const silverValue = grams * rate;
+    const rateTola = parseFloat(form.rateTola) || SILVER_RATE_PER_TOLA;
+    const ratePerGram = rateTola / TOLA_GRAMS;
+    const grams = form.unit === "tola" ? qty * TOLA_GRAMS : qty;
+    const silverValue = grams * ratePerGram;
     const otherAssets = parseFloat(form.otherAssets) || 0;
     const total = silverValue + otherAssets;
-    const nisabValue = NISAB_SILVER_GRAMS * rate;
-    const zakatDue = total >= nisabValue;
+    const nisabValue = NISAB_SILVER_GRAMS * ratePerGram;
+    const zakatDue = total >= nisabValue && total > 0;
     const zakat = zakatDue ? total * ZAKAT_RATE : 0;
-    setResult({ grams, silverValue, total, nisabValue, zakatDue, zakat, rate });
+    setResult({ grams, silverValue, total, nisabValue, zakatDue, zakat, rateTola });
     setTimeout(() => {
-  if (window.innerWidth <= 768 && resultRef.current) {
-    const y =
-      resultRef.current.getBoundingClientRect().top +
-      window.pageYOffset -
-      80;
-
-    window.scrollTo({
-      top: y,
-      behavior: "smooth",
-    });
-  }
-}, 100);
+      if (window.innerWidth <= 768 && resultRef.current) {
+        const y = resultRef.current.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    }, 100);
   };
 
   return (
     <div>
       <section className="page-hero">
-      <div className="page-hero-inner">
-        <div className="hero-badge">Silver Nisab · 52.5 Tola · 2.5% · 2026</div>
-        <h1>Silver Zakat Calculator Pakistan 2026</h1>
-        <p>Calculate Zakat on silver using current silver rates. The silver Nisab is the more commonly used threshold for Zakat on all assets.</p>
-      </div>
+        <div className="page-hero-inner">
+          <div className="hero-badge">Silver Nisab · 52.5 Tola · 2.5%</div>
+          <h1>Silver Zakat Calculator Pakistan</h1>
+          <p>Calculate Zakat on silver in tola or grams, and check your wealth against the silver Nisab — the threshold most scholars in Pakistan use for cash and savings.</p>
+        </div>
       </section>
 
       <div className="calc-layout">
@@ -53,44 +66,34 @@ export default function SilverZakat({ navigate }) {
             <h2>Silver Details</h2>
             <div className="form-row">
               <div className="form-group">
-                <label>Weight Unit</label>
-                <select value={form.unit} onChange={e => set("unit", e.target.value)}>
+                <label htmlFor="sz-unit">Weight Unit</label>
+                <select id="sz-unit" value={form.unit} onChange={e => set("unit", e.target.value)}>
+                  <option value="tola">Tola (11.664 g)</option>
                   <option value="grams">Grams (g)</option>
-                  <option value="tola">Tola (مثقال)</option>
                 </select>
               </div>
               <div className="form-group">
-                <label>Silver Quantity</label>
-                <input type="number" placeholder={form.unit === "tola" ? "e.g. 52.5" : "e.g. 612"} value={form.quantity} onChange={e => set("quantity", e.target.value)} />
+                <label htmlFor="sz-qty">Silver Weight</label>
+                <input id="sz-qty" type="number" inputMode="decimal" placeholder={form.unit === "tola" ? "e.g. 60" : "e.g. 700"} value={form.quantity} onChange={e => set("quantity", e.target.value)} />
               </div>
             </div>
             <div className="form-group">
-              <label>Silver Rate <span>(Rs per gram)</span></label>
+              <label htmlFor="sz-rate">Silver Rate <span>(Rs per tola)</span></label>
               <div className="input-prefix">
                 <span>Rs</span>
-                <input type="number" placeholder={`Default: ${RATE}`} value={form.customRate} onChange={e => set("customRate", e.target.value)} />
+                <input id="sz-rate" type="number" inputMode="numeric" placeholder={SILVER_RATE_PER_TOLA.toLocaleString("en-PK")} value={form.rateTola} onChange={e => set("rateTola", e.target.value)} />
               </div>
-              <p className="hint">Check current silver rate at your local jeweller or Sarafa Bazar</p>
+              <p className="hint">Blank = Sarafa rate of {METAL_RATES_DATE}</p>
             </div>
             <div className="form-group">
-              <label>Other Zakatable Assets <span>(optional)</span></label>
+              <label htmlFor="sz-other">Other Zakatable Assets <span>(cash, savings, gold — optional)</span></label>
               <div className="input-prefix">
                 <span>Rs</span>
-                <input type="number" placeholder="0" value={form.otherAssets} onChange={e => set("otherAssets", e.target.value)} />
+                <input id="sz-other" type="number" inputMode="numeric" placeholder="0" value={form.otherAssets} onChange={e => set("otherAssets", e.target.value)} />
               </div>
             </div>
             <button className="btn-calc" onClick={calculate}>Calculate Silver Zakat →</button>
-            <button className="btn-reset" onClick={() => { setForm({ unit: "grams", quantity: "", customRate: "", otherAssets: "" }); setResult(null); }}>Reset</button>
-          </div>
-
-          <div className="info-card" style={{ marginTop: 24, borderLeftColor: "#94a3b8" }}>
-            <h4>🥈 Why Silver Nisab?</h4>
-            <ul>
-              <li>Silver Nisab = <strong>52.5 tola = 612.36 grams</strong></li>
-              <li>Silver Nisab is much lower than gold Nisab, so more people become obligated to pay Zakat</li>
-              <li>Most contemporary scholars recommend silver Nisab for cash & savings</li>
-              <li>At approx Rs 260/gram, silver Nisab ≈ Rs 159,000</li>
-            </ul>
+            <button className="btn-reset" onClick={() => { setForm(EMPTY); setResult(null); }}>Reset</button>
           </div>
         </div>
 
@@ -104,42 +107,59 @@ export default function SilverZakat({ navigate }) {
                   <div className="result-main-label">{result.zakatDue ? "Zakat Due (2.5%)" : "Below Nisab"}</div>
                 </div>
                 <div className="result-body">
-                  <div className="result-row"><span className="label">Silver Weight</span><span className="value">{result.grams.toFixed(2)}g</span></div>
-                  <div className="result-row"><span className="label">Rate Used</span><span className="value">{fmt(result.rate)}/g</span></div>
+                  <div className="result-row"><span className="label">Silver Weight</span><span className="value">{result.grams.toFixed(2)} g</span></div>
+                  <div className="result-row"><span className="label">Rate Used</span><span className="value">{fmt(result.rateTola)}/tola</span></div>
                   <div className="result-row highlight"><span className="label">Silver Value</span><span className="value">{fmt(result.silverValue)}</span></div>
-                  <div className="result-row"><span className="label">Nisab (612.36g)</span><span className="value">{fmt(result.nisabValue)}</span></div>
+                  <div className="result-row"><span className="label">Total Zakatable</span><span className="value">{fmt(result.total)}</span></div>
+                  <div className="result-row"><span className="label">Nisab (52.5 tola)</span><span className="value">{fmt(result.nisabValue)}</span></div>
                   <div className="result-row"><span className="label">Nisab Reached?</span><span className="value" style={{ color: result.zakatDue ? "var(--g-700)" : "var(--danger)" }}>{result.zakatDue ? "✅ Yes" : "❌ No"}</span></div>
                   {result.zakatDue && <div className="result-row highlight"><span className="label">Total Zakat</span><span className="value">{fmt(result.zakat)}</span></div>}
                 </div>
               </>
             ) : (
-              <div className="result-placeholder"><div className="icon">🥈</div><p>Enter silver quantity and rate to calculate Zakat.</p></div>
+              <div className="result-placeholder"><div className="icon">🥈</div><p>Enter silver weight and rate to calculate Zakat.</p></div>
             )}
           </div>
 
-          {/* <AdSlot size="300x250" /> */}
-
-          <div className="nisab-box" style = {{background: "linear-gradient(135deg, #caced2 0%, #838383 100%)" }}>
+          <div className="nisab-box" style={{ background: "linear-gradient(135deg, #caced2 0%, #838383 100%)" }}>
             <h4 style={{ color: "black" }}>⚖️ Silver Nisab</h4>
             <div className="nisab-grid">
-              <div className="nisab-item"><span className="nisab-val">52.5</span><span className="nisab-lbl">Tola</span></div>
-              <div className="nisab-item"><span className="nisab-val">612g</span><span className="nisab-lbl">Grams</span></div>
+              <div className="nisab-item"><span className="nisab-val">52.5 tola</span><span className="nisab-lbl">612.36 g</span></div>
+              <div className="nisab-item"><span className="nisab-val">{fmt(NISAB_TOLA * SILVER_RATE_PER_TOLA)}</span><span className="nisab-lbl">{METAL_RATES_DATE}</span></div>
             </div>
           </div>
 
-          <div className="sidebar-card">
-            <h4>Related Calculators</h4>
-            <ul className="quick-link-list">
-              <li><button onClick={() => navigate("/gold-zakat")}>🥇 Gold Zakat</button></li>
-              <li><button onClick={() => navigate("/zakat")}>☪️ Full Zakat Calculator</button></li>
-            </ul>
-          </div>
+          <RelatedLinks
+            title="Related"
+            links={[
+              { to: "/zakat", label: "☪️ Full Zakat calculator" },
+              { to: "/gold-zakat", label: "🥇 Gold Zakat calculator" },
+              { to: "/blog/zakat-nisab", label: "⚖️ Zakat Nisab 2026 explained" },
+            ]}
+          />
         </div>
       </div>
 
-      {/* <div className="container" style={{ padding: "24px 20px" }}>
-        <AdSlot size="responsive" />
-      </div> */}
+      <ContentSection eyebrow="How it works" title="Zakat on silver and the silver Nisab">
+        <p className="formula">Silver Nisab = 52.5 tola × today's silver rate per tola</p>
+        <p>
+          At Rs {SILVER_RATE_PER_TOLA.toLocaleString("en-PK")} per tola, the silver Nisab is{" "}
+          {fmt(NISAB_TOLA * SILVER_RATE_PER_TOLA)}. Anyone whose net Zakatable wealth — cash, savings, gold,
+          silver and business stock together — stays at or above this for a lunar year owes 2.5% of it.
+          Because silver prices move, check the rate on the day you calculate.
+        </p>
+        <p>
+          For a mix of assets, the <Link to="/zakat">Zakat calculator</Link> adds everything up and subtracts
+          debts for you. The <Link to="/blog/zakat-nisab">Nisab guide</Link> explains when the gold Nisab is
+          used instead.
+        </p>
+        <ReviewNote
+          updated={RATES_REVIEWED_ISO}
+          sources={[{ label: `Default silver rate: Karachi Sarafa benchmark, ${METAL_RATES_DATE}` }]}
+        />
+      </ContentSection>
+
+      <FaqSection faqs={faqs} title="Silver Zakat questions" />
     </div>
   );
 }

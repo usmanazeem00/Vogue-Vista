@@ -1,12 +1,13 @@
 import React, { useState, useRef } from "react";
-import { Helmet } from "react-helmet-async";
+import { Link } from "../lib/nav";
+import { FaqSection, ReviewNote } from "../components/Content";
+import { RATES_REVIEWED_ISO } from "../utils/taxUtils";
 
 const TAX_RATE_FILER = 0.15;
 const TAX_RATE_NON_FILER = 0.30;
-const LAST_UPDATED = "July 2026";
 const QUICK_AMOUNTS = [1000, 10000, 50000, 200000, 1500000];
 
-export default function PrizeBondTax({ navigate }) {
+export default function PrizeBondTax() {
   const [amount, setAmount] = useState("");
   const [status, setStatus] = useState("filer"); // 'filer' or 'non-filer'
   const [result, setResult] = useState(null);
@@ -72,97 +73,14 @@ export default function PrizeBondTax({ navigate }) {
     }, 100);
   };
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebPage",
-        "@id": "https://pktaxcalc.com/prize-bond-tax",
-        url: "https://pktaxcalc.com/prize-bond-tax",
-        name: "Prize Bond Tax Calculator Pakistan 2026 - Filer & Non-Filer WHT",
-        description:
-          "Calculate FBR withholding tax deductions on prize bond winnings in Pakistan. Free tool for both Filers (15%) and Non-Filers (30%).",
-        dateModified: "2026-07-01"
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://pktaxcalc.com/"
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Prize Bond Tax Calculator",
-            item: "https://pktaxcalc.com/prize-bond-tax"
-          }
-        ]
-      },
-      {
-        "@type": "WebApplication",
-        name: "Prize Bond Tax Calculator Pakistan 2026",
-        url: "https://pktaxcalc.com/prize-bond-tax",
-        applicationCategory: "FinanceApplication",
-        operatingSystem: "Any",
-        offers: {
-          "@type": "Offer",
-          price: "0",
-          priceCurrency: "PKR"
-        }
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: faqs.map((f) => ({
-          "@type": "Question",
-          name: f.q,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: f.a
-          }
-        }))
-      }
-    ]
-  };
 
   return (
     <div>
-      <Helmet>
-        <title>
-          Prize Bond Tax Calculator Pakistan 2026 | Filer vs Non-Filer WHT
-        </title>
-
-        <meta
-          name="description"
-          content="Find out your exact net prize money payout after FBR tax deductions on prize bond winnings in Pakistan. Dynamic calculations for Filers and Non-Filers."
-        />
-
-        <link rel="canonical" href="https://pktaxcalc.com/prize-bond-tax" />
-
-        <meta
-          property="og:title"
-          content="Prize Bond Tax Calculator Pakistan 2026 | Filer vs Non-Filer"
-        />
-
-        <meta
-          property="og:description"
-          content="Calculate your tax deduction and take-home prize cash based on your current FBR tax status — updated for 2026."
-        />
-
-        <meta property="og:url" content="https://pktaxcalc.com/prize-bond-tax" />
-        <meta property="og:type" content="website" />
-
-        <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
-        </script>
-      </Helmet>
 
       <section className="page-hero">
         <div className="page-hero-inner">
           <div className="hero-badge">
-            FBR National Savings Taxes · Updated {LAST_UPDATED}
+            Section 156 · Final tax · Tax Year 2027
           </div>
 
           <h1>Prize Bond Tax Calculator Pakistan 2026</h1>
@@ -370,60 +288,46 @@ export default function PrizeBondTax({ navigate }) {
         </div>
       </div>
 
-      <section className="calc-grid-section">
-        <div className="section-eyebrow">National Savings WHT</div>
-
-        <h2 className="section-title">Prize Bond Tax Deductions — How FBR Evaluates Winnings</h2>
-
-        <p className="section-desc">
-          When you pull a winning ticket from a Pakistani prize bond draw, you do not keep the 
-          entire bounty. Under Section 156 of the Income Tax Ordinance, the Federal Board of 
-          Revenue (FBR) mandates withholding tax (WHT) deductions at the spot of collection.
-        </p>
-
-        <p style={{ marginTop: 20 }}>
-          Your active tax filing profile drastically affects how much cash makes it back home. Active 
-          registered <strong>Filers</strong> enjoy a base rate of <strong>15%</strong>, while individuals 
-          not present on the Active Taxpayer List (<strong>Non-Filers</strong>) are hit with a heavy 
-          punitive rate of <strong>30%</strong>.
-        </p>
-
-        <h3 style={{ marginTop: 28 }}>Is this tax adjustable in annual returns?</h3>
-        <p className="section-desc">
-          No. Unlike salary or cellular load withholding components which can frequently count as advance adjustable payments 
-          against annual asset disclosures, prize bond wins belong to the <strong>Final Tax Regime (FTR)</strong>. 
-          The value processed out at source serves as your absolute settlement for that transaction, meaning you cannot claim 
-          credits or refunds against it later.
-        </p>
-
-        <h3 style={{ marginTop: 28 }}>Premium Prize Bonds vs Standard Deminonations</h3>
-        <p className="section-desc">
-          Whether you hold standard paper bonds (Rs. 100 up to Rs. 1,500) or electronic Premium Prize Bonds 
-          (Rs. 25,000 and Rs. 40,000), the percentage rules remain uniform. However, premium registrations 
-          additionally yield quarterly profits directly deposited to your bank account, which fall under separate profit-on-debt WHT 
-          structures.
-        </p>
-
-        <p className="reviewed-note" style={{ marginTop: 20, fontSize: "0.85rem", opacity: 0.7 }}>
-          Last reviewed: {LAST_UPDATED}. Statutory guidelines are managed dynamically by FBR budget announcements. 
-          This tool generates general informational estimations and must not supersede qualified fiscal advisory.
-        </p>
-      </section>
-
-      <section className="calc-grid-section">
-        <div className="section-eyebrow">Frequently Asked Questions</div>
-
-        <h2 className="section-title">Prize Bond Winnings Tax — Common Questions</h2>
-
-        <div className="faq-list">
-          {faqs.map((f, i) => (
-            <div className="faq-item" key={i} style={{ marginTop: 16 }}>
-              <h3 style={{ marginBottom: 6 }}>{f.q}</h3>
-              <p className="section-desc">{f.a}</p>
-            </div>
-          ))}
+      <section className="calc-grid-section content-section">
+        <div className="section-eyebrow">Explained</div>
+        <h2 className="section-title">How tax on prize bond winnings works</h2>
+        <div className="prose">
+          <p>
+            When you claim a prize bond prize, the State Bank office or bank branch that pays you deducts
+            withholding tax under Section 156 of the Income Tax Ordinance before handing over the money.
+            The rate depends only on whether you are on FBR's Active Taxpayers List (ATL) when you claim:
+            <strong> 15% for filers</strong> and <strong>30% for non-filers</strong>.
+          </p>
+          <p className="formula">Net prize = prize amount × (1 − 15% or 30%)</p>
+          <h3>Example: Rs 1,500,000 first prize</h3>
+          <p>
+            A filer receives Rs 1,275,000 after Rs 225,000 tax. A non-filer receives Rs 1,050,000 after
+            Rs 450,000 tax — Rs 225,000 less for the same winning bond. If you are close to claiming a large
+            prize and aren't a filer, it is usually worth <Link to="/blog/become-filer">filing a return</Link> first.
+          </p>
+          <h3>Can I claim the tax back?</h3>
+          <p>
+            No. Tax on prize bond winnings is a final tax: it settles your liability on the prize and can't be
+            adjusted against other income or refunded. You still declare the prize, and the tax deducted, in
+            your next return and wealth statement.
+          </p>
+          <h3>Premium prize bonds</h3>
+          <p>
+            Registered premium prize bonds also pay periodic profit into your bank account. That profit is
+            taxed separately as profit on debt (15% / 30%), like <Link to="/bank-interest">bank profit</Link>.
+          </p>
+          <ReviewNote
+            updated={RATES_REVIEWED_ISO}
+            appliesTo="Tax Year 2027"
+            sources={[
+              { label: "Income Tax Ordinance 2001, Section 156 and First Schedule (Finance Act 2026)" },
+              { label: "National Savings (CDNS)", url: "https://savings.gov.pk" },
+            ]}
+          />
         </div>
       </section>
+
+      <FaqSection faqs={faqs} title="Common questions" />
 
       <section className="calc-grid-section">
         <div className="section-eyebrow">More Free Tools</div>
@@ -463,17 +367,12 @@ export default function PrizeBondTax({ navigate }) {
               desc: "Calculate Zakat on cash, gold, silver and savings."
             }
           ].map((tool) => (
-            <article
-              key={tool.path}
-              className="calc-tile"
-              onClick={() => navigate(tool.path)}
-              style={{ cursor: "pointer" }}
-            >
+            <Link key={tool.path} to={tool.path} className="calc-tile">
               <div className="tile-icon">{tool.icon}</div>
               <h3>{tool.title}</h3>
               <p>{tool.desc}</p>
               <div className="tile-arrow">Open Calculator →</div>
-            </article>
+            </Link>
           ))}
         </div>
       </section>

@@ -1,25 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Link } from "../lib/nav";
 
 const navItems = [
   { label: "Income Tax", path: "/income-tax" },
+  { label: "Salary", path: "/salary" },
   { label: "Zakat", path: "/zakat" },
   { label: "Gold Zakat", path: "/gold-zakat" },
-  { label: "Silver Zakat", path: "/silver-zakat" },
   { label: "Bank Profit", path: "/bank-interest" },
-  { label: "Salary", path: "/salary" },
   { label: "WHT", path: "/withholding-tax" },
+  { label: "Tax Slabs", path: "/blog/income-tax-slabs-2026" },
 ];
 
-// Grouped under "More" instead of appended inline — the nav row was already
-// overflowing on desktop with 8 items, so adding 2 more directly would make
-// it worse rather than better.
+// Grouped under "More" so the desktop nav row doesn't overflow.
 const moreItems = [
   { label: "Freelancer Tax", path: "/freelancer-tax" },
-  { label: "SIM Load Tax", path: "/sim-load-tax" },
-  { label: "Blog", path: "/blogs" },
+  { label: "Silver Zakat", path: "/silver-zakat" },
+  { label: "Prize Bond Tax", path: "/prize-bond-tax" },
+  { label: "Mobile Load Tax", path: "/sim-load-tax" },
+  { label: "All Guides", path: "/blogs" },
 ];
 
-export default function Navbar({ navigate, currentPath }) {
+export default function Navbar({ currentPath }) {
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef(null);
@@ -34,63 +35,28 @@ export default function Navbar({ navigate, currentPath }) {
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
 
+  useEffect(() => {
+    setOpen(false);
+    setMoreOpen(false);
+  }, [currentPath]);
+
   const isMoreActive = moreItems.some(m => m.path === currentPath);
+  const cls = (p) => (currentPath === p ? "active" : undefined);
 
   return (
-    <nav className="navbar">
-      <style>{`
-        .nav-more-wrap {
-          position: relative;
-          display: inline-block;
-        }
-        .nav-more-dropdown {
-          position: absolute;
-          top: calc(100% + 8px);
-          right: 0;
-          background: #0e3b2c;
-          border: 1px solid rgba(255,255,255,0.12);
-          border-radius: 10px;
-          min-width: 170px;
-          padding: 6px;
-          z-index: 50;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-        }
-        .nav-more-dropdown button {
-          display: block;
-          width: 100%;
-          text-align: left;
-          padding: 8px 12px;
-          border-radius: 6px;
-          background: transparent;
-          border: none;
-          color: rgba(255,255,255,0.85);
-          font-size: 0.9rem;
-          cursor: pointer;
-        }
-        .nav-more-dropdown button:hover {
-          background: rgba(255,255,255,0.08);
-        }
-        .nav-more-dropdown button.active {
-          color: #fff;
-          font-weight: 600;
-        }
-      `}</style>
-
+    <nav className="navbar" aria-label="Main">
       <div className="navbar-inner">
-        <div className="nav-logo" onClick={() => { navigate("/"); setOpen(false); }}>
-          <div className="nav-logo-icon">🇵🇰</div>
+        <Link to="/" className="nav-logo" aria-label="PK Tax Calc home">
+          <div className="nav-logo-icon" aria-hidden="true">🇵🇰</div>
           <div>
             <div className="nav-logo-text">PK Tax Calc</div>
-            <div className="nav-logo-sub">Finance Bill 2026 · Pakistan</div>
+            <div className="nav-logo-sub">Tax Year 2027 · Pakistan</div>
           </div>
-        </div>
+        </Link>
         <ul className="nav-links">
           {navItems.map(n => (
             <li key={n.path}>
-              <button
-                className={currentPath === n.path ? "active" : ""}
-                onClick={() => navigate(n.path)}
-              >{n.label}</button>
+              <Link to={n.path} className={cls(n.path)}>{n.label}</Link>
             </li>
           ))}
           <li className="nav-more-wrap" ref={moreRef}>
@@ -102,36 +68,26 @@ export default function Navbar({ navigate, currentPath }) {
             >
               More {moreOpen ? "▲" : "▼"}
             </button>
-            {moreOpen && (
-              <div className="nav-more-dropdown">
-                {moreItems.map(n => (
-                  <button
-                    key={n.path}
-                    className={currentPath === n.path ? "active" : ""}
-                    onClick={() => { navigate(n.path); setMoreOpen(false); }}
-                  >
-                    {n.label}
-                  </button>
-                ))}
-              </div>
-            )}
+            {/* Always in the DOM so the links are crawlable; shown on click. */}
+            <div className="nav-more-dropdown" hidden={!moreOpen}>
+              {moreItems.map(n => (
+                <Link key={n.path} to={n.path} className={cls(n.path)}>
+                  {n.label}
+                </Link>
+              ))}
+            </div>
           </li>
         </ul>
-        <button className="hamburger" onClick={() => setOpen(o => !o)} aria-label="Menu">
+        <button className="hamburger" onClick={() => setOpen(o => !o)} aria-label="Menu" aria-expanded={open}>
           {open ? "✕" : "☰"}
         </button>
       </div>
       <div className={`mobile-menu${open ? " open" : ""}`}>
-        <button onClick={() => { navigate("/"); setOpen(false); }}>🏠 Home</button>
-        {navItems.map(n => (
-          <button key={n.path} onClick={() => { navigate(n.path); setOpen(false); }}>
+        <Link to="/">🏠 Home</Link>
+        {[...navItems, ...moreItems].map(n => (
+          <Link key={n.path} to={n.path} className={cls(n.path)}>
             {n.label}
-          </button>
-        ))}
-        {moreItems.map(n => (
-          <button key={n.path} onClick={() => { navigate(n.path); setOpen(false); }}>
-            {n.label}
-          </button>
+          </Link>
         ))}
       </div>
     </nav>

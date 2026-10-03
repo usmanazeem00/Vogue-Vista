@@ -1,170 +1,91 @@
-import React, { useState,useRef} from "react";
-// import AdSlot from "../components/AdSlot";
-import { Helmet } from "react-helmet-async";
-import { fmt, calcIncomeTax } from "../utils/taxUtils";
+import React, { useState, useRef } from "react";
+import {
+  fmt, calcTaxBreakdown, EOBI_EMPLOYEE, EOBI_EMPLOYER, EOBI_WAGE_BASE, RATES_REVIEWED_ISO,
+} from "../utils/taxUtils";
+import { Link } from "../lib/nav";
+import { FaqSection, RelatedLinks, ReviewNote, ContentSection } from "../components/Content";
 
 const salaryFaqs = [
-  { q: "How is EOBI deducted from salary in Pakistan?",
-    a: "EOBI (Employees' Old-Age Benefits Institution) deducts 1% of wages from the employee, capped at Rs 370/month, while the employer contributes a further 5%, capped at Rs 1,850/month. It applies to most formal-sector employees and funds an old-age pension." },
-  { q: "What is the difference between SESSI and PESSI?",
-    a: "SESSI (Sindh Employees' Social Security Institution) and PESSI (Punjab Employees Social Security Institution) are the same type of social security scheme, just administered separately by province. Both deduct roughly 1% from the employee, funding medical and injury benefits." },
-  { q: "Is Provident Fund contribution mandatory in Pakistan?",
-    a: "Provident Fund isn't mandated by federal law for every employer, but many companies offer it as a retirement benefit, typically matching an employee contribution of 8.33% to 12% of basic salary. The exact percentage depends on your company's policy, not a fixed government rate." },
-  { q: "Are medical and conveyance allowances taxed in Pakistan?",
-    a: "Medical allowance is exempt from income tax up to 10% of basic salary, and conveyance allowance is exempt up to Rs 10,000 per month. Any amount above these limits is added back to taxable income." },
+  {
+    q: "How much tax is deducted from a Rs 100,000 salary in Pakistan?",
+    a: "On Rs 100,000 a month (Rs 1.2 million a year) the 2026-27 tax is Rs 6,000 a year, or Rs 500 a month, assuming the whole amount is taxable. Your take-home is lower again if EOBI or provident fund is deducted.",
+  },
+  {
+    q: "How is EOBI deducted from salary?",
+    a: `EOBI is charged on the minimum wage, not on your actual salary. The employee pays 1% and the employer 5%, so with a Rs ${EOBI_WAGE_BASE.toLocaleString("en-PK")} minimum wage the employee share is Rs ${EOBI_EMPLOYEE.toLocaleString("en-PK")} a month whether you earn Rs 50,000 or Rs 500,000. It funds an old-age pension from EOBI.`,
+  },
+  {
+    q: "Are PESSI or SESSI deducted from my salary?",
+    a: "Normally no. Provincial social security (PESSI in Punjab, SESSI in Sindh and similar schemes elsewhere) is paid by the employer for covered workers. If your payslip still shows a deduction, enter it under 'Other monthly deductions'.",
+  },
+  {
+    q: "Is medical allowance taxable?",
+    a: "Medical allowance is exempt up to 10% of basic salary where the employer doesn't also provide free medical treatment or reimbursement. Any amount above 10% of basic is taxable. That is why the calculator asks for your basic salary.",
+  },
+  {
+    q: "Is provident fund deducted before or after tax?",
+    a: "Your own provident fund contribution comes out of your taxable salary — it does not reduce income tax. It is still your money, saved in the fund and paid back with profit when you leave or retire.",
+  },
 ];
 
-export default function SalaryCalculator({ navigate }) {
-  const [form, setForm] = useState({
-    grossSalary: "",
-    medicalAllowance: "",
-    conveyance: "",
-    eobi: true,
-    providentFund: false,
-    pfPercent: "8.33",
-    sessi: false,
-    province: "punjab",
-  });
+const EMPTY = {
+  grossSalary: "",
+  basicSalary: "",
+  medicalAllowance: "",
+  eobi: true,
+  providentFund: false,
+  pfPercent: "8.33",
+  otherDeductions: "",
+};
+
+const num = (v) => parseFloat(String(v).replace(/,/g, "")) || 0;
+
+export default function SalaryCalculator() {
+  const [form, setForm] = useState(EMPTY);
   const [result, setResult] = useState(null);
-  const [openFaq, setOpenFaq] = useState(null);
   const resultRef = useRef(null);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  // Helper to keep SPA navigation working while still rendering a real <a href>
-  // so crawlers can discover and follow the link.
-  const go = (path) => (e) => {
-    e.preventDefault();
-    navigate(path);
-  };
-
   const calculate = () => {
-    const gross = parseFloat(form.grossSalary.replace(/,/g, "")) || 0;
-    const medical = parseFloat(form.medicalAllowance.replace(/,/g, "")) || 0;
-    const conveyance = parseFloat(form.conveyance.replace(/,/g, "")) || 0;
+    const gross = num(form.grossSalary);
+    const basic = num(form.basicSalary) || gross;
+    const medical = num(form.medicalAllowance);
+    const other = num(form.otherDeductions);
 
-    // EOBI: 1% of minimum wage or actual (employee contribution)
-    const eobiEmployee = form.eobi ? Math.min(gross * 0.01, 370) : 0;
-    const eobiEmployer = form.eobi ? Math.min(gross * 0.05, 1850) : 0;
-
-    // PF: variable %
-    const pfAmount = form.providentFund ? gross * (parseFloat(form.pfPercent) / 100) : 0;
-
-    // SESSI (Sindh) / PESSI (Punjab) — approximately 1% of gross
-    const sessiEmployee = form.sessi ? gross * 0.01 : 0;
-
-    // Income tax — exempt: medical (up to 10% of basic), conveyance (up to 10k/month)
-    const taxableMonthly = gross - Math.min(medical, gross * 0.1) - Math.min(conveyance, 10000);
+    const medicalExempt = Math.min(medical, basic * 0.1);
+    const taxableMonthly = Math.max(0, gross - medicalExempt);
     const taxableAnnual = taxableMonthly * 12;
-    const annualTax = calcIncomeTax(taxableAnnual, true);
-    const monthlyTax = annualTax / 12;
+    const tax = calcTaxBreakdown(taxableAnnual, true);
+    const monthlyTax = tax.total / 12;
 
-    const totalDeductions = monthlyTax + eobiEmployee + pfAmount + sessiEmployee;
+    const eobiEmployee = form.eobi ? EOBI_EMPLOYEE : 0;
+    const pfAmount = form.providentFund ? basic * (parseFloat(form.pfPercent) / 100) : 0;
+
+    const totalDeductions = monthlyTax + eobiEmployee + pfAmount + other;
     const netSalary = gross - totalDeductions;
 
     setResult({
-      gross, medical, conveyance, taxableMonthly, taxableAnnual,
-      monthlyTax, annualTax,
-      eobiEmployee, eobiEmployer, pfAmount, sessiEmployee,
-      totalDeductions, netSalary
+      gross, basic, medicalExempt, taxableMonthly, taxableAnnual,
+      monthlyTax, annualTax: tax.total, topRate: tax.slab.rate,
+      eobiEmployee, pfAmount, other, totalDeductions, netSalary,
     });
-setTimeout(() => {
-  if (window.innerWidth <= 768 && resultRef.current) {
-    const y =
-      resultRef.current.getBoundingClientRect().top +
-      window.pageYOffset -
-      80;
-
-    window.scrollTo({
-      top: y,
-      behavior: "smooth",
-    });
-  }
-}, 100);
-  };
-
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebPage",
-        "@id": "https://pktaxcalc.com/salary",
-        url: "https://pktaxcalc.com/salary",
-        name: "Salary Calculator Pakistan 2026-27 | Net Take-Home Pay",
-        description: "Calculate your net take-home salary in Pakistan after income tax, EOBI, SESSI/PESSI and Provident Fund deductions for FY 2026-27.",
-        breadcrumb: {
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://pktaxcalc.com" },
-            { "@type": "ListItem", position: 2, name: "Salary Calculator", item: "https://pktaxcalc.com/salary" }
-          ]
-        }
-      },
-      {
-        "@type": "WebApplication",
-        name: "Pakistan Salary Calculator 2026-27",
-        url: "https://pktaxcalc.com/salary",
-        applicationCategory: "FinanceApplication",
-        operatingSystem: "Any",
-        description: "Free Pakistan salary calculator covering income tax, EOBI, SESSI/PESSI and Provident Fund deductions for FY 2026-27.",
-        offers: { "@type": "Offer", price: "0", priceCurrency: "PKR" }
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: salaryFaqs.map(f => ({
-          "@type": "Question",
-          name: f.q,
-          acceptedAnswer: { "@type": "Answer", text: f.a }
-        }))
+    setTimeout(() => {
+      if (window.innerWidth <= 768 && resultRef.current) {
+        const y = resultRef.current.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top: y, behavior: "smooth" });
       }
-    ]
+    }, 100);
   };
 
   return (
     <div>
-      <Helmet>
-        <title>Salary Calculator Pakistan 2026-27 | Net Take-Home Pay</title>
-        <meta
-          name="description"
-          content="Calculate your net take-home salary in Pakistan after income tax, EOBI, SESSI/PESSI and Provident Fund deductions for FY 2026-27."
-        />
-        <link rel="canonical" href="https://pktaxcalc.com/salary" />
-        <meta property="og:title" content="Salary Calculator Pakistan 2026-27 | Net Take-Home Pay" />
-        <meta
-          property="og:description"
-          content="Calculate your exact monthly take-home salary after tax, EOBI, SESSI/PESSI and Provident Fund deductions."
-        />
-        <meta property="og:url" content="https://pktaxcalc.com/salary" />
-        <meta property="og:type" content="website" />
-        <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
-      </Helmet>
-
-      <nav aria-label="Breadcrumb" className="breadcrumb-nav">
-        <a href="/" onClick={go("/")}>Home</a>
-        <span aria-hidden="true"> / </span>
-        <span>Salary Calculator</span>
-      </nav>
-
-      <style>{`
-        .breadcrumb-nav {
-          background: var(--brand-dark, #0e3b2c);
-          padding: 10px 24px;
-          font-size: 0.85rem;
-          color: rgba(255, 255, 255, 0.65);
-        }
-        .breadcrumb-nav a {
-          color: rgba(255, 255, 255, 0.85);
-          text-decoration: none;
-        }
-        .breadcrumb-nav a:hover {
-          text-decoration: underline;
-        }
-      `}</style>
-
       <section className="page-hero">
-        <div className="hero-badge">Net Take-Home · EOBI · PF · 2026-27</div>
-        <h1>Salary Calculator Pakistan 2026-27</h1>
-        <p>Calculate your exact monthly take-home salary after income tax, EOBI, SESSI/PESSI and Provident Fund deductions.</p>
+        <div className="page-hero-inner">
+          <div className="hero-badge">Tax Year 2027 · Salaried Slabs · EOBI · Provident Fund</div>
+          <h1>Salary Tax Calculator Pakistan 2026-27</h1>
+          <p>Work out the income tax your employer should deduct each month and your take-home pay after EOBI and provident fund.</p>
+        </div>
       </section>
 
       <div className="calc-layout">
@@ -172,93 +93,91 @@ setTimeout(() => {
           <div className="calc-card fade-in">
             <h2>Salary & Deductions</h2>
 
-            <div className="form-group">
-              <label>Gross Monthly Salary <span>(Rs)</span></label>
-              <div className="input-prefix">
-                <span>Rs</span>
-                <input type="number" placeholder="e.g. 150,000" value={form.grossSalary} onChange={e => set("grossSalary", e.target.value)} />
-              </div>
-            </div>
-
             <div className="form-row">
               <div className="form-group">
-                <label>Medical Allowance <span>(monthly)</span></label>
+                <label htmlFor="sal-gross">Gross Monthly Salary <span>(Rs)</span></label>
                 <div className="input-prefix">
                   <span>Rs</span>
-                  <input type="number" placeholder="e.g. 15,000" value={form.medicalAllowance} onChange={e => set("medicalAllowance", e.target.value)} />
+                  <input id="sal-gross" type="number" inputMode="numeric" placeholder="e.g. 150000" value={form.grossSalary} onChange={e => set("grossSalary", e.target.value)} />
                 </div>
-                <p className="hint">Exempt up to 10% of basic salary</p>
+                <p className="hint">Total monthly pay including allowances</p>
               </div>
               <div className="form-group">
-                <label>Conveyance Allowance <span>(monthly)</span></label>
+                <label htmlFor="sal-basic">Basic Salary <span>(optional)</span></label>
                 <div className="input-prefix">
                   <span>Rs</span>
-                  <input type="number" placeholder="e.g. 10,000" value={form.conveyance} onChange={e => set("conveyance", e.target.value)} />
+                  <input id="sal-basic" type="number" inputMode="numeric" placeholder="e.g. 100000" value={form.basicSalary} onChange={e => set("basicSalary", e.target.value)} />
                 </div>
-                <p className="hint">Exempt up to Rs 10,000/month</p>
+                <p className="hint">From your payslip. If blank, gross is used.</p>
               </div>
             </div>
 
             <div className="form-group">
-              <label>Province / Social Security</label>
-              <select value={form.province} onChange={e => set("province", e.target.value)}>
-                <option value="punjab">Punjab (PESSI)</option>
-                <option value="sindh">Sindh (SESSI)</option>
-                <option value="kpk">KPK (KPESSI)</option>
-                <option value="balochistan">Balochistan</option>
-              </select>
+              <label htmlFor="sal-medical">Medical Allowance <span>(monthly, included in gross)</span></label>
+              <div className="input-prefix">
+                <span>Rs</span>
+                <input id="sal-medical" type="number" inputMode="numeric" placeholder="e.g. 10000" value={form.medicalAllowance} onChange={e => set("medicalAllowance", e.target.value)} />
+              </div>
+              <p className="hint">Tax-free up to 10% of basic salary</p>
             </div>
 
             <div className="form-group">
-              <label>Optional Deductions</label>
+              <label>Deductions from your pay</label>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 8 }}>
                 <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontWeight: 400 }}>
-                  <input type="checkbox" checked={form.eobi} onChange={e => set("eobi", e.target.checked)} style={{ accentColor: "var(--green-600)", width: 18, height: 18 }} />
-                  EOBI (Employee Old-Age Benefits — 1% of salary, max Rs 370/month)
+                  <input type="checkbox" checked={form.eobi} onChange={e => set("eobi", e.target.checked)} style={{ accentColor: "var(--g-600)", width: 18, height: 18 }} />
+                  EOBI — employee share Rs {EOBI_EMPLOYEE.toLocaleString("en-PK")}/month (1% of minimum wage)
                 </label>
                 <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontWeight: 400 }}>
-                  <input type="checkbox" checked={form.sessi} onChange={e => set("sessi", e.target.checked)} style={{ accentColor: "var(--green-600)", width: 18, height: 18 }} />
-                  Social Security (Employee contribution ~1%)
-                </label>
-                <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontWeight: 400 }}>
-                  <input type="checkbox" checked={form.providentFund} onChange={e => set("providentFund", e.target.checked)} style={{ accentColor: "var(--green-600)", width: 18, height: 18 }} />
-                  Provident Fund (Employee contribution)
+                  <input type="checkbox" checked={form.providentFund} onChange={e => set("providentFund", e.target.checked)} style={{ accentColor: "var(--g-600)", width: 18, height: 18 }} />
+                  Provident Fund (your contribution)
                 </label>
               </div>
             </div>
 
             {form.providentFund && (
               <div className="form-group">
-                <label>Provident Fund % <span>(of gross salary)</span></label>
-                <select value={form.pfPercent} onChange={e => set("pfPercent", e.target.value)}>
+                <label htmlFor="sal-pf">Provident Fund <span>(% of basic salary)</span></label>
+                <select id="sal-pf" value={form.pfPercent} onChange={e => set("pfPercent", e.target.value)}>
                   <option value="5">5%</option>
-                  <option value="8.33">8.33% (1 month / year)</option>
+                  <option value="8.33">8.33% (one month's basic per year)</option>
                   <option value="10">10%</option>
                   <option value="12">12%</option>
                 </select>
               </div>
             )}
 
+            <div className="form-group">
+              <label htmlFor="sal-other">Other Monthly Deductions <span>(optional — loan, social security, etc.)</span></label>
+              <div className="input-prefix">
+                <span>Rs</span>
+                <input id="sal-other" type="number" inputMode="numeric" placeholder="0" value={form.otherDeductions} onChange={e => set("otherDeductions", e.target.value)} />
+              </div>
+            </div>
+
             <button className="btn-calc" onClick={calculate}>Calculate Take-Home Salary →</button>
-            <button className="btn-reset" onClick={() => { setForm({ grossSalary: "", medicalAllowance: "", conveyance: "", eobi: true, providentFund: false, pfPercent: "8.33", sessi: false, province: "punjab" }); setResult(null); }}>Reset</button>
+            <button className="btn-reset" onClick={() => { setForm(EMPTY); setResult(null); }}>Reset</button>
           </div>
 
           {result && (
             <div className="calc-card fade-in" style={{ marginTop: 24 }}>
-              <h2>Annual Salary Breakdown</h2>
-              <table className="slab-table">
-                <thead><tr><th>Component</th><th>Monthly</th><th>Annual</th></tr></thead>
-                <tbody>
-                  <tr><td>Gross Salary</td><td>{fmt(result.gross)}</td><td>{fmt(result.gross * 12)}</td></tr>
-                  <tr><td>Taxable Income</td><td>{fmt(result.taxableMonthly)}</td><td>{fmt(result.taxableAnnual)}</td></tr>
-                  <tr><td style={{ color: "var(--red-600)" }}>Income Tax</td><td style={{ color: "var(--red-600)" }}>- {fmt(result.monthlyTax)}</td><td style={{ color: "var(--red-600)" }}>- {fmt(result.annualTax)}</td></tr>
-                  {result.eobiEmployee > 0 && <tr><td>EOBI (Employee)</td><td>- {fmt(result.eobiEmployee)}</td><td>- {fmt(result.eobiEmployee * 12)}</td></tr>}
-                  {result.pfAmount > 0 && <tr><td>Provident Fund</td><td>- {fmt(result.pfAmount)}</td><td>- {fmt(result.pfAmount * 12)}</td></tr>}
-                  {result.sessiEmployee > 0 && <tr><td>Social Security</td><td>- {fmt(result.sessiEmployee)}</td><td>- {fmt(result.sessiEmployee * 12)}</td></tr>}
-                  <tr className="active-slab"><td><strong>Net Take-Home</strong></td><td><strong>{fmt(result.netSalary)}</strong></td><td><strong>{fmt(result.netSalary * 12)}</strong></td></tr>
-                </tbody>
-              </table>
-              {result.eobiEmployee > 0 && <p className="hint" style={{ marginTop: 10 }}>Employer also contributes EOBI: {fmt(result.eobiEmployer)}/month (not shown in your deductions)</p>}
+              <h2>Monthly and Annual Breakdown</h2>
+              <div style={{ overflowX: "auto" }}>
+                <table className="slab-table">
+                  <thead><tr><th>Component</th><th>Monthly</th><th>Annual</th></tr></thead>
+                  <tbody>
+                    <tr><td>Gross Salary</td><td>{fmt(result.gross)}</td><td>{fmt(result.gross * 12)}</td></tr>
+                    {result.medicalExempt > 0 && <tr><td>Tax-free medical allowance</td><td>- {fmt(result.medicalExempt)}</td><td>- {fmt(result.medicalExempt * 12)}</td></tr>}
+                    <tr><td>Taxable Salary</td><td>{fmt(result.taxableMonthly)}</td><td>{fmt(result.taxableAnnual)}</td></tr>
+                    <tr><td style={{ color: "var(--danger)" }}>Income Tax</td><td style={{ color: "var(--danger)" }}>- {fmt(result.monthlyTax)}</td><td style={{ color: "var(--danger)" }}>- {fmt(result.annualTax)}</td></tr>
+                    {result.eobiEmployee > 0 && <tr><td>EOBI (employee)</td><td>- {fmt(result.eobiEmployee)}</td><td>- {fmt(result.eobiEmployee * 12)}</td></tr>}
+                    {result.pfAmount > 0 && <tr><td>Provident Fund</td><td>- {fmt(result.pfAmount)}</td><td>- {fmt(result.pfAmount * 12)}</td></tr>}
+                    {result.other > 0 && <tr><td>Other deductions</td><td>- {fmt(result.other)}</td><td>- {fmt(result.other * 12)}</td></tr>}
+                    <tr className="active-slab"><td><strong>Net Take-Home</strong></td><td><strong>{fmt(result.netSalary)}</strong></td><td><strong>{fmt(result.netSalary * 12)}</strong></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              {result.eobiEmployee > 0 && <p className="hint" style={{ marginTop: 10 }}>Your employer also pays EOBI of {fmt(EOBI_EMPLOYER)}/month on your behalf (not deducted from you).</p>}
             </div>
           )}
         </div>
@@ -277,114 +196,87 @@ setTimeout(() => {
                   <div className="result-row tax-row"><span className="label">Income Tax</span><span className="value">- {fmt(result.monthlyTax)}</span></div>
                   {result.eobiEmployee > 0 && <div className="result-row"><span className="label">EOBI</span><span className="value">- {fmt(result.eobiEmployee)}</span></div>}
                   {result.pfAmount > 0 && <div className="result-row"><span className="label">Provident Fund</span><span className="value">- {fmt(result.pfAmount)}</span></div>}
-                  {result.sessiEmployee > 0 && <div className="result-row"><span className="label">Social Security</span><span className="value">- {fmt(result.sessiEmployee)}</span></div>}
+                  {result.other > 0 && <div className="result-row"><span className="label">Other</span><span className="value">- {fmt(result.other)}</span></div>}
                   <div className="result-row tax-row"><span className="label">Total Deductions</span><span className="value">- {fmt(result.totalDeductions)}</span></div>
                   <div className="result-row highlight"><span className="label">Take-Home Pay</span><span className="value">{fmt(result.netSalary)}</span></div>
-                  <div className="result-row"><span className="label">Effective Tax Rate</span><span className="value">{result.gross > 0 ? ((result.monthlyTax / result.gross) * 100).toFixed(1) : 0}%</span></div>
+                  <div className="result-row"><span className="label">Tax as % of Gross</span><span className="value">{result.gross > 0 ? ((result.monthlyTax / result.gross) * 100).toFixed(1) : 0}%</span></div>
+                  <div className="result-row"><span className="label">Your Top Slab Rate</span><span className="value">{(result.topRate * 100).toFixed(0)}%</span></div>
                 </div>
               </>
             ) : (
-              <div className="result-placeholder"><div className="icon">💼</div><p>Enter your salary details to calculate your net take-home pay.</p></div>
+              <div className="result-placeholder"><div className="icon">💼</div><p>Enter your salary details to calculate your take-home pay.</p></div>
             )}
           </div>
 
-          {/* <AdSlot size="300x250" /> */}
-
           <div className="info-card">
-            <h4>📌 Deduction Notes</h4>
+            <h4>📌 Deduction notes</h4>
             <ul>
-              <li><strong>EOBI:</strong> Employee 1% + Employer 5% of minimum wage</li>
-              <li><strong>Medical:</strong> Exempt up to 10% of basic salary</li>
-              <li><strong>Conveyance:</strong> Exempt up to Rs 10,000/month</li>
-              <li><strong>PF:</strong> Employee contribution varies by company policy</li>
+              <li><strong>Income tax:</strong> 2026-27 salaried slabs; first Rs 50,000/month tax-free</li>
+              <li><strong>EOBI:</strong> 1% of minimum wage from you, 5% from employer</li>
+              <li><strong>Medical:</strong> tax-free up to 10% of basic</li>
+              <li><strong>PF:</strong> set by your employer's fund rules</li>
             </ul>
           </div>
 
-          <div className="sidebar-card">
-            <h4>Related Calculators</h4>
-            <ul className="quick-link-list">
-              <li><a href="/income-tax" onClick={go("/income-tax")}>🧾 Income Tax</a></li>
-              <li><a href="/withholding-tax" onClick={go("/withholding-tax")}>📋 Withholding Tax</a></li>
-            </ul>
-          </div>
+          <RelatedLinks
+            title="Related"
+            links={[
+              { to: "/blog/salary-tax-guide", label: "📊 Tax on every salary: monthly table" },
+              { to: "/income-tax", label: "🧾 Income tax calculator (salaried & business)" },
+              { to: "/blog/salary-deduction-breakdown", label: "📄 Payslip deductions explained" },
+              { to: "/blog/income-tax-slabs-2026", label: "📑 Tax slabs 2026-27" },
+              { to: "/blog/become-filer", label: "✅ How to become a filer" },
+            ]}
+          />
         </div>
       </div>
 
-      {/* <div className="container" style={{ padding: "24px 20px" }}>
-        <AdSlot size="responsive" />
-      </div> */}
+      <ContentSection eyebrow="How it works" title="How take-home salary is calculated in Pakistan">
+        <p>
+          Your take-home pay is your gross salary minus income tax and any deductions your employer
+          makes for EOBI, provident fund or loans. The calculator follows the same order a payroll
+          department does:
+        </p>
+        <ol>
+          <li>Start with gross monthly salary (basic plus allowances).</li>
+          <li>Remove the tax-free part of medical allowance (up to 10% of basic) to get taxable salary.</li>
+          <li>Multiply by 12 and apply the <Link to="/blog/income-tax-slabs-2026">2026-27 salaried tax slabs</Link> to get annual tax, then divide by 12.</li>
+          <li>Subtract monthly tax, your EOBI share and your provident fund contribution.</li>
+        </ol>
 
-      {/* ── Extra unique content: depth for ranking, not just a bare calculator ── */}
-      <section className="calc-grid-section">
-        <div className="section-eyebrow">How It Works</div>
-        <h2 className="section-title">How Take-Home Salary Is Calculated in Pakistan</h2>
-        <p className="section-desc">
-          Your net salary is your gross pay minus income tax and any
-          applicable social security or retirement deductions. The calculator
-          above starts from your gross monthly salary, subtracts the portion
-          of your medical and conveyance allowances that's tax-exempt to find
-          your taxable income, applies the FBR income tax slabs to that
-          amount, and then deducts EOBI, Provident Fund, and SESSI/PESSI
-          contributions where selected — whatever's left is your take-home
-          pay.
+        <h3>Why EOBI is the same on every salary</h3>
+        <p>
+          EOBI contributions are worked out on the minimum wage rather than your actual pay, so the
+          employee share is a flat amount (currently Rs {EOBI_EMPLOYEE.toLocaleString("en-PK")} a month on a
+          Rs {EOBI_WAGE_BASE.toLocaleString("en-PK")} minimum wage). It changes when the government revises the
+          minimum wage, so check the figure on your payslip if it differs.
         </p>
 
-        <h3 style={{ marginTop: 24 }}>Understanding EOBI, PF, and SESSI/PESSI</h3>
-        <p className="section-desc">
-          EOBI (Employees' Old-Age Benefits Institution) deducts 1% of wages
-          from you, capped at Rs 370 a month, with your employer adding a
-          further 5%, capped at Rs 1,850 — this funds a government pension
-          you can draw on retirement. Provident Fund is a separate retirement
-          savings scheme set by your employer's own policy, usually 5–12% of
-          basic salary, matched by the company. SESSI in Sindh and PESSI in
-          Punjab are provincial social security schemes, each deducting
-          roughly 1% of gross salary in exchange for medical and injury
-          benefit coverage.
+        <h3>Provident fund and social security</h3>
+        <p>
+          Provident fund is set by your employer's fund rules — commonly 8.33% or 10% of basic salary from
+          you, matched by the company. Provincial social security (PESSI, SESSI and similar) is an employer
+          contribution for covered workers and is not normally deducted from your pay.
         </p>
 
-        <h3 style={{ marginTop: 24 }}>Why medical and conveyance allowances matter</h3>
-        <p className="section-desc">
-          Splitting your gross pay into basic salary plus medical and
-          conveyance allowances can lower your tax bill, because these
-          allowances are partly tax-exempt: medical allowance up to 10% of
-          basic salary, and conveyance up to Rs 10,000 a month. Any amount you
-          receive above these limits gets added back into taxable income, so
-          it's worth checking your payslip breakdown rather than assuming the
-          whole allowance is tax-free.
+        <p>
+          Want to see the tax for many salaries at once? The{" "}
+          <Link to="/blog/salary-tax-guide">monthly salary tax table</Link> lists the 2026-27 tax for
+          salaries from Rs 50,000 to Rs 1,000,000 a month.
         </p>
 
-        <p className="reviewed-note" style={{ marginTop: 20, fontSize: "0.85rem", opacity: 0.7 }}>
-          Last reviewed: July 2026, against Finance Bill 2026, FBR's published
-          slab tables, and current EOBI/PESSI/SESSI contribution rates. This
-          tool gives an estimate for planning purposes and isn't a substitute
-          for professional payroll or tax advice.
-        </p>
-      </section>
+        <ReviewNote
+          updated={RATES_REVIEWED_ISO}
+          appliesTo="Tax Year 2027 (July 2026 – June 2027)"
+          sources={[
+            { label: "Finance Act 2026 — salaried income tax rates" },
+            { label: "Federal Board of Revenue (FBR)", url: "https://www.fbr.gov.pk" },
+            { label: "Employees' Old-Age Benefits Institution (EOBI)", url: "https://www.eobi.gov.pk" },
+          ]}
+        />
+      </ContentSection>
 
-      {/* ── FAQ ── */}
-      <section className="faq-section">
-        <div className="faq-inner">
-          <div className="section-eyebrow">FAQ</div>
-          <h2 className="section-title" style={{ marginBottom: 32 }}>Common questions</h2>
-          {salaryFaqs.map((f, i) => (
-            <div key={i} className="faq-item" itemScope itemType="https://schema.org/Question">
-              <div
-                className={`faq-q${openFaq === i ? " open" : ""}`}
-                onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                itemProp="name"
-              >
-                {f.q}
-                <span className="faq-chevron">▼</span>
-              </div>
-              {openFaq === i && (
-                <div className="faq-a" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
-                  <span itemProp="text">{f.a}</span>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
+      <FaqSection faqs={salaryFaqs} title="Salary tax questions" />
     </div>
   );
 }

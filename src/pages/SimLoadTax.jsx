@@ -1,44 +1,43 @@
 import React, { useState, useRef } from "react";
-import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Link } from "../lib/nav";
+import { FaqSection, ReviewNote } from "../components/Content";
+import { RATES_REVIEWED_ISO } from "../utils/taxUtils";
 
-const TAX_RATE = 0.1304;
-const LAST_UPDATED = "July 2026";
+// 15% advance tax on the tax-exclusive value = 15/115 of the recharge.
+const WHT_SHARE = 15 / 115;
+// 19.5% sales tax charged on usage, i.e. 19.5/119.5 of the remaining balance.
+const SALES_TAX_SHARE = 19.5 / 119.5;
 const QUICK_AMOUNTS = [100, 500, 1000, 2000];
 
-export default function SimLoadTax({ navigate }) {
+export default function SimLoadTax() {
   const [amount, setAmount] = useState("");
   const [result, setResult] = useState(null);
   const resultRef = useRef(null);
 
   const faqs = [
     {
-      q: "How much balance do I get after loading Rs. 100 in Pakistan?",
-      a: "After tax deductions, you receive approximately Rs. 86.96 from a Rs. 100 recharge, since Rs. 13.04 (13.04%) is deducted as tax."
+      q: "How much balance do I get on a Rs 100 recharge?",
+      a: "Rs 86.96 is credited. Rs 13.04 is deducted as advance income tax (15% of the service value). Sales tax of 19.5% is then charged as you use the balance, so the usable value of Rs 100 is about Rs 72.77."
     },
     {
-      q: "Do all mobile networks charge the same taxes?",
-      a: "Yes. Jazz, Zong, Ufone and Telenor all apply the same 13.04% government-mandated deduction on prepaid recharge, since the tax is set by FBR, not by the telecom operator."
+      q: "Do Jazz, Zong, Ufone and Telenor charge the same tax?",
+      a: "Yes. The rates are set by law, not by the operator, so every network deducts the same 15% advance tax at recharge and charges the same sales tax on usage."
     },
     {
       q: "Why is tax deducted from mobile recharge?",
-      a: "Telecom operators act as withholding agents, collecting withholding tax and Federal Excise Duty (FED) on behalf of FBR at the time of recharge, then depositing it with the government."
+      a: "Mobile operators are withholding agents. They collect advance income tax under Section 236 when you recharge and sales tax when you use services, and deposit both with the government."
     },
     {
-      q: "Is the mobile load tax refundable?",
-      a: "If you are an active taxpayer (filer) with an NTN, the withholding portion is treated as advance tax and can be adjusted against your annual income tax liability when you file your return."
+      q: "Can I get the mobile load tax back?",
+      a: "If you file an income tax return, the 15% advance tax collected on your recharges can be adjusted against your yearly tax liability. Sales tax on usage cannot be claimed back by individuals."
     },
     {
-      q: "Does the tax rate change based on how I recharge (card, EasyLoad, JazzCash)?",
-      a: "No. The 13.04% deduction applies uniformly whether you recharge via a scratch card, EasyLoad retailer, or a mobile wallet like JazzCash or Easypaisa."
+      q: "Does it matter how I recharge (card, EasyLoad, JazzCash)?",
+      a: "No. The same deduction applies to scratch cards, EasyLoad, and mobile wallets such as JazzCash and Easypaisa."
     },
     {
-      q: "How much tax do I pay on a Rs. 1000 recharge?",
-      a: "On a Rs. 1000 recharge, approximately Rs. 130.40 is deducted as tax, leaving you a usable balance of about Rs. 869.60."
-    },
-    {
-      q: "Is this the same as the tax on calls, SMS, and mobile data usage?",
-      a: "No. This rate applies to the recharge itself. Additional General Sales Tax (GST) may also apply when you actually use your balance on calls, SMS, or data bundles, which this calculator does not model separately."
+      q: "How much is deducted on a Rs 1,000 recharge?",
+      a: "Rs 130.43 is deducted at recharge, so Rs 869.57 is credited. After sales tax on usage, the usable value is about Rs 728."
     }
   ];
 
@@ -46,14 +45,16 @@ export default function SimLoadTax({ navigate }) {
     const value = load !== undefined ? load : parseFloat(amount) || 0;
     if (load !== undefined) setAmount(String(load));
 
-    const totalTax = value * TAX_RATE;
+    const totalTax = value * WHT_SHARE;
     const balance = value - totalTax;
+    const usable = balance * (1 - SALES_TAX_SHARE);
 
     setResult({
       load: value,
       totalTax,
       balance,
-      taxRate: TAX_RATE * 100
+      usable,
+      taxRate: WHT_SHARE * 100
     });
 
     setTimeout(() => {
@@ -71,100 +72,17 @@ export default function SimLoadTax({ navigate }) {
     }, 100);
   };
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebPage",
-        "@id": "https://pktaxcalc.com/sim-load-tax",
-        url: "https://pktaxcalc.com/sim-load-tax",
-        name: "Mobile Load Tax Calculator Pakistan 2026 - Jazz, Zong, Ufone, Telenor",
-        description:
-          "Free calculator showing the exact balance you receive after tax on Jazz, Zong, Ufone and Telenor prepaid mobile recharge in Pakistan.",
-        dateModified: "2026-07-01"
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://pktaxcalc.com/"
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Mobile Load Tax Calculator",
-            item: "https://pktaxcalc.com/sim-load-tax"
-          }
-        ]
-      },
-      {
-        "@type": "WebApplication",
-        name: "Mobile Load Tax Calculator Pakistan 2026",
-        url: "https://pktaxcalc.com/sim-load-tax",
-        applicationCategory: "FinanceApplication",
-        operatingSystem: "Any",
-        offers: {
-          "@type": "Offer",
-          price: "0",
-          priceCurrency: "PKR"
-        }
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: faqs.map((f) => ({
-          "@type": "Question",
-          name: f.q,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: f.a
-          }
-        }))
-      }
-    ]
-  };
 
   return (
     <div>
-      <Helmet>
-        <title>
-          Mobile Load Tax Calculator Pakistan 2026 | Jazz, Zong, Ufone, Telenor
-        </title>
-
-        <meta
-          name="description"
-          content="Find out exactly how much balance you get after tax on a Jazz, Zong, Ufone or Telenor recharge in Pakistan. Free, instant, updated for 2026."
-        />
-
-        <link rel="canonical" href="https://pktaxcalc.com/sim-load-tax" />
-
-        <meta
-          property="og:title"
-          content="Mobile Load Tax Calculator Pakistan 2026 | Jazz, Zong, Ufone, Telenor"
-        />
-
-        <meta
-          property="og:description"
-          content="Calculate the real balance you receive after mobile recharge tax in Pakistan — updated for 2026."
-        />
-
-        <meta property="og:url" content="https://pktaxcalc.com/sim-load-tax" />
-        <meta property="og:type" content="website" />
-
-        <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
-        </script>
-      </Helmet>
 
       <section className="page-hero">
         <div className="page-hero-inner">
           <div className="hero-badge">
-            Pakistan Telecom Taxes · Updated {LAST_UPDATED}
+            Section 236 · 15% advance tax · Tax Year 2027
           </div>
 
-          <h1>Mobile Load Tax Calculator Pakistan 2026 (Jazz, Zong, Ufone, Telenor)</h1>
+          <h1>Mobile Load Tax Calculator Pakistan (Jazz, Zong, Ufone, Telenor)</h1>
 
           <p>
             See exactly how much balance you actually receive after tax on
@@ -272,7 +190,7 @@ export default function SimLoadTax({ navigate }) {
                     Rs {result.balance ? result.balance.toFixed(2) : "0.00"}
                   </div>
 
-                  <div className="result-main-label">Balance Received</div>
+                  <div className="result-main-label">Balance Credited</div>
                 </div>
 
                 <div className="result-body">
@@ -282,23 +200,30 @@ export default function SimLoadTax({ navigate }) {
                   </div>
 
                   <div className="result-row tax-row">
-                    <span className="label">Total Tax Deducted</span>
+                    <span className="label">Advance Tax at Recharge</span>
                     <span className="value">
                       Rs {result.totalTax.toFixed(2)}
                     </span>
                   </div>
 
                   <div className="result-row">
-                    <span className="label">Deduction Rate</span>
+                    <span className="label">Deducted (% of recharge)</span>
                     <span className="value">
                       {result.taxRate.toFixed(2)}%
                     </span>
                   </div>
 
                   <div className="result-row highlight">
-                    <span className="label">Final Balance</span>
+                    <span className="label">Balance Credited</span>
                     <span className="value">
                       Rs {result.balance.toFixed(2)}
+                    </span>
+                  </div>
+
+                  <div className="result-row">
+                    <span className="label">Usable value after 19.5% sales tax</span>
+                    <span className="value">
+                      ≈ Rs {result.usable.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -317,71 +242,58 @@ export default function SimLoadTax({ navigate }) {
           <div className="info-card">
             <h4>📌 Example</h4>
             <ul>
-              <li>Rs 100 load → Rs 86.96 received</li>
-              <li>Rs 500 load → Rs 434.80 received</li>
-              <li>Rs 1000 load → Rs 869.60 received</li>
+              <li>Rs 100 load → Rs 86.96 credited</li>
+              <li>Rs 500 load → Rs 434.78 credited</li>
+              <li>Rs 1,000 load → Rs 869.57 credited</li>
             </ul>
           </div>
         </div>
       </div>
 
-      <section className="calc-grid-section">
-        <div className="section-eyebrow">Mobile Recharge Taxes</div>
-
-        <h2 className="section-title">Mobile Load Tax in Pakistan — How It Works</h2>
-
-        <p className="section-desc">
-          When you recharge your mobile phone in Pakistan, you don't receive
-          the full amount. A combination of government taxes is deducted by
-          the telecom operator before the credit reaches your account, so a
-          Rs. 100 recharge shows up as noticeably less than Rs. 100 of usable
-          balance.
-        </p>
-
-        <p style={{ marginTop: 20 }}>
-          For a Rs. 100 recharge, you actually receive approximately Rs.
-          86.96, with Rs. 13.04 (13.04%) lost to tax.
-        </p>
-
-        <h3 style={{ marginTop: 28 }}>What makes up the 13.04%?</h3>
-        <p className="section-desc">
-          The deduction combines withholding tax collected under Section 236
-          of the Income Tax Ordinance, 2001, along with Federal Excise Duty
-          (FED) that telecom operators are required to collect on prepaid
-          recharge. Operators act only as collection agents — the money is
-          deposited with the Federal Board of Revenue (FBR), not kept by
-          Jazz, Zong, Ufone, or Telenor.
-        </p>
-
-        <h3 style={{ marginTop: 28 }}>Does this apply to Jazz, Zong, Ufone, and Telenor equally?</h3>
-        <p className="section-desc">
-          Yes. Because this is a federal tax rate set by FBR rather than a
-          fee set by the operator, it applies uniformly across all major
-          prepaid networks in Pakistan, regardless of which recharge method
-          you use.
-        </p>
-
-        <p className="reviewed-note" style={{ marginTop: 20, fontSize: "0.85rem", opacity: 0.7 }}>
-          Last reviewed: {LAST_UPDATED}. Tax rates are set by FBR and may
-          change with future budget notifications — this tool is for
-          informational estimates only and isn't tax advice.
-        </p>
-      </section>
-
-      <section className="calc-grid-section">
-        <div className="section-eyebrow">Frequently Asked Questions</div>
-
-        <h2 className="section-title">Mobile Load Tax — Common Questions</h2>
-
-        <div className="faq-list">
-          {faqs.map((f, i) => (
-            <div className="faq-item" key={i} style={{ marginTop: 16 }}>
-              <h3 style={{ marginBottom: 6 }}>{f.q}</h3>
-              <p className="section-desc">{f.a}</p>
-            </div>
-          ))}
+      <section className="calc-grid-section content-section">
+        <div className="section-eyebrow">Explained</div>
+        <h2 className="section-title">Mobile load tax in Pakistan — how it works</h2>
+        <div className="prose">
+          <p>
+            Two different taxes reduce your mobile balance, at two different moments:
+          </p>
+          <ol>
+            <li>
+              <strong>Advance income tax at recharge (Section 236).</strong> 15% is charged on the value of
+              the service, which works out to 13.04% of the amount you pay (15 ÷ 115). On a Rs 100 recharge,
+              Rs 13.04 is deducted and Rs 86.96 is credited.
+            </li>
+            <li>
+              <strong>Sales tax when you use the balance.</strong> Provincial sales tax / FED of 19.5% is
+              charged as you make calls, send SMS or buy bundles. Over the whole Rs 86.96 that is about
+              Rs 14.19, so the usable value of Rs 100 is roughly Rs 72.77.
+            </li>
+          </ol>
+          <p className="formula">Balance credited = recharge × 100 ÷ 115</p>
+          <p>
+            The rates are set by law, not by the operator, so they are the same on Jazz, Zong, Ufone and
+            Telenor and whether you recharge by card, EasyLoad, JazzCash or Easypaisa. Operators collect the
+            tax and deposit it with FBR.
+          </p>
+          <h3>Can filers claim it back?</h3>
+          <p>
+            The 15% under Section 236 is an advance tax. If you file a return, the tax shown in your telecom
+            withholding statement can be adjusted against your yearly liability. Sales tax on usage can't be
+            claimed by individuals. A much higher 75% advance tax applies only to people FBR has placed on its
+            Income Tax General Order list for not filing.
+          </p>
+          <ReviewNote
+            updated={RATES_REVIEWED_ISO}
+            appliesTo="Tax Year 2027"
+            sources={[
+              { label: "Income Tax Ordinance 2001, Section 236 and First Schedule (Finance Act 2026)" },
+              { label: "Federal Board of Revenue (FBR)", url: "https://www.fbr.gov.pk" },
+            ]}
+          />
         </div>
       </section>
+
+      <FaqSection faqs={faqs} title="Common questions" />
 
       <section className="calc-grid-section">
         <div className="section-eyebrow">More Free Tools</div>
@@ -422,17 +334,12 @@ export default function SimLoadTax({ navigate }) {
               desc: "Calculate Zakat on cash, gold, silver and savings."
             }
           ].map((tool) => (
-            <article
-              key={tool.path}
-              className="calc-tile"
-              onClick={() => navigate(tool.path)}
-              style={{ cursor: "pointer" }}
-            >
+            <Link key={tool.path} to={tool.path} className="calc-tile">
               <div className="tile-icon">{tool.icon}</div>
               <h3>{tool.title}</h3>
               <p>{tool.desc}</p>
               <div className="tile-arrow">Open Calculator →</div>
-            </article>
+            </Link>
           ))}
         </div>
       </section>

@@ -1,116 +1,96 @@
 import React from "react";
-//import AdSlot from "../components/AdSlot";
+import { Link } from "../lib/nav";
+import { RATES_REVIEWED, METAL_RATES_DATE } from "../utils/taxUtils";
 
-export default function About({ navigate }) {
+const sectionTitle = {
+  fontFamily: "var(--font-hero)", fontSize: "1.3rem", color: "var(--ink)",
+  marginBottom: 16, paddingBottom: 12, borderBottom: "2px solid var(--g-100)",
+};
+
+export default function About() {
   return (
     <div>
       <section className="page-hero">
-        <div className="hero-badge">About Us</div>
-        <h1>About PK Tax Calc</h1>
-        <p>Pakistan's free, accurate and Updated tax and Zakat calculator.</p>
+        <div className="page-hero-inner">
+          <div className="hero-badge">About Us</div>
+          <h1>About PK Tax Calc</h1>
+          <p>Free, independent tax and Zakat calculators for people in Pakistan — with our sources and review dates in the open.</p>
+        </div>
       </section>
 
       <div style={{ maxWidth: 860, margin: "40px auto", padding: "0 20px 80px" }}>
         <div className="calc-card fade-in" style={{ marginBottom: 24 }}>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", color: "var(--slate-900)", marginBottom: 20, paddingBottom: 16, borderBottom: "2px solid var(--green-100)" }}>
-            Our Mission
-          </h2>
-          <p style={{ fontSize: "1rem", color: "var(--slate-600)", lineHeight: 1.9, marginBottom: 16 }}>
-            PK Tax Calc was built with a simple goal: make Pakistani tax and Zakat calculations
-            accessible, accurate, and free for every Pakistani — whether you're a salaried employee
-            in Lahore, a business owner in Karachi, or a freelancer in Islamabad.
-          </p>
-          <p style={{ fontSize: "1rem", color: "var(--slate-600)", lineHeight: 1.9 }}>
-            Tax law in Pakistan is complicated. FBR updates slabs every year, withholding tax rates
-            differ for filers and non-filers, and Zakat calculations involve multiple asset types
-            and scholarly opinions. We bring all of that together in one place — for free.
-          </p>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
-          {[
-            { icon: "🧾", title: "Income Tax", desc: "FBR-compliant slabs for salaried and business taxpayers, updated every Finance Act." },
-            { icon: "☪️", title: "Zakat", desc: "Comprehensive Zakat calculator covering cash, gold, silver, stocks, and business goods." },
-            { icon: "💼", title: "Salary", desc: "Net take-home calculator including EOBI, provident fund, and social security deductions." },
-            { icon: "📋", title: "Withholding Tax", desc: "18 WHT categories with separate filer and non-filer rates to help you understand deductions." },
-          ].map(f => (
-            <div key={f.title} style={{ background: "var(--slate-50)", borderRadius: "var(--radius-md)", padding: "20px", border: "1.5px solid var(--slate-100)" }}>
-              <div style={{ fontSize: "2rem", marginBottom: 10 }}>{f.icon}</div>
-              <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: 8, color: "var(--slate-800)" }}>{f.title}</h3>
-              <p style={{ fontSize: "0.85rem", color: "var(--slate-500)", lineHeight: 1.6 }}>{f.desc}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="calc-card fade-in" style={{ marginBottom: 24 }}>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", color: "var(--slate-900)", marginBottom: 20, paddingBottom: 16, borderBottom: "2px solid var(--green-100)" }}>
-            Our Commitment to Accuracy
-          </h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {[
-              ["📖 FBR Source Data", "All income tax slabs and withholding tax rates are taken directly from the FBR Finance Act and Income Tax Ordinance 2001 (as amended). We update figures every year after the Federal Budget."],
-              ["☪️ Islamic Finance Standards", "Zakat calculations follow the Hanafi school of thought, which is the most widely followed in Pakistan. We clearly note where scholarly opinions differ (e.g., on gold jewellery)."],
-              ["🔒 Your Privacy First", "Every calculation runs entirely in your browser. We never see, store or transmit your income or asset figures. No account is required."],
-              ["⚡ Free of Cost", "PK Tax Calc is and will remain free to use. No paywalls, no premium features, no subscriptions."],
-            ].map(([title, desc]) => (
-              <div key={title} style={{ display: "flex", gap: 16 }}>
-                <div style={{ fontSize: "1.3rem", flexShrink: 0, marginTop: 2 }}>{title.split(" ")[0]}</div>
-                <div>
-                  <div style={{ fontWeight: 700, color: "var(--slate-800)", marginBottom: 4 }}>{title.substring(3)}</div>
-                  <p style={{ fontSize: "0.875rem", color: "var(--slate-500)", lineHeight: 1.7 }}>{desc}</p>
-                </div>
-              </div>
-            ))}
+          <h2 style={sectionTitle}>What we do</h2>
+          <div className="prose">
+            <p>
+              PK Tax Calc helps salaried employees, freelancers, small business owners and families in Pakistan
+              answer everyday money questions quickly: how much tax comes off a salary, what a non-filer pays
+              extra, how much Zakat is due on savings and gold. Each calculator is paired with a plain-English
+              explanation of the rule behind it, so you can check the working rather than trust a number blindly.
+            </p>
+            <p>
+              PK Tax Calc is an independent website. We don't present the site as professional tax or
+              religious advice — which is why every page links to its sources and tells you when to check
+              with FBR, a tax adviser or a scholar.
+            </p>
           </div>
         </div>
 
         <div className="calc-card fade-in" style={{ marginBottom: 24 }}>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", color: "var(--slate-900)", marginBottom: 16, paddingBottom: 16, borderBottom: "2px solid var(--green-100)" }}>
-            Data Sources
-          </h2>
-          <table className="slab-table">
-            <thead><tr><th>Calculator</th><th>Data Source</th><th>Last Updated</th></tr></thead>
-            <tbody>
-              {[
-                ["Income Tax Slabs", "FBR Finance Act 2024", "July 2024"],
-                ["Withholding Tax", "FBR Income Tax Ordinance 2001 (amended)", "July 2024"],
-                ["EOBI Rate", "Employees' Old-Age Benefits Institution", "2024"],
-                ["Gold Nisab", "Sarafa Bazar / Jewellers Association rates", "Indicative"],
-                ["Silver Nisab", "Pakistan Silver Market rates", "Indicative"],
-                ["Bank Rates", "Public disclosures of major Pakistani banks", "Indicative"],
-              ].map(r => (
-                <tr key={r[0]}><td>{r[0]}</td><td>{r[1]}</td><td>{r[2]}</td></tr>
-              ))}
-            </tbody>
-          </table>
+          <h2 style={sectionTitle}>How we check our rates</h2>
+          <div className="prose">
+            <ul>
+              <li><strong>Income tax slabs</strong> come from the rates schedule of the current Finance Act (Finance Act 2026 for Tax Year 2027). We update them after each federal budget is passed.</li>
+              <li><strong>Withholding tax rates</strong> come from the First and Tenth Schedules of the Income Tax Ordinance 2001 as amended, and FBR's withholding rate card.</li>
+              <li><strong>Deadlines and circulars</strong> are checked against FBR announcements; for example, the extension of the 2026 return deadline to 15 October.</li>
+              <li><strong>Gold and silver prices</strong> used as defaults in the Zakat calculators are Sarafa benchmark rates on a stated date. You can always type today's rate.</li>
+              <li><strong>Zakat rules</strong> follow the approach most widely used in Pakistan (Hanafi). Where schools differ, such as Zakat on jewellery, we say so.</li>
+            </ul>
+            <p>
+              Every calculator and guide shows a "last reviewed" date. The current rates were last reviewed on{" "}
+              <strong>{RATES_REVIEWED}</strong>; default metal prices are from {METAL_RATES_DATE}.
+            </p>
+          </div>
+        </div>
+
+        <div className="calc-card fade-in" style={{ marginBottom: 24 }}>
+          <h2 style={sectionTitle}>Corrections</h2>
+          <div className="prose">
+            <p>
+              Tax rules change often and mistakes happen. If you find a figure that doesn't match FBR's
+              publications or your payslip, please <Link to="/contact">contact us</Link> with the page and, if
+              possible, the source. We check every report and correct confirmed errors, updating the page's
+              review date.
+            </p>
+          </div>
+        </div>
+
+        <div className="calc-card fade-in" style={{ marginBottom: 24 }}>
+          <h2 style={sectionTitle}>Privacy and cost</h2>
+          <div className="prose">
+            <p>
+              The calculators run entirely in your browser — the salary, savings or gold figures you type are
+              never sent to us. The site is free to use with no sign-up. To cover running costs we may show
+              advertising; ads never influence our figures. See the <Link to="/privacy-policy">privacy policy</Link>.
+            </p>
+          </div>
         </div>
 
         <div className="info-card warning">
-          <h4>⚠️ Important Disclaimer</h4>
+          <h4>⚠️ Independent — not affiliated with FBR</h4>
           <p>
-            PK Tax Calc is for <strong>informational purposes only</strong>. Tax calculations are
-            estimates based on publicly available FBR law. Individual circumstances may vary. Always
-            verify with a qualified tax consultant or chartered accountant before filing your tax return.
-            Zakat amounts should be verified with a qualified Islamic scholar for your specific situation.
-            We are not affiliated with FBR, the Government of Pakistan, or any bank.
+            PK Tax Calc is not affiliated with the Federal Board of Revenue, the Government of Pakistan or any
+            bank. Results are estimates for planning. Read the full <Link to="/disclaimer">disclaimer</Link>.
           </p>
         </div>
 
         <div style={{ textAlign: "center", marginTop: 40 }}>
-          <p style={{ color: "var(--slate-500)", marginBottom: 20 }}>Have a question or found an error?</p>
-          <button
-            className="btn-calc"
-            style={{ width: "auto", padding: "12px 32px" }}
-            onClick={() => navigate("/contact")}
-          >
+          <p style={{ color: "var(--ink-500)", marginBottom: 20 }}>Have a question or found an error?</p>
+          <Link to="/contact" className="btn-calc" style={{ width: "auto", padding: "12px 32px", display: "inline-block", textDecoration: "none" }}>
             Contact Us →
-          </button>
+          </Link>
         </div>
       </div>
-{/* 
-      <div className="container" style={{ padding: "0 20px 40px" }}>
-        <AdSlot size="responsive" />
-      </div> */}
     </div>
   );
 }

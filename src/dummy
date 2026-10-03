@@ -1,0 +1,137 @@
+"/agriculture-income-tax": {
+  component: AgricultureIncomeTax,
+  title: "Agriculture Income Tax Calculator Pakistan 2026 | Provincial Rates",
+  desc: "Calculate agriculture income tax in Pakistan using the latest provincial tax rates for Punjab, Sindh, KPK and Balochistan.",
+},
+
+"/property-tax": {
+  component: PropertyTax,
+  title: "Property Tax Calculator Pakistan 2026 | Capital Gain & Advance Tax",
+  desc: "Calculate advance tax, capital gains tax and property-related taxes in Pakistan for buyers and sellers.",
+},
+
+"/vehicle-tax": {
+  component: VehicleTax,
+  title: "Vehicle Tax Calculator Pakistan 2026 | Registration & Token Tax",
+  desc: "Calculate vehicle registration tax, token tax and advance tax for cars in Pakistan.",
+},
+
+"/custom-duty": {
+  component: CustomDuty,
+  title: "Custom Duty Calculator Pakistan 2026 | Import Duty Calculator",
+  desc: "Estimate customs duty, sales tax and import taxes on goods entering Pakistan.",
+},
+
+"/currency-converter": {
+  component: CurrencyConverter,
+  title: "Currency Converter Pakistan | USD to PKR Live Exchange Calculator",
+  desc: "Convert USD, GBP, AED, SAR and other currencies into Pakistani Rupees instantly.",
+},
+
+"/loan-calculator": {
+  component: LoanCalculator,
+  title: "Loan EMI Calculator Pakistan | Personal & Car Loan 2026",
+  desc: "Calculate monthly installments, total interest and repayment schedule for loans in Pakistan.",
+},
+
+"/car-finance-calculator": {
+  component: CarFinanceCalculator,
+  title: "Car Finance Calculator Pakistan 2026",
+  desc: "Calculate monthly installments, markup and total payment for car financing in Pakistan.",
+},
+
+"/mortgage-calculator": {
+  component: MortgageCalculator,
+  title: "Home Loan Calculator Pakistan 2026",
+  desc: "Calculate mortgage installments, interest and repayment schedule for home financing in Pakistan.",
+},
+
+"/savings-calculator": {
+  component: SavingsCalculator,
+  title: "Savings Calculator Pakistan | Future Value Calculator",
+  desc: "Estimate how much your savings can grow with monthly deposits and profit rates.",
+},
+
+"/profit-rate-calculator": {
+  component: ProfitRateCalculator,
+  title: "Profit Rate Calculator Pakistan",
+  desc: "Calculate simple and compound profit on savings and investments in Pakistan.",
+},
+
+"/gst-calculator": {
+  component: GSTCalculator,
+  title: "GST Calculator Pakistan 2026 | Sales Tax Calculator",
+  desc: "Add or remove GST from any amount using Pakistan's sales tax rates.",
+},
+
+"/vat-calculator": {
+  component: VATCalculator,
+  title: "VAT Calculator | Add or Remove VAT",
+  desc: "Calculate VAT-inclusive and VAT-exclusive prices instantly.",
+},
+
+"/percentage-calculator": {
+  component: PercentageCalculator,
+  title: "Percentage Calculator | Increase, Decrease & Percentage Change",
+  desc: "Free percentage calculator for discounts, increases, decreases and percentage changes.",
+},
+
+"/currency-profit": {
+  component: CurrencyProfit,
+  title: "Foreign Currency Profit Calculator Pakistan",
+  desc: "Estimate profit or loss on USD, EUR, GBP and other foreign currency investments.",
+},
+
+"/inflation-calculator": {
+  component: InflationCalculator,
+  title: "Inflation Calculator Pakistan",
+  desc: "Calculate how inflation affects the purchasing power of your money in Pakistan.",
+},
+
+"/retirement-calculator": {
+  component: RetirementCalculator,
+  title: "Retirement Calculator Pakistan",
+  desc: "Estimate retirement savings required based on your income, age and expected expenses.",
+},
+
+"/income-tax-refund": {
+  component: IncomeTaxRefund,
+  title: "Income Tax Refund Calculator Pakistan 2026",
+  desc: "Estimate whether you are eligible for an income tax refund after annual tax adjustments.",
+},
+
+"/tax-savings": {
+  component: TaxSavings,
+  title: "Tax Savings Calculator Pakistan",
+  desc: "Estimate how much tax you can legally save using available exemptions and credits.",
+},
+
+"/eobi-calculator": {
+  component: EOBICalculator,
+  title: "EOBI Contribution Calculator Pakistan",
+  desc: "Calculate employee and employer EOBI contributions using the latest contribution rates.",
+},
+
+"/provident-fund": {
+  component: ProvidentFund,
+  title: "Provident Fund Calculator Pakistan",
+  desc: "Calculate employee provident fund contributions, employer share and future balance.",
+},
+
+"/gratuity-calculator": {
+  component: GratuityCalculator,
+  title: "Gratuity Calculator Pakistan",
+  desc: "Estimate gratuity payable based on salary and years of service in Pakistan.",
+},
+
+"/leave-encashment": {
+  component: LeaveEncashment,
+  title: "Leave Encashment Calculator Pakistan",
+  desc: "Calculate leave encashment amount using your salary and unused leave balance.",
+},
+
+"/bonus-tax": {
+  component: BonusTax,
+  title: "Bonus Tax Calculator Pakistan",
+  desc: "Estimate tax payable on bonuses and additional salary payments.",
+},

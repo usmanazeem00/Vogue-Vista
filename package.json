@@ -41,9 +41,10 @@
   },
   "scripts": {
     "start": "react-scripts start -entry ./src/index.js",
-    "build": "react-scripts build",
+    "build": "react-scripts build && node scripts/prerender.js",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build:sitemap": "node scripts/prerender.js --sitemap-only"
   },
   "eslintConfig": {
     "extends": [

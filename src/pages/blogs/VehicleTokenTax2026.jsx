@@ -1,5 +1,7 @@
 import React from "react";
-import { Helmet } from "react-helmet-async";
+import { Link } from "../../lib/nav";
+import { FaqSection, ReviewNote } from "../../components/Content";
+import { ROUTE_META } from "../../routeMeta";
 
 const wht231B = [
   { cc: "Up to 850cc", rate: "0.5%" },
@@ -23,58 +25,26 @@ const annualTokenTax = [
   { cc: "Above 2,000cc", annual: "Rs 10,000", lumpSum: "Rs 120,000" },
 ];
 
-export default function VehicleTokenTax2026({ navigate }) {
-  const pageUrl = "https://pktaxcalc.com/blog/vehicle-token-tax-2026";
+const faqs = [
+  {
+    q: "What is vehicle token tax in Pakistan?",
+    a: "Token tax (motor vehicle tax) is collected each year by your provincial Excise and Taxation department to keep a vehicle registered. It is separate from the federal advance income tax collected by FBR at registration, transfer and with the annual token.",
+  },
+  {
+    q: "Do non-filers pay more?",
+    a: "Yes, on the federal part. The advance income tax collected at registration and with the annual token is much higher for people not on the Active Taxpayers List. The provincial token tax itself is the same for filers and non-filers.",
+  },
+  {
+    q: "Is token tax the same in every province?",
+    a: "No. Punjab, Sindh, Khyber Pakhtunkhwa, Balochistan and Islamabad each publish their own token tax schedules, so the amount can differ for the same engine size. Check your provincial Excise department.",
+  },
+];
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What is vehicle token tax in Pakistan?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Vehicle token tax (motor vehicle tax) is an annual tax collected by provincial excise and taxation departments to keep a vehicle legally registered on the road. It's separate from the federal FBR advance tax collected on registration and transfer."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Do non-filers pay more token tax in Pakistan?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. Under FBR rules, non-filers pay significantly higher advance tax at registration and transfer, and up to 200% more on the federal advance tax component compared to active filers."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is token tax the same in every province?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "No. Punjab, Sindh, Islamabad, and Khyber Pakhtunkhwa each set their own provincial token tax schedules, so the exact annual amount can differ by region even for the same engine capacity."
-        }
-      }
-    ]
-  };
+export default function VehicleTokenTax2026() {
+
 
   return (
     <>
-      <Helmet>
-        <title>Vehicle Token Tax Pakistan 2026 — Rates by Engine Capacity</title>
-        <meta
-          name="description"
-          content="Vehicle token tax Pakistan 2026: FBR advance tax rates on registration, transfer, and annual motor vehicle tax by engine capacity, plus filer vs non-filer differences."
-        />
-        <link rel="canonical"  href={pageUrl} />
-        <meta property="og:title" content="Vehicle Token Tax Pakistan 2026" />
-        <meta
-          property="og:description"
-          content="Full breakdown of vehicle token tax and FBR advance tax rates in Pakistan for 2026, by engine capacity and filer status."
-        />
-        <meta property="og:url" content={pageUrl} />
-        <meta property="og:type" content="article" />
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
 
       <section className="page-hero">
         <div className="page-hero-inner">
@@ -160,14 +130,9 @@ export default function VehicleTokenTax2026({ navigate }) {
             Being off the Active Taxpayer List doesn't just cost you at registration — it also
             applies to transfer of ownership and leasing. Read our{" "}
             
-              <a href="/blog/filer-vs-non-filer"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate("/blog/filer-vs-non-filer");
-              }}
-            >
+              <Link to="/blog/filer-vs-non-filer">
               Filer vs Non-Filer guide
-            </a>{" "}
+            </Link>{" "}
             to see the full picture across banking, property, and vehicles.
           </p>
         </div>
@@ -177,29 +142,26 @@ export default function VehicleTokenTax2026({ navigate }) {
           <ul className="related-links">
             <li>
               
-                <a href="/blog/filer-vs-non-filer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate("/blog/filer-vs-non-filer");
-                }}
-              >
+                <Link to="/blog/filer-vs-non-filer">
                 Filer vs Non-Filer in Pakistan
-              </a>
+              </Link>
             </li>
             <li>
               
-                <a href="/blog/become-filer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate("/blog/become-filer");
-                }}
-              >
+                <Link to="/blog/become-filer">
                 How to Become a Filer in Pakistan
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
+        <ReviewNote updated={ROUTE_META["/blog/vehicle-token-tax-2026"].updated}>
+          Vehicle tax rates are set separately by FBR (advance income tax) and by each province (token tax),
+          and change with budgets. Confirm the amount for your vehicle with your provincial Excise and Taxation
+          department or on your token challan before paying.
+        </ReviewNote>
       </div>
+
+      <FaqSection faqs={faqs} title="Vehicle tax questions" />
     </>
   );
 }

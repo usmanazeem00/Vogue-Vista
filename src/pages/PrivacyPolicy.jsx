@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function PrivacyPolicy() {
-  const lastUpdated = "June 2026";
+  const lastUpdated = "3 October 2026";
 
   return (
     <div>
@@ -23,7 +23,7 @@ export default function PrivacyPolicy() {
         <div className="calc-card fade-in">
           <p
             style={{
-              color: "var(--slate-500)",
+              color: "var(--ink-500)",
               fontSize: "0.875rem",
               marginBottom: 32,
             }}
@@ -95,7 +95,36 @@ export default function PrivacyPolicy() {
             parties.
           </Section>
 
-          <Section title="5. How We Use Your Information">
+          <Section title="5. Advertising">
+            PK Tax Calc may display advertisements served by Google AdSense and
+            other third-party advertising partners to keep the site free.
+            <ul style={{ marginTop: 12, paddingLeft: 20, lineHeight: 2 }}>
+              <li>
+                Third-party vendors, including Google, use cookies to serve ads
+                based on your previous visits to this website or other websites.
+              </li>
+              <li>
+                Google's use of advertising cookies enables it and its partners
+                to serve ads to you based on your visits to this site and/or
+                other sites on the Internet.
+              </li>
+              <li>
+                You may opt out of personalised advertising by visiting{" "}
+                <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>,
+                or opt out of some third-party vendors' use of cookies at{" "}
+                <a href="https://www.aboutads.info/choices" target="_blank" rel="noopener noreferrer">www.aboutads.info</a>.
+              </li>
+              <li>
+                Learn how Google uses information from sites that use its
+                services at{" "}
+                <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">policies.google.com/technologies/partner-sites</a>.
+              </li>
+            </ul>
+            Advertisers never receive the figures you enter into our
+            calculators, because those figures never leave your browser.
+          </Section>
+
+          <Section title="6. How We Use Your Information">
             We use the automatically collected information to:
             <ul
               style={{
@@ -111,7 +140,7 @@ export default function PrivacyPolicy() {
             </ul>
           </Section>
 
-          <Section title="6. Data Security">
+          <Section title="7. Data Security">
             Since all calculator inputs are processed locally in your browser
             and never sent to our servers, the financial data you enter remains
             private and secure. We do not store any personal financial
@@ -119,14 +148,14 @@ export default function PrivacyPolicy() {
             technical and organizational security measures.
           </Section>
 
-          <Section title="7. Third-Party Links">
+          <Section title="8. Third-Party Links">
             Our website may contain links to third-party websites such as FBR,
             State Bank of Pakistan, and the IRIS Portal. We are not responsible
             for the privacy practices or content of these external websites and
             encourage you to review their privacy policies.
           </Section>
 
-          <Section title="8. Children's Privacy">
+          <Section title="9. Children's Privacy">
             Our service is not directed to children under the age of 13. We do
             not knowingly collect personally identifiable information from
             children under 13. If you believe a child has provided us with
@@ -134,7 +163,7 @@ export default function PrivacyPolicy() {
             information.
           </Section>
 
-          <Section title="9. Your Rights">
+          <Section title="10. Your Rights">
             Depending on your location and applicable laws, you may have the
             right to:
             <ul
@@ -154,20 +183,20 @@ export default function PrivacyPolicy() {
             below.
           </Section>
 
-          <Section title="10. Changes to This Policy">
+          <Section title="11. Changes to This Policy">
             We may update this Privacy Policy from time to time. Any changes
             will be posted on this page along with an updated revision date. We
             encourage you to review this policy periodically.
           </Section>
 
-          <Section title="11. Contact Us">
+          <Section title="12. Contact Us">
             If you have any questions about this Privacy Policy, please contact
             us:
             <br />
             <br />
             <strong>Email:</strong> hello.pktaxcalc@gmail.com
             <br />
-            <strong>Website:</strong> https://pktaxcalc.com/contact
+            <strong>Contact page:</strong> pktaxcalc.com/contact
           </Section>
 
           <div className="info-card" style={{ marginTop: 32 }}>
@@ -193,25 +222,25 @@ function Section({ title, children }) {
     <div style={{ marginBottom: 28 }}>
       <h2
         style={{
-          fontFamily: "var(--font-display)",
+          fontFamily: "var(--font-hero)",
           fontSize: "1.1rem",
-          color: "var(--green-800)",
+          color: "var(--g-800)",
           marginBottom: 10,
           paddingBottom: 8,
-          borderBottom: "1px solid var(--green-100)",
+          borderBottom: "1px solid var(--g-100)",
         }}
       >
         {title}
       </h2>
-      <p
+      <div
         style={{
-          color: "var(--slate-600)",
+          color: "var(--ink-500)",
           fontSize: "0.9rem",
           lineHeight: 1.8,
         }}
       >
         {children}
-      </p>
+      </div>
     </div>
   );
 }

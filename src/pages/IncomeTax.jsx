@@ -1,11 +1,45 @@
 import React, { useState, useRef } from "react";
-import { Helmet } from "react-helmet-async";
 import {
-  fmt, fmtPlain, calcIncomeTax, getSlabs, getActiveSlab,
-  TAX_YEARS, DEFAULT_TAX_YEAR
+  fmt, fmtPlain, calcTaxBreakdown, getSlabs,
+  TAX_YEARS, DEFAULT_TAX_YEAR, RATES_REVIEWED_ISO
 } from "../utils/taxUtils";
+import { Link } from "../lib/nav";
+import { FaqSection, RelatedLinks, ReviewNote, ContentSection } from "../components/Content";
 
-export default function IncomeTax({ navigate }) {
+const FBR_SOURCES = [
+  { label: "Finance Act 2026 — First Schedule, Part I, Division I (rates for individuals)" },
+  { label: "Federal Board of Revenue (FBR)", url: "https://www.fbr.gov.pk" },
+  { label: "FBR IRIS portal (return filing)", url: "https://iris.fbr.gov.pk" },
+];
+
+const faqs = [
+  {
+    q: "How much income is tax-free in Pakistan for 2026-27?",
+    a: "Taxable income up to Rs 600,000 a year (Rs 50,000 a month) is not taxed, for both salaried and business individuals. Above that, tax is charged progressively under the slabs for Tax Year 2027.",
+  },
+  {
+    q: "What changed in the 2026-27 budget for salaried people?",
+    a: "Finance Act 2026 cut the 23% rate to 20%, the 30% rate to 25%, and introduced a 29% band (Rs 4.1m–5.6m) and a new 32% band (Rs 5.6m–7m), so 35% now starts above Rs 7 million instead of Rs 4.1 million. The surcharge on income above Rs 10 million was abolished. The first three bands (0%, 1%, 11%) did not change.",
+  },
+  {
+    q: "Am I taxed as salaried or as a business individual?",
+    a: "You use the salaried slabs if salary is more than 75% of your taxable income. Otherwise the non-salaried (business) slabs apply, which are higher at most income levels — for example 15% instead of 1% on income between Rs 600,000 and Rs 1.2 million.",
+  },
+  {
+    q: "Is tax charged on my whole salary at my top rate?",
+    a: "No. Each slab's rate only applies to the part of your income inside that slab. That is why the slab table shows a fixed amount (the tax on everything below the slab) plus a percentage of the amount above the slab's starting point.",
+  },
+  {
+    q: "How do I work out my monthly income tax?",
+    a: "Multiply your monthly taxable salary by 12, apply the annual slab formula, then divide the annual tax by 12. Employers do the same, adjusting through the year if your pay changes. Choose 'Monthly' in the calculator above and it does this for you.",
+  },
+  {
+    q: "Do I still need to file a return if my employer deducts tax?",
+    a: "Yes, if your taxable income is above Rs 600,000 (and in several other cases, such as owning a car above 1000cc or property). Filing keeps you on the Active Taxpayers List, which lowers the withholding tax you pay on bank profit, property and cash withdrawals.",
+  },
+];
+
+export default function IncomeTax() {
   const [form, setForm] = useState({
     incomeType: "salaried",
     period: "monthly",
@@ -17,26 +51,23 @@ export default function IncomeTax({ navigate }) {
   const resultRef = useRef(null);
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  // Helper to keep SPA navigation working while still rendering a real
-  // <a href> so crawlers can discover and follow the link.
-  const go = (path) => (e) => {
-    e.preventDefault();
-    navigate(path);
-  };
-
   const calculate = () => {
     let annual = parseFloat(form.income.replace(/,/g, "")) || 0;
     const other = parseFloat(form.otherIncome.replace(/,/g, "")) || 0;
     if (form.period === "monthly") annual = annual * 12;
     annual += other;
     const isSalaried = form.incomeType === "salaried";
-    const tax = calcIncomeTax(annual, isSalaried, form.taxYear);
-    const activeSlab = getActiveSlab(annual, isSalaried, form.taxYear);
-    const effectiveRate = annual > 0 ? (tax / annual) * 100 : 0;
-    const monthly = annual / 12;
-    const monthlyTax = tax / 12;
-    const netAnnual = annual - tax;
-    setResult({ annual, tax, effectiveRate, activeSlab, monthly, monthlyTax, netAnnual, isSalaried });
+    const b = calcTaxBreakdown(annual, isSalaried, form.taxYear);
+    const otherYear = form.taxYear === "TY2027" ? "TY2026" : "TY2027";
+    const compare = calcTaxBreakdown(annual, isSalaried, otherYear);
+    setResult({
+      annual, isSalaried, ...b,
+      monthly: annual / 12,
+      monthlyTax: b.total / 12,
+      netAnnual: annual - b.total,
+      compareYear: otherYear,
+      compareTotal: compare.total,
+    });
     setTimeout(() => {
       if (window.innerWidth <= 768 && resultRef.current) {
         const y = resultRef.current.getBoundingClientRect().top + window.pageYOffset - 80;
@@ -47,134 +78,20 @@ export default function IncomeTax({ navigate }) {
 
   const slabs = getSlabs(form.incomeType === "salaried", form.taxYear);
   const yearLabel = TAX_YEARS.find(y => y.id === form.taxYear)?.label || "";
+  const yearShort = (id) => (id === "TY2027" ? "2026-27" : "2025-26");
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebPage",
-        "@id": "https://pktaxcalc.com/income-tax",
-        "url": "https://pktaxcalc.com/income-tax",
-        "name": "Income Tax Calculator Pakistan 2026-27 | FBR Slabs",
-        "description": "Free Pakistan income tax calculator for FY 2026-27. Enter your salary or business income and get your exact tax instantly using FBR slabs.",
-        "dateModified": "2026-07-11",
-        "isPartOf": { "@id": "https://pktaxcalc.com" },
-        "breadcrumb": {
-          "@type": "BreadcrumbList",
-          "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pktaxcalc.com" },
-            { "@type": "ListItem", "position": 2, "name": "Income Tax Calculator", "item": "https://pktaxcalc.com/income-tax" }
-          ]
-        }
-      },
-      {
-        "@type": "WebApplication",
-        "name": "Pakistan Income Tax Calculator 2026-27",
-        "url": "https://pktaxcalc.com/income-tax",
-        "applicationCategory": "FinanceApplication",
-        "operatingSystem": "Any",
-        "description": "Free Pakistan income tax calculator for FY 2026-27. Covers salaried and business income using official FBR Finance Bill 2026 slabs.",
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "PKR" },
-        "featureList": [
-          "Salaried income tax calculation",
-          "Business income tax calculation",
-          "Monthly and annual tax breakdown",
-          "Effective tax rate calculation",
-          "FBR Finance Bill 2026 slabs",
-          "Tax year 2025-26 and 2026-27 support"
-        ]
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is the income tax threshold in Pakistan for 2026-27?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Income up to Rs 600,000 per year is fully exempt from income tax in Pakistan for FY 2026-27. Above this, progressive rates apply under Finance Bill 2026: 1% up to Rs 1.2m, 11% up to Rs 2.2m, 20% up to Rs 3.2m, 25% up to Rs 4.1m, 29% up to Rs 5.6m, 32% up to Rs 7m, and 35% above Rs 7m."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is the difference between salaried and business income tax in Pakistan?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Salaried individuals in Pakistan pay lower income tax rates than business or self-employed individuals. FBR maintains separate tax slab tables for both categories. Salaried income is taxed at source by the employer via monthly deduction, while business owners file and pay tax annually via the IRIS portal."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What changed in Budget 2026-27 for salaried people in Pakistan?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Finance Bill 2026 brought major relief for salaried taxpayers: tax rates were cut for all income brackets above Rs 2.2m, a new 32% bracket was introduced for income between Rs 5.6m and Rs 7m, and the 9% surcharge on income above Rs 10 million was fully abolished effective July 1, 2026."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How do I calculate my monthly income tax in Pakistan?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "To calculate monthly income tax in Pakistan: multiply your monthly salary by 12 to get annual income, apply the FBR tax slabs for FY 2026-27 to find annual tax liability, then divide by 12 for the monthly deduction. Our salary tax calculator does this automatically including EOBI and SESSI deductions."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Do I need to file a tax return if my employer deducts tax?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Even if your employer deducts income tax monthly, you must still file an annual tax return on the FBR IRIS portal by September 30, 2026. Filing keeps you on the Active Taxpayer List (ATL), which gives you lower withholding tax rates on banking transactions, property purchases, dividends and more."
-            }
-          }
-        ]
-      }
-    ]
-  };
+  // Worked examples are computed from the same functions as the calculator.
+  const ex1 = calcTaxBreakdown(1800000, true);
+  const ex2 = calcTaxBreakdown(4800000, true);
+  const ex2old = calcTaxBreakdown(4800000, true, "TY2026");
 
   return (
     <div>
-      <Helmet>
-        <title>Income Tax Calculator Pakistan 2026-27 | FBR Slabs</title>
-        <meta name="description" content="Free Pakistan income tax calculator for FY 2026-27. Enter your salary or business income and get your exact tax instantly using FBR slabs." />
-        <link rel="canonical" href="https://pktaxcalc.com/income-tax" />
-        <meta property="og:title" content="Income Tax Calculator Pakistan 2026-27 | FBR Slabs" />
-        <meta property="og:description" content="Calculate your income tax for FY 2026-27 based on FBR Finance Bill 2026 slabs. Free, accurate, no signup required." />
-        <meta property="og:url" content="https://pktaxcalc.com/income-tax" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:title" content="Income Tax Calculator Pakistan 2026-27 | FBR Slabs" />
-        <meta name="twitter:description" content="Calculate your Pakistan income tax instantly. FBR Finance Bill 2026 slabs, salaried and business income." />
-        <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
-      </Helmet>
-
-      {/* Visible breadcrumb — helps users and mirrors the schema above */}
-      <nav aria-label="Breadcrumb" className="breadcrumb-nav">
-        <a href="/" onClick={go("/")}>Home</a>
-        <span aria-hidden="true"> / </span>
-        <span>Income Tax Calculator</span>
-      </nav>
-
-      <style>{`
-        .breadcrumb-nav {
-          background: var(--brand-dark, #0e3b2c);
-          padding: 10px 24px;
-          font-size: 0.85rem;
-          color: rgba(255, 255, 255, 0.65);
-        }
-        .breadcrumb-nav a {
-          color: rgba(255, 255, 255, 0.85);
-          text-decoration: none;
-        }
-        .breadcrumb-nav a:hover {
-          text-decoration: underline;
-        }
-      `}</style>
-
       <section className="page-hero">
         <div className="page-hero-inner">
-          <div className="hero-badge">FBR Finance Bill 2026 · FY 2026-27</div>
+          <div className="hero-badge">Finance Act 2026 · Tax Year 2027 (July 2026 – June 2027)</div>
           <h1>Income Tax Calculator Pakistan 2026-27</h1>
-          <p>Calculate your exact income tax liability based on the latest FBR Finance Bill 2026 slabs for salaried individuals and business owners.</p>
+          <p>Enter your salary or business income to see your income tax under the new 2026-27 FBR slabs — monthly and yearly, with the slab-by-slab working.</p>
         </div>
       </section>
 
@@ -184,8 +101,8 @@ export default function IncomeTax({ navigate }) {
             <h2>Enter Your Income Details</h2>
 
             <div className="form-group">
-              <label>Tax Year</label>
-              <select value={form.taxYear} onChange={e => { set("taxYear", e.target.value); setResult(null); }}>
+              <label htmlFor="it-year">Tax Year</label>
+              <select id="it-year" value={form.taxYear} onChange={e => { set("taxYear", e.target.value); setResult(null); }}>
                 {TAX_YEARS.map(y => (
                   <option key={y.id} value={y.id}>{y.label}</option>
                 ))}
@@ -204,26 +121,29 @@ export default function IncomeTax({ navigate }) {
                   </label>
                 ))}
               </div>
+              <p className="hint">Salaried slabs apply when salary is more than 75% of your taxable income.</p>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Income Period</label>
-                <select value={form.period} onChange={e => set("period", e.target.value)}>
+                <label htmlFor="it-period">Income Period</label>
+                <select id="it-period" value={form.period} onChange={e => set("period", e.target.value)}>
                   <option value="monthly">Monthly</option>
                   <option value="annual">Annual (Yearly)</option>
                 </select>
               </div>
               <div className="form-group">
-                <label>
-                  {form.incomeType === "salaried" ? "Gross Salary" : "Business Income"}
+                <label htmlFor="it-income">
+                  {form.incomeType === "salaried" ? "Taxable Salary" : "Taxable Business Income"}
                   <span> (Rs)</span>
                 </label>
                 <div className="input-prefix">
                   <span>Rs</span>
                   <input
+                    id="it-income"
                     type="number"
-                    placeholder={form.period === "monthly" ? "e.g. 150,000" : "e.g. 1,800,000"}
+                    inputMode="numeric"
+                    placeholder={form.period === "monthly" ? "e.g. 150000" : "e.g. 1800000"}
                     value={form.income}
                     onChange={e => set("income", e.target.value)}
                   />
@@ -232,58 +152,85 @@ export default function IncomeTax({ navigate }) {
             </div>
 
             <div className="form-group">
-              <label>Other Taxable Income <span>(optional — rent, freelance, etc.)</span></label>
+              <label htmlFor="it-other">Other Taxable Income <span>(optional, yearly — e.g. rent)</span></label>
               <div className="input-prefix">
                 <span>Rs</span>
                 <input
+                  id="it-other"
                   type="number"
-                  placeholder="e.g. 200,000"
+                  inputMode="numeric"
+                  placeholder="e.g. 200000"
                   value={form.otherIncome}
                   onChange={e => set("otherIncome", e.target.value)}
                 />
               </div>
+              <p className="hint">Income taxed separately under the final tax regime (bank profit, dividends, prize bonds) should not be added here.</p>
             </div>
 
             <button className="btn-calc" onClick={calculate}>Calculate Income Tax →</button>
-            <button className="btn-reset" onClick={() => { setForm({ incomeType: "salaried", period: "annual", income: "", otherIncome: "", taxYear: DEFAULT_TAX_YEAR }); setResult(null); }}>
+            <button className="btn-reset" onClick={() => { setForm({ incomeType: "salaried", period: "monthly", income: "", otherIncome: "", taxYear: DEFAULT_TAX_YEAR }); setResult(null); }}>
               Reset
             </button>
           </div>
 
+          {result && result.bands.length > 0 && (
+            <div className="calc-card fade-in" style={{ marginTop: 24 }}>
+              <h2>How your tax was worked out</h2>
+              <div style={{ overflowX: "auto" }}>
+                <table className="slab-table">
+                  <thead>
+                    <tr><th>Income band (Rs)</th><th>Rate</th><th>Tax on this band</th></tr>
+                  </thead>
+                  <tbody>
+                    {result.bands.map((b) => (
+                      <tr key={b.lower}>
+                        <td>{fmtPlain(b.lower)} – {fmtPlain(b.upper)}</td>
+                        <td>{b.rate === 0 ? "0%" : `${(b.rate * 100).toFixed(0)}%`}</td>
+                        <td>{fmt(b.tax)}</td>
+                      </tr>
+                    ))}
+                    {result.surcharge > 0 && (
+                      <tr><td>Surcharge (income above Rs 10m)</td><td>{result.isSalaried ? "9%" : "10%"} of tax</td><td>{fmt(result.surcharge)}</td></tr>
+                    )}
+                    <tr className="active-slab"><td><strong>Total annual tax</strong></td><td></td><td><strong>{fmt(result.total)}</strong></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           <div className="calc-card fade-in" style={{ marginTop: 24 }}>
-            <h2>Tax Slabs {yearLabel} — {form.incomeType === "salaried" ? "Salaried" : "Business"}</h2>
+            <h2>Tax Slabs {yearLabel.split(" —")[0]} — {form.incomeType === "salaried" ? "Salaried" : "Business / Non-Salaried"}</h2>
             <div style={{ overflowX: "auto" }}>
               <table className="slab-table">
                 <thead>
                   <tr>
-                    <th>Taxable Income (Rs)</th>
-                    <th>Rate</th>
-                    <th>Fixed Amount</th>
+                    <th>Taxable income per year (Rs)</th>
+                    <th>Tax</th>
                   </tr>
                 </thead>
                 <tbody>
                   {slabs.map((s, i) => {
                     const isActive = result && result.annual >= s.min && result.annual <= s.max;
+                    const base = s.min > 0 ? s.min - 1 : 0;
                     return (
                       <tr key={i} className={isActive ? "active-slab" : ""}>
                         <td>
-                          {fmtPlain(s.min)} – {s.max === Infinity ? "Above" : fmtPlain(s.max)}
+                          {s.min === 0 ? "Up to 600,000" : s.max === Infinity ? `Above ${fmtPlain(base)}` : `${fmtPlain(s.min)} – ${fmtPlain(s.max)}`}
                           {isActive && " ✓"}
                         </td>
-                        <td>{s.rate === 0 ? "Nil" : `${(s.rate * 100).toFixed(0)}%`}</td>
-                        <td>{s.fixed === 0 ? "—" : fmt(s.fixed)}</td>
+                        <td>
+                          {s.rate === 0 ? "0%" : `${s.fixed ? fmt(s.fixed) + " + " : ""}${(s.rate * 100).toFixed(0)}% of amount above Rs ${fmtPlain(base)}`}
+                        </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
             </div>
-            <p className="hint" style={{ marginTop: 12 }}>✓ Highlighted row is your applicable tax slab.</p>
-            {form.taxYear === "TY2027" && form.incomeType === "salaried" && (
-              <div style={{ marginTop: 12, padding: "10px 14px", background: "var(--g-50)", borderRadius: "var(--r-sm)", fontSize: "0.82rem", color: "var(--g-900)" }}>
-                🎉 <strong>Finance Bill 2026:</strong> Rates reduced above Rs 2.2m. 9% surcharge on income &gt; Rs 10m fully abolished. Effective July 1, 2026.
-              </div>
-            )}
+            <p className="hint" style={{ marginTop: 12 }}>
+              Full explanation and comparison with last year: <Link to="/blog/income-tax-slabs-2026">Income tax slabs 2026-27</Link>.
+            </p>
           </div>
         </div>
 
@@ -292,33 +239,29 @@ export default function IncomeTax({ navigate }) {
             {result ? (
               <>
                 <div className="result-header">
-                  <h3>Your Tax Summary</h3>
-                  <div className="result-main-amount">{form.period === "monthly" ? fmt(result.monthlyTax) : fmt(result.tax)}</div>
+                  <h3>Your Tax Summary ({yearShort(form.taxYear)})</h3>
+                  <div className="result-main-amount">{form.period === "monthly" ? fmt(result.monthlyTax) : fmt(result.total)}</div>
                   <div className="result-main-label">{form.period === "monthly" ? "Monthly Income Tax" : "Annual Income Tax"}</div>
                 </div>
                 <div className="result-body">
                   <div className="result-row">
-                    <span className="label">Gross Annual Income</span>
+                    <span className="label">Annual Taxable Income</span>
                     <span className="value">{fmt(result.annual)}</span>
                   </div>
                   <div className="result-row tax-row">
                     <span className="label">Annual Tax</span>
-                    <span className="value">{fmt(result.tax)}</span>
+                    <span className="value">{fmt(result.total)}</span>
                   </div>
                   <div className="result-row highlight">
-                    <span className="label">Net Annual Income</span>
+                    <span className="label">Annual Income After Tax</span>
                     <span className="value">{fmt(result.netAnnual)}</span>
-                  </div>
-                  <div className="result-row">
-                    <span className="label">Monthly Gross</span>
-                    <span className="value">{fmt(result.monthly)}</span>
                   </div>
                   <div className="result-row tax-row">
                     <span className="label">Monthly Tax</span>
                     <span className="value">{fmt(result.monthlyTax)}</span>
                   </div>
                   <div className="result-row highlight">
-                    <span className="label">Monthly Net Pay</span>
+                    <span className="label">Monthly Income After Tax</span>
                     <span className="value">{fmt(result.monthly - result.monthlyTax)}</span>
                   </div>
                   <div className="result-row">
@@ -326,8 +269,12 @@ export default function IncomeTax({ navigate }) {
                     <span className="value">{result.effectiveRate.toFixed(2)}%</span>
                   </div>
                   <div className="result-row">
-                    <span className="label">Marginal Rate</span>
-                    <span className="value">{(result.activeSlab.rate * 100).toFixed(0)}%</span>
+                    <span className="label">Marginal (Top) Rate</span>
+                    <span className="value">{(result.slab.rate * 100).toFixed(0)}%</span>
+                  </div>
+                  <div className="result-row">
+                    <span className="label">Same income in {yearShort(result.compareYear)}</span>
+                    <span className="value">{fmt(result.compareTotal)}/yr</span>
                   </div>
                 </div>
               </>
@@ -340,64 +287,81 @@ export default function IncomeTax({ navigate }) {
           </div>
 
           <div className="info-card">
-            <h4>📌 Important Notes</h4>
+            <h4>📌 Key points for 2026-27</h4>
             <ul>
-              <li>Tax slabs are for FY 2026-27 (Finance Bill 2026, effective July 2026)</li>
-              <li>Salaried persons pay lower rates than business/non-salaried income</li>
-              <li>File your return on <strong>IRIS portal</strong> by September 30, 2026</li>
-              <li>Being a filer reduces WHT on many transactions</li>
-              <li>9% surcharge on income &gt; Rs 10m abolished from TY2027</li>
+              <li>Tax Year 2027 covers income from 1 July 2026 to 30 June 2027</li>
+              <li>First Rs 600,000 a year is tax-free</li>
+              <li>Salaried top rate of 35% now starts above Rs 7 million</li>
+              <li>Surcharge on income above Rs 10 million abolished</li>
+              <li>Business slabs are unchanged from 2025-26</li>
             </ul>
           </div>
 
-          <div className="sidebar-card">
-            <h4>Related Calculators</h4>
-            <ul className="quick-link-list">
-              <li><a href="/salary" onClick={go("/salary")}>💼 Salary &amp; Deductions Calculator</a></li>
-              <li><a href="/withholding-tax" onClick={go("/withholding-tax")}>📋 Withholding Tax Calculator</a></li>
-              <li><a href="/zakat" onClick={go("/zakat")}>☪️ Zakat Calculator</a></li>
-            </ul>
-          </div>
+          <RelatedLinks
+            title="Related calculators & guides"
+            links={[
+              { to: "/salary", label: "💼 Take-home salary calculator" },
+              { to: "/blog/salary-tax-guide", label: "📊 Monthly salary tax table" },
+              { to: "/blog/income-tax-slabs-2026", label: "📑 Tax slabs 2026-27 explained" },
+              { to: "/freelancer-tax", label: "💻 Freelancer tax calculator" },
+              { to: "/withholding-tax", label: "📋 Withholding tax calculator" },
+              { to: "/blog/tax-return-deadline", label: "📅 Tax return last date" },
+            ]}
+          />
         </div>
       </div>
 
-      {/* ── Extra unique content: depth for ranking, not just a bare calculator ── */}
-      <section className="calc-grid-section">
-        <div className="section-eyebrow">How It Works</div>
-        <h2 className="section-title">How Income Tax Is Calculated in Pakistan</h2>
-        <p className="section-desc">
-          Pakistan uses a progressive income tax system: your income is split
-          across brackets, and each bracket is taxed at its own rate — not
-          your whole income at the top rate. FBR publishes separate slab
-          tables for salaried individuals and for business/self-employed
-          taxpayers, with salaried rates generally lower at the same income
-          level.
+      <ContentSection eyebrow="How it works" title="How income tax is calculated in Pakistan">
+        <p>
+          Pakistan taxes individuals progressively. Your yearly taxable income is split into bands,
+          and each band is taxed at its own rate — so moving into a higher slab only raises the tax on
+          the rupees inside that slab, never on your whole income. FBR publishes separate tables for
+          salaried individuals and for business and other non-salaried individuals.
+        </p>
+        <p className="formula">
+          Tax = fixed amount for your slab + slab rate × (income − slab starting point)
         </p>
 
-        <h3 style={{ marginTop: 24 }}>Salaried vs. business income</h3>
-        <p className="section-desc">
-          If more than 75% of your taxable income comes from salary, you're
-          taxed under the salaried slabs, which employers apply automatically
-          through monthly withholding. Business and self-employed income is
-          assessed under a separate, generally steeper, slab table and is
-          typically settled through annual filing rather than monthly
-          deduction.
+        <h3>Example 1: Rs 150,000 a month salary</h3>
+        <p>
+          Yearly salary is Rs 1,800,000, which falls in the Rs 1,200,001–2,200,000 slab:
+          Rs 6,000 + 11% × (1,800,000 − 1,200,000) = <strong>{fmt(ex1.total)} a year</strong>,
+          or <strong>{fmt(ex1.total / 12)} a month</strong>. That is an effective rate of {ex1.effectiveRate.toFixed(1)}%,
+          even though the top slab rate is 11%.
         </p>
 
-        <h3 style={{ marginTop: 24 }}>What Finance Bill 2026 changed</h3>
-        <p className="section-desc">
-          The FY 2026-27 budget reduced rates across most brackets above Rs
-          2.2 million, introduced a new 32% bracket for income between Rs 5.6
-          million and Rs 7 million, and abolished the 9% surcharge that
-          previously applied above Rs 10 million — the calculator above
-          reflects these changes automatically when you select TY2027.
+        <h3>Example 2: Rs 400,000 a month salary</h3>
+        <p>
+          Yearly salary is Rs 4,800,000, in the Rs 4,100,001–5,600,000 slab:
+          Rs 541,000 + 29% × (4,800,000 − 4,100,000) = <strong>{fmt(ex2.total)} a year</strong>
+          ({fmt(ex2.total / 12)} a month). Under the 2025-26 slabs the same salary paid {fmt(ex2old.total)},
+          so the 2026 budget saves this employee about {fmt(ex2old.total - ex2.total)} a year.
         </p>
 
-        <p className="reviewed-note" style={{ marginTop: 20, fontSize: "0.85rem", opacity: 0.7 }}>
-          Last reviewed: July 2026, against Finance Bill 2026 and FBR's published slab tables.
-          This tool gives an estimate for planning purposes and isn't a substitute for professional tax advice.
+        <h3>Salaried vs business income</h3>
+        <p>
+          If more than 75% of your taxable income is salary, the salaried slabs apply and your employer
+          deducts the tax monthly under Section 149. Shopkeepers, professionals, landlords with no salary,
+          and freelancers serving local clients use the non-salaried table, which starts at 15% and goes
+          up to 45%. Foreign IT export income is usually taxed separately at 0.25% or 1% — use the{" "}
+          <Link to="/freelancer-tax">freelancer tax calculator</Link> for that.
         </p>
-      </section>
+
+        <h3>What this calculator does not include</h3>
+        <ul>
+          <li>Income under the final tax regime — bank profit, dividends and prize bonds are taxed at source (see the <Link to="/withholding-tax">withholding tax calculator</Link>).</li>
+          <li>Tax credits for charitable donations, approved pension fund contributions and similar items, which reduce the final figure on your return.</li>
+          <li>Withholding tax already paid (e.g. on mobile bills or vehicle tokens), which is adjusted against your liability when you file.</li>
+        </ul>
+
+        <ReviewNote
+          updated={RATES_REVIEWED_ISO}
+          appliesTo="Tax Year 2027 (1 July 2026 – 30 June 2027) and Tax Year 2026"
+          sources={FBR_SOURCES}
+        />
+      </ContentSection>
+
+      <FaqSection faqs={faqs} title="Income tax questions" />
     </div>
   );
 }

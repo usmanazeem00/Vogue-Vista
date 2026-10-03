@@ -1,263 +1,122 @@
 import React from "react";
-import { Helmet } from "react-helmet-async";
-import { fmt, calcIncomeTax } from "../../utils/taxUtils";
+import { Link } from "../../lib/nav";
+import { ArticleLayout, FaqSection, Callout } from "../../components/Content";
+import { ROUTE_META } from "../../routeMeta";
+import { fmt, calcTaxBreakdown, EOBI_EMPLOYEE, EOBI_EMPLOYER, EOBI_WAGE_BASE } from "../../utils/taxUtils";
 
-// Worked examples shown in the table below. EOBI/PF/SESSI logic mirrors the
-// Salary Calculator page so the numbers stay consistent across the site.
-function buildExample(gross, { pf = false, pfPercent = 8.33, sessi = false } = {}) {
-  const eobiEmployee = Math.min(gross * 0.01, 370);
-  const pfAmount = pf ? gross * (pfPercent / 100) : 0;
-  const sessiEmployee = sessi ? gross * 0.01 : 0;
-  // Assume no separate medical/conveyance split for these illustrative examples —
-  // full gross is treated as taxable basic salary.
-  const annualTax = calcIncomeTax(gross * 12, true);
-  const monthlyTax = annualTax / 12;
-  const totalDeductions = monthlyTax + eobiEmployee + pfAmount + sessiEmployee;
-  const net = gross - totalDeductions;
-  return { gross, monthlyTax, eobiEmployee, pfAmount, sessiEmployee, totalDeductions, net };
+const META = ROUTE_META["/blog/salary-deduction-breakdown"];
+
+// Worked examples use the same rules as the Salary Calculator: basic salary is
+// two-thirds of gross, medical allowance is 10% of basic (fully tax-free), PF
+// is 8.33% of basic, EOBI is the flat employee share.
+function buildExample(gross) {
+  const basic = Math.round(gross * (2 / 3));
+  const medical = Math.round(basic * 0.1);
+  const taxable = gross - medical;
+  const monthlyTax = calcTaxBreakdown(taxable * 12, true).total / 12;
+  const pf = basic * 0.0833;
+  const total = monthlyTax + EOBI_EMPLOYEE + pf;
+  return { gross, basic, medical, monthlyTax, eobi: EOBI_EMPLOYEE, pf, total, net: gross - total };
 }
 
-const examples = [
-  { label: "Rs 100,000 / month", data: buildExample(100000, { pf: true, sessi: true }) },
-  { label: "Rs 150,000 / month", data: buildExample(150000, { pf: true, sessi: true }) },
-  { label: "Rs 300,000 / month", data: buildExample(300000, { pf: true, sessi: true }) },
-];
+const examples = [100000, 200000, 400000].map((g) => ({ label: `${fmt(g)} / month`, data: buildExample(g) }));
 
 const faqs = [
-  { q: "Why is my take-home pay so much lower than my offered salary?",
-    a: "The salary quoted in an offer letter is almost always the gross figure — before income tax, EOBI, Provident Fund, and social security are deducted. Depending on your income level and which optional deductions your employer runs, total deductions can range from roughly 3-4% at lower salaries to over 30% at higher salaries, mostly driven by income tax." },
-  { q: "Do all four deductions (tax, EOBI, PF, SESSI) apply to every salaried employee?",
-    a: "Income tax applies once your income exceeds the annual exemption threshold. EOBI is close to universal for formal-sector employees at registered establishments. Provident Fund depends entirely on your employer's own policy — it isn't a federal mandate. SESSI (Sindh) or PESSI (Punjab) applies if your employer is registered with the provincial social security institution." },
-  { q: "Which deduction is usually the largest?",
-    a: "For most salaried employees above roughly Rs 100,000/month, income tax is by far the largest deduction — EOBI is capped at Rs 370/month and SESSI/PESSI is roughly 1% of gross, while income tax scales up through FBR's slabs and can exceed 20-30% of gross at higher incomes." },
+  {
+    q: "Why is my take-home pay lower than the salary in my offer letter?",
+    a: "Offer letters usually quote gross salary. Income tax, your EOBI share and your provident fund contribution come out before pay reaches your account. At Rs 100,000 a month total deductions are small (around 6–7% with provident fund); at Rs 400,000 a month income tax alone takes around 14% of gross.",
+  },
+  {
+    q: "Which deductions apply to every salaried employee?",
+    a: "Income tax applies once your taxable salary is above Rs 50,000 a month. EOBI applies to most employees of registered private-sector establishments. Provident fund depends on your employer's fund rules. Provincial social security (PESSI, SESSI) is paid by the employer and isn't normally deducted from your pay.",
+  },
+  {
+    q: "Does provident fund reduce my income tax?",
+    a: "No. Your own provident fund contribution is paid out of taxable salary. The employer's contribution to a recognised fund is generally exempt up to a limit, and the fund is paid back to you with profit when you leave or retire.",
+  },
 ];
 
-export default function SalaryDeductionBreakdown({ navigate }) {
-  const pageUrl = "https://pktaxcalc.com/blog/salary-deduction-breakdown";
-
-  const go = (path) => (e) => {
-    e.preventDefault();
-    navigate(path);
-  };
-
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebPage",
-        "@id": pageUrl,
-        url: pageUrl,
-        name: "Salary Breakdown Pakistan 2026-27 — Tax + EOBI + PF + SESSI Explained",
-        description:
-          "See exactly how much tax, EOBI, Provident Fund and SESSI/PESSI take out of a Pakistani salary in 2026-27, with worked examples at Rs 100,000, 150,000 and 300,000.",
-        breadcrumb: {
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://pktaxcalc.com" },
-            { "@type": "ListItem", position: 2, name: "Salary Deduction Breakdown", item: pageUrl }
-          ]
-        }
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: faqs.map(f => ({
-          "@type": "Question",
-          name: f.q,
-          acceptedAnswer: { "@type": "Answer", text: f.a }
-        }))
-      }
-    ]
-  };
-
+export default function SalaryDeductionBreakdown() {
   return (
-    <>
-      <Helmet>
-        <title>Salary Breakdown Pakistan 2026-27 — Tax + EOBI + PF + SESSI</title>
-        <meta
-          name="description"
-          content="See exactly how tax, EOBI, Provident Fund and SESSI/PESSI combine to reduce a Pakistani salary in 2026-27, with worked examples at 3 income levels."
-        />
-        <link rel="canonical" href={pageUrl} />
-        <meta property="og:title" content="Salary Breakdown Pakistan 2026-27 — Tax + EOBI + PF + SESSI" />
-        <meta
-          property="og:description"
-          content="Full worked examples showing every deduction that comes out of a Pakistani payslip in 2026-27, together in one table."
-        />
-        <meta property="og:url" content={pageUrl} />
-        <meta property="og:type" content="article" />
-        <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
-      </Helmet>
+    <ArticleLayout
+      badge="Payslip · Tax Year 2027"
+      title="Salary Deductions in Pakistan 2026-27: Tax, EOBI and Provident Fund"
+      intro="What comes off a Pakistani payslip, why, and how much — with full worked examples at three salary levels."
+      updated={META.updated}
+      appliesTo="Salaries paid from July 2026 to June 2027"
+      sources={[
+        { label: "Finance Act 2026 — salaried income tax rates" },
+        { label: "Employees' Old-Age Benefits Institution (EOBI)", url: "https://www.eobi.gov.pk" },
+        { label: "Income Tax Ordinance 2001, Second Schedule (medical allowance exemption)" },
+      ]}
+      related={[
+        { to: "/salary", label: "Salary tax and take-home calculator" },
+        { to: "/blog/salary-tax-guide", label: "Monthly salary tax table" },
+        { to: "/blog/income-tax-slabs-2026", label: "Income tax slabs 2026-27" },
+        { to: "/blog/zakat-on-provident-fund-eobi", label: "Is Zakat due on provident fund?" },
+      ]}
+    >
+      <Callout>
+        <strong>In short:</strong> a typical Pakistani payslip has three deductions — income tax (by far the
+        largest above Rs 150,000 a month), a flat EOBI contribution of Rs {EOBI_EMPLOYEE.toLocaleString("en-PK")}{" "}
+        and, if your employer runs one, provident fund of around 8.33% of basic salary.
+      </Callout>
 
-      <nav aria-label="Breadcrumb" className="breadcrumb-nav">
-        <a href="/" onClick={go("/")}>Home</a>
-        <span aria-hidden="true"> / </span>
-        <a href="/blogs" onClick={go("/blogs")}>Guides</a>
-        <span aria-hidden="true"> / </span>
-        <span>Salary Deduction Breakdown</span>
-      </nav>
-
-      <style>{`
-        .breadcrumb-nav {
-          background: var(--brand-dark, #0e3b2c);
-          padding: 10px 24px;
-          font-size: 0.85rem;
-          color: rgba(255, 255, 255, 0.65);
-        }
-        .breadcrumb-nav a {
-          color: rgba(255, 255, 255, 0.85);
-          text-decoration: none;
-        }
-        .breadcrumb-nav a:hover {
-          text-decoration: underline;
-        }
-      `}</style>
-
-      <section className="page-hero">
-        <div className="page-hero-inner">
-          <div className="hero-badge">FY 2026-27 · Worked Examples</div>
-          <h1>Salary Breakdown Pakistan 2026-27: Tax, EOBI, PF & SESSI Together</h1>
-          <p>
-            Most guides explain income tax, EOBI, and Provident Fund one at a time. Here's what
-            happens when all four deductions hit the same payslip — with real numbers.
-          </p>
-        </div>
-      </section>
-
-      <div className="container" style={{ padding: "60px 24px" }}>
-        <div className="calc-card">
-          <h2>Why Your Payslip Looks Smaller Than Your Offer Letter</h2>
-          <p>
-            A salary offer of Rs 150,000 a month rarely means Rs 150,000 lands in your account.
-            Between income tax, EOBI, Provident Fund, and SESSI/PESSI, several separate deductions
-            stack on top of each other — and most articles explain only one at a time, which makes
-            it hard to see the full picture. Below are worked examples at three common salary
-            levels, assuming EOBI, a 1% social security contribution, and an 8.33% Provident Fund
-            are all active — adjust the assumptions in the calculator link below to match your own
-            payslip.
-          </p>
-        </div>
-
-        <div className="calc-card">
-          <h2>Worked Examples: Full Deduction Breakdown</h2>
-          <div style={{ overflowX: "auto" }}>
-            <table className="slab-table">
-              <thead>
-                <tr>
-                  <th>Component</th>
-                  {examples.map(ex => <th key={ex.label}>{ex.label}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Gross Salary</td>
-                  {examples.map(ex => <td key={ex.label}>{fmt(ex.data.gross)}</td>)}
-                </tr>
-                <tr>
-                  <td style={{ color: "var(--red-600)" }}>Income Tax</td>
-                  {examples.map(ex => <td key={ex.label} style={{ color: "var(--red-600)" }}>- {fmt(ex.data.monthlyTax)}</td>)}
-                </tr>
-                <tr>
-                  <td>EOBI (Employee)</td>
-                  {examples.map(ex => <td key={ex.label}>- {fmt(ex.data.eobiEmployee)}</td>)}
-                </tr>
-                <tr>
-                  <td>Provident Fund (8.33%)</td>
-                  {examples.map(ex => <td key={ex.label}>- {fmt(ex.data.pfAmount)}</td>)}
-                </tr>
-                <tr>
-                  <td>Social Security (~1%)</td>
-                  {examples.map(ex => <td key={ex.label}>- {fmt(ex.data.sessiEmployee)}</td>)}
-                </tr>
-                <tr className="active-slab">
-                  <td><strong>Net Take-Home</strong></td>
-                  {examples.map(ex => <td key={ex.label}><strong>{fmt(ex.data.net)}</strong></td>)}
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p className="hint" style={{ marginTop: 12 }}>
-            Figures assume medical and conveyance allowances aren't split out separately — if your
-            payslip breaks those out, your actual tax will usually be slightly lower.
-          </p>
-        </div>
-
-        <div className="calc-card">
-          <h2>What Each Deduction Actually Pays For</h2>
-          <p>
-            <strong>Income tax</strong> is the only deduction that scales sharply with income — it's
-            calculated on FBR's progressive slabs for FY 2026-27 and is usually the single biggest
-            line item once gross salary passes roughly Rs 100,000-150,000 a month.
-          </p>
-          <p>
-            <strong>EOBI</strong> (Employees' Old-Age Benefits Institution) deducts 1% of wages from
-            you, capped at Rs 370/month, funding a government pension you can draw at retirement —
-            your employer adds a further 5%, capped at Rs 1,850/month, which doesn't come out of
-            your pay.
-          </p>
-          <p>
-            <strong>Provident Fund</strong> isn't set by law — it's a retirement savings benefit your
-            employer chooses to offer, usually matching your own contribution of 5-12% of basic
-            salary.
-          </p>
-          <p>
-            <strong>SESSI/PESSI</strong> (provincial social security) deducts roughly 1% of gross
-            salary in exchange for medical and injury benefit coverage, if your employer is
-            registered with the scheme.
-          </p>
-        </div>
-
-        <div className="calc-card">
-          <h2>See Your Own Numbers</h2>
-          <p>
-            These examples use standard assumptions — your actual deductions depend on your specific
-            allowances, employer's PF policy, and province. Use our{" "}
-            <a href="/salary" onClick={go("/salary")}>
-              <strong>Salary Calculator</strong>
-            </a>{" "}
-            to enter your exact gross salary, allowances, and which deductions apply to you, and get
-            your precise take-home pay instantly.
-          </p>
-        </div>
-
-        <div className="calc-card">
-          <h2>FAQ</h2>
-          {faqs.map((f, i) => (
-            <div key={i} style={{ marginBottom: 20 }} itemScope itemType="https://schema.org/Question">
-              <h3 itemProp="name" style={{ fontSize: "1.05rem" }}>{f.q}</h3>
-              <p itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
-                <span itemProp="text">{f.a}</span>
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <div className="calc-card">
-          <h2>Related Guides</h2>
-          <ul className="related-links">
-            <li>
-              <a href="/blog/salary-tax-guide" onClick={go("/blog/salary-tax-guide")}>
-                How to Calculate Salary Tax in Pakistan
-              </a>
-            </li>
-            <li>
-              <a href="/blog/income-tax-slabs-2026" onClick={go("/blog/income-tax-slabs-2026")}>
-                Income Tax Slabs Pakistan FY 2026-27
-              </a>
-            </li>
-            <li>
-              <a href="/blog/become-filer" onClick={go("/blog/become-filer")}>
-                How to Become a Filer in Pakistan
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <p className="reviewed-note" style={{ marginTop: 20, fontSize: "0.85rem", opacity: 0.7 }}>
-          Last reviewed: July 2026, against Finance Bill 2026, FBR's published slab tables, and
-          current EOBI/PESSI/SESSI contribution rates. This article gives an estimate for planning
-          purposes and isn't a substitute for professional payroll or tax advice.
-        </p>
+      <h2>Worked examples</h2>
+      <p>
+        Assumptions: basic salary is two-thirds of gross (a common split), medical allowance is 10% of basic
+        and fully tax-free, provident fund is 8.33% of basic, and EOBI applies.
+      </p>
+      <div className="table-wrap">
+        <table className="slab-table">
+          <thead>
+            <tr><th>Component</th>{examples.map(ex => <th key={ex.label}>{ex.label}</th>)}</tr>
+          </thead>
+          <tbody>
+            <tr><td>Gross salary</td>{examples.map(ex => <td key={ex.label}>{fmt(ex.data.gross)}</td>)}</tr>
+            <tr><td>of which basic</td>{examples.map(ex => <td key={ex.label}>{fmt(ex.data.basic)}</td>)}</tr>
+            <tr><td>Income tax</td>{examples.map(ex => <td key={ex.label}>- {fmt(ex.data.monthlyTax)}</td>)}</tr>
+            <tr><td>EOBI (employee)</td>{examples.map(ex => <td key={ex.label}>- {fmt(ex.data.eobi)}</td>)}</tr>
+            <tr><td>Provident fund (8.33% of basic)</td>{examples.map(ex => <td key={ex.label}>- {fmt(ex.data.pf)}</td>)}</tr>
+            <tr className="active-slab"><td><strong>Take-home</strong></td>{examples.map(ex => <td key={ex.label}><strong>{fmt(ex.data.net)}</strong></td>)}</tr>
+            <tr><td>Deductions as % of gross</td>{examples.map(ex => <td key={ex.label}>{((ex.data.total / ex.data.gross) * 100).toFixed(1)}%</td>)}</tr>
+          </tbody>
+        </table>
       </div>
-    </>
+      <p>
+        Your own split of basic and allowances will differ — enter your payslip figures in the{" "}
+        <Link to="/salary">salary calculator</Link> for an exact result.
+      </p>
+
+      <h2>What each deduction is</h2>
+      <h3>Income tax</h3>
+      <p>
+        Your employer works out your yearly tax from the <Link to="/blog/income-tax-slabs-2026">2026-27
+        salaried slabs</Link> and deducts one-twelfth each month (Section 149). It is the only deduction that
+        grows quickly with salary. Medical allowance up to 10% of basic is tax-free, which is why the split
+        between basic and allowances matters.
+      </p>
+      <h3>EOBI</h3>
+      <p>
+        The Employees' Old-Age Benefits Institution runs a pension scheme for private-sector workers.
+        Contributions are worked out on the minimum wage, not your actual pay: 1% from you
+        (Rs {EOBI_EMPLOYEE.toLocaleString("en-PK")} a month on a Rs {EOBI_WAGE_BASE.toLocaleString("en-PK")} minimum
+        wage) and 5% from your employer (Rs {EOBI_EMPLOYER.toLocaleString("en-PK")}). The amount changes when
+        the minimum wage is revised.
+      </p>
+      <h3>Provident fund</h3>
+      <p>
+        Provident fund isn't required by law for most private employers. Where it exists, the fund rules set
+        the contribution — commonly 8.33% or 10% of basic salary from you, matched by the employer. It is your
+        savings, paid out with profit when you leave or retire.
+      </p>
+      <h3>Provincial social security</h3>
+      <p>
+        PESSI (Punjab), SESSI (Sindh) and similar provincial schemes provide medical and injury benefits to
+        covered workers. Contributions are paid by the employer and are not normally deducted from your salary.
+      </p>
+
+      <FaqSection faqs={faqs} title="Payslip questions" />
+    </ArticleLayout>
   );
 }

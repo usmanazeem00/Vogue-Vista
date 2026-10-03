@@ -1,76 +1,72 @@
-import React, { useState,useRef } from "react";
-import { Helmet } from "react-helmet-async";
-import AdSlot from "../components/AdSlot";
-import { fmt, calcIncomeTax, DEFAULT_TAX_YEAR } from "../utils/taxUtils";
+import React, { useState, useRef } from "react";
+import {
+  fmt, calcTaxBreakdown, DEFAULT_TAX_YEAR, SILVER_RATE_PER_TOLA, GOLD_RATE_PER_TOLA, METAL_RATES_DATE,
+} from "../utils/taxUtils";
+import { Link } from "../lib/nav";
+import { JsonLd, SITE_URL, SITE_NAME } from "../lib/seo";
+import { FaqSection } from "../components/Content";
 
 const calcs = [
-  { icon: "🧾", title: "Income Tax Calculator", path: "/income-tax", type: "tax",   badge: "FBR 2026-27", desc: "Calculate your annual income tax based on Finance Bill 2026 slabs. Covers salaried & business income." },
-  { icon: "☪️", title: "Zakat Calculator",       path: "/zakat",       type: "zakat", badge: "Nisab 2026",   desc: "Zakat on cash, savings, stocks, gold, silver and receivables — with Nisab check included." },
-  { icon: "📱", title: "SIM Load Tax",           path: "/sim-load-tax", type: "sim",   badge: "Mobile Recharge", desc: "Calculate mobile load tax in Pakistan including advance tax and service tax for Jazz, Zong, Ufone and Telenor." },
-  { icon: "💼", title: "Salary Calculator",      path: "/salary",      type: "salary",badge: "Net Pay",      desc: "Your exact take-home after income tax, EOBI, SESSI and provident fund. Monthly + annual view." },
-  { 
-    icon: "🏆", 
-    title: "Prize Bond Tax", 
-    path: "/prize-bond-tax", 
-    type: "prize-bond", 
-    badge: "Prize Bond Tax", 
-    desc: "Calculate FBR withholding tax deductions on national prize bond winnings. Instantly compare net take-home cash payouts." 
-  },
-  { icon: "🥇", title: "Gold Zakat",             path: "/gold-zakat",  type: "gold",  badge: "Live Rate",    desc: "Zakat on gold jewellery, coins and bars. Supports 24K, 22K, 21K, 18K purity in grams or tola." },
-  { icon: "🥈", title: "Silver Zakat",           path: "/silver-zakat",type: "silver",badge: "Live Rate",    desc: "Calculate Zakat on silver with current Sarafa rate. Uses the most conservative Nisab threshold." },
-  { icon: "🏦", title: "Bank Profit",            path: "/bank-interest",type:"bank",  badge: "All Banks",    desc: "Calculate profit on savings & term deposits for HBL, MCB, UBL, Meezan and more. WHT included." },
-  { icon: "📋", title: "Withholding Tax",        path: "/withholding-tax",type:"wht", badge: "23 Categories",desc: "WHT on contracts, rent, dividends, property, exports, freelance and more — filer vs non-filer." },
-  { icon: "💻", title: "Freelancer Tax",         path: "/freelancer-tax", type: "freelancer", badge: "Section 154A", desc: "Calculate your Upwork, Fiverr and Payoneer tax — PSEB 0.25% vs non-PSEB 1%, plus local client income." },
+  { icon: "🧾", title: "Income Tax Calculator",   path: "/income-tax",      type: "tax",        badge: "2026-27 slabs",  desc: "Yearly and monthly income tax for salaried and business individuals, with the slab-by-slab working." },
+  { icon: "💼", title: "Salary Tax Calculator",   path: "/salary",          type: "salary",     badge: "Take-home pay",  desc: "Tax your employer should deduct each month, and take-home pay after EOBI and provident fund." },
+  { icon: "☪️", title: "Zakat Calculator",        path: "/zakat",           type: "zakat",      badge: "Nisab check",    desc: "Zakat on cash, bank balances, gold, silver, shares and business stock, minus debts due now." },
+  { icon: "🥇", title: "Gold Zakat",              path: "/gold-zakat",      type: "gold",       badge: "Tola & grams",   desc: "Zakat on gold jewellery, coins and bars for 24K, 22K, 21K and 18K at today's Sarafa rate." },
+  { icon: "🥈", title: "Silver Zakat",            path: "/silver-zakat",    type: "silver",     badge: "52.5 tola",      desc: "Zakat on silver and the silver Nisab in rupees, the threshold most used for savings." },
+  { icon: "💻", title: "Freelancer Tax",          path: "/freelancer-tax",  type: "freelancer", badge: "Section 154A",   desc: "Tax on Upwork, Fiverr and foreign-client income: 0.25% with PSEB, 1% without, plus local income." },
+  { icon: "🏦", title: "Bank Profit",             path: "/bank-interest",   type: "bank",       badge: "15% / 30% WHT",  desc: "Profit on savings accounts and term deposits after withholding tax for filers and non-filers." },
+  { icon: "📋", title: "Withholding Tax",         path: "/withholding-tax", type: "wht",        badge: "Filer vs non-filer", desc: "WHT on bank profit, dividends, property, cash withdrawals, contracts and IT exports." },
+  { icon: "🏆", title: "Prize Bond Tax",          path: "/prize-bond-tax",  type: "prize-bond", badge: "Section 156",    desc: "Tax deducted from prize bond winnings and the net cash you receive." },
+  { icon: "📱", title: "Mobile Load Tax",         path: "/sim-load-tax",    type: "sim",        badge: "Rs 100 = ?",     desc: "Balance credited on a Jazz, Zong, Ufone or Telenor recharge after tax." },
 ];
 
-const blogPosts = [
-  { title: "Income Tax Slabs Pakistan FY 2026-27", path: "/blog/income-tax-slabs-2026" },
-  { title: "How to Become a Filer in Pakistan", path: "/blog/become-filer" },
-  { title: "How to Calculate Salary Tax", path: "/blog/salary-tax-guide" }
+const guides = [
+  { title: "Income Tax Slabs 2026-27", path: "/blog/income-tax-slabs-2026", desc: "Salaried and business slabs for Tax Year 2027 and what changed." },
+  { title: "Tax on Salary: Monthly Table", path: "/blog/salary-tax-guide", desc: "Tax on salaries from Rs 50,000 to Rs 1,000,000 a month." },
+  { title: "Tax Return Last Date 2026", path: "/blog/tax-return-deadline", desc: "Deadline extended to 15 October 2026 — what you need to know." },
+  { title: "Zakat Nisab 2026", path: "/blog/zakat-nisab", desc: "Gold and silver Nisab in rupees, and which to use." },
+  { title: "How to Become a Filer", path: "/blog/become-filer", desc: "Register on IRIS and join the Active Taxpayers List." },
+  { title: "Filer vs Non-Filer", path: "/blog/filer-vs-non-filer", desc: "What non-filers pay extra on banking, property and more." },
 ];
+
+const silverNisab = 52.5 * SILVER_RATE_PER_TOLA;
+const goldNisab = 7.5 * GOLD_RATE_PER_TOLA;
 
 const faqs = [
-  { q: "What is the income tax threshold in Pakistan for 2026-27?",
-    a: "Income up to Rs 600,000 per year remains fully exempt. Finance Bill 2026 then applies reduced progressive rates: 1% up to 1.2m, 11% up to 2.2m, 20% up to 3.2m, 25% up to 4.1m, 29% up to 5.6m, 32% up to 7m, and 35% above 7m. The 9% surcharge on income above Rs 10 million has been fully abolished." },
-  { q: "What is the Nisab for Zakat in Pakistan 2026?",
-    a: "Nisab can be calculated using gold (87.48g / 7.5 tola) or silver (612.36g / 52.5 tola). Silver Nisab is recommended by most scholars as it's lower and more inclusive — at current 2026 rates approximately Rs 195,000–200,000. Once your net Zakatable assets reach Nisab and one lunar year has passed, 2.5% Zakat is due." },
-  { q: "What changed in Budget 2026-27 for salaried people?",
-    a: "Finance Bill 2026 (announced June 12, 2026) brought the biggest salary tax relief in years: rates cut for all brackets above Rs 2.2m, a new 32% bracket added for Rs 5.6m–7m, and the 9% surcharge on high earners abolished. Property WHT for buyers also dropped from 2.5% to 1.25%." },
-  { q: "Do I need to file an income tax return in Pakistan?",
-    a: "Yes — if your annual income exceeds Rs 600,000, you must file a return on the FBR IRIS portal. Deadline is September 30, 2026. Being a 'filer' on the Active Taxpayer List gives you significantly lower withholding tax rates on banking, property, dividends and dozens of other transactions." },
-  { q: "Is bank profit (interest) halal in Pakistan?",
-    a: "Conventional bank interest (Sood) is generally considered impermissible in Islam. Many Pakistani banks now offer Sharia-compliant Mudarabah profit-sharing accounts. Meezan Bank, Bank Islami, Dubai Islamic Bank and others operate fully on Islamic finance principles. Consult a qualified Islamic scholar for your specific situation." },
-  { q: "How is Zakat calculated on gold jewellery?",
-    a: "If your gold (combined with other Zakatable assets) reaches Nisab (87.48g of pure gold equivalent) and one lunar year has passed, 2.5% of the total market value is due as Zakat. Our Gold Zakat calculator supports all purities (18K–24K) and lets you enter today's Sarafa rate." },
+  {
+    q: "How much income is tax-free in Pakistan in 2026-27?",
+    a: "The first Rs 600,000 of taxable income a year (Rs 50,000 a month) is tax-free for salaried and business individuals. Salaried income above that is taxed at 1% up to Rs 1.2m, 11% up to Rs 2.2m, 20% up to Rs 3.2m, 25% up to Rs 4.1m, 29% up to Rs 5.6m, 32% up to Rs 7m and 35% above Rs 7m, each on the part of income inside that band.",
+  },
+  {
+    q: "What changed in Budget 2026-27 for salaried people?",
+    a: "Finance Act 2026 cut the rates on salaried income above Rs 2.2 million, added a 29% band and a new 32% band so the 35% rate starts only above Rs 7 million, and abolished the surcharge on income above Rs 10 million. Rates up to Rs 2.2 million did not change.",
+  },
+  {
+    q: "What is the Zakat Nisab in Pakistan in 2026?",
+    a: `Nisab is 52.5 tola (612.36 g) of silver or 7.5 tola (87.48 g) of gold. At Sarafa rates of ${METAL_RATES_DATE} that is about ${fmt(silverNisab)} (silver) or ${fmt(goldNisab)} (gold). Most scholars in Pakistan advise the silver Nisab for cash and savings. Zakat is 2.5% of net Zakatable wealth.`,
+  },
+  {
+    q: "What is the last date to file the 2026 tax return?",
+    a: "FBR extended the deadline for Tax Year 2026 returns from 30 September to 15 October 2026 for salaried and other individuals and AOPs. Filing late means a penalty and a Rs 25,000 surcharge to get back on the Active Taxpayers List.",
+  },
+  {
+    q: "Are these calculators official FBR tools?",
+    a: "No. PK Tax Calc is an independent website and is not affiliated with FBR or any government body. We follow the Finance Act and FBR publications and show the date each page was last checked, but you should confirm important figures on FBR's website or with a tax adviser.",
+  },
 ];
 
-export default function Home({ navigate }) {
-  const [openFaq, setOpenFaq] = useState(null);
-
-  // ── Quick upfront income tax calculator (homepage) ──
+export default function Home() {
   const [qIncome, setQIncome] = useState("");
   const [qPeriod, setQPeriod] = useState("monthly");
   const [qType, setQType] = useState("salaried");
   const [qResult, setQResult] = useState(null);
   const resultRef = useRef(null);
 
-  // Helper to keep SPA navigation working while still rendering a real
-  // <a href> so crawlers can discover and follow the link.
-  const go = (path) => (e) => {
-    e.preventDefault();
-    navigate(path);
-  };
-
   const quickCalculate = () => {
     let annual = parseFloat(String(qIncome).replace(/,/g, "")) || 0;
     if (qPeriod === "monthly") annual = annual * 12;
-    const isSalaried = qType === "salaried";
-    const tax = calcIncomeTax(annual, isSalaried, DEFAULT_TAX_YEAR);
-    const monthlyTax = tax / 12;
-    const netAnnual = annual - tax;
-    const monthly = netAnnual / 12;
-    setQResult({ annual, tax, monthlyTax, netAnnual,monthly });
-        setTimeout(() => {
+    const { total } = calcTaxBreakdown(annual, qType === "salaried", DEFAULT_TAX_YEAR);
+    setQResult({ annual, tax: total, monthlyTax: total / 12, netAnnual: annual - total, monthly: (annual - total) / 12 });
+    setTimeout(() => {
       if (window.innerWidth <= 768 && resultRef.current) {
         const y = resultRef.current.getBoundingClientRect().top + window.pageYOffset - 80;
         window.scrollTo({ top: y, behavior: "smooth" });
@@ -78,103 +74,47 @@ export default function Home({ navigate }) {
     }, 100);
   };
 
-  const structuredData = {
+  const siteSchema = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebSite",
-        "@id": "https://pktaxcalc.com/#website",
-        url: "https://pktaxcalc.com/",
-        name: "PkTaxCalc — Pakistan Tax & Zakat Calculators",
-        description:
-          "Free income tax, Zakat, salary and withholding tax calculators for Pakistan, updated for FY 2026-27.",
-        potentialAction: {
-          "@type": "SearchAction",
-          target: "https://pktaxcalc.com/search?q={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
+        "@id": `${SITE_URL}/#website`,
+        url: `${SITE_URL}/`,
+        name: SITE_NAME,
+        inLanguage: "en-PK",
+        publisher: { "@id": `${SITE_URL}/#organization` },
       },
       {
-        "@type": "WebPage",
-        "@id": "https://pktaxcalc.com/",
-        url: "https://pktaxcalc.com/",
-        name: "Pakistan Tax & Zakat Calculators 2026-27 | PkTaxCalc",
-        description:
-          "Free calculators for income tax, Zakat, salary and withholding tax in Pakistan — updated for FY 2026-27. No signup needed.",
-        isPartOf: { "@id": "https://pktaxcalc.com/#website" }
+        "@type": "Organization",
+        "@id": `${SITE_URL}/#organization`,
+        name: SITE_NAME,
+        url: `${SITE_URL}/`,
+        email: "hello.pktaxcalc@gmail.com",
       },
-      {
-        "@type": "ItemList",
-        itemListElement: calcs.map((c, i) => ({
-          "@type": "ListItem",
-          position: i + 1,
-          name: c.title,
-          url: `https://pktaxcalc.com${c.path}`
-        }))
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: faqs.map((f) => ({
-          "@type": "Question",
-          name: f.q,
-          acceptedAnswer: { "@type": "Answer", text: f.a }
-        }))
-      }
-    ]
+    ],
   };
 
   return (
     <div>
-      <Helmet>
-        <title>Pakistan Tax & Zakat Calculators 2026-27 | PkTaxCalc</title>
-        <meta
-          name="description"
-          content="Free calculators for income tax, Zakat, salary and withholding tax in Pakistan — updated for FY 2026-27. No signup needed."
-        />
-        <link rel="canonical" href="https://pktaxcalc.com/" />
-        <meta property="og:title" content="Pakistan Tax & Zakat Calculators 2026-27 | PkTaxCalc" />
-        <meta
-          property="og:description"
-          content="Free calculators for income tax, Zakat, salary and withholding tax in Pakistan — updated for FY 2026-27."
-        />
-        <meta property="og:url" content="https://pktaxcalc.com/" />
-        <meta property="og:type" content="website" />
-        <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
-      </Helmet>
+      <JsonLd data={siteSchema} />
 
-      {/* Scoped override to bring the hero down to a reasonable size without
-          touching the shared stylesheet (which may set .home-hero elsewhere) */}
+      {/* Scoped override to keep the hero compact without touching the shared stylesheet */}
       <style>{`
-        .home-hero {
-          padding: 40px 20px 28px !important;
-          min-height: 0 !important;
-        }
-        .home-hero-inner h1 {
-          font-size: clamp(1.5rem, 4vw, 2.1rem) !important;
-          line-height: 1.25 !important;
-          margin-bottom: 10px !important;
-        }
-        .home-hero-inner p {
-          font-size: 1rem !important;
-          margin-bottom: 18px !important;
-        }
-        .hero-stats {
-          margin-top: 16px !important;
-          gap: 12px !important;
-        }
-        .hero-stat .stat-val {
-          font-size: 1.3rem !important;
-        }
+        .home-hero { padding: 40px 20px 28px !important; min-height: 0 !important; }
+        .home-hero-inner h1 { font-size: clamp(1.5rem, 4vw, 2.1rem) !important; line-height: 1.25 !important; margin-bottom: 10px !important; }
+        .home-hero-inner p { font-size: 1rem !important; margin-bottom: 18px !important; }
+        .hero-stats { margin-top: 16px !important; gap: 12px !important; }
+        .hero-stat .stat-val { font-size: 1.3rem !important; }
       `}</style>
 
-      {/* ── HERO (single H1 lives here) ── */}
       <section className="home-hero">
         <div className="home-hero-inner">
-          <div className="hero-pill">Finance Bill 2026 · Official Slabs · Free</div>
-          <h1>Pakistan's Free Tax & Zakat Calculators — FY 2026-27</h1>
-          <p>Accurate income tax, Zakat, salary and withholding tax calculations for FY 2026-27. No account required.</p>
+          <div className="hero-pill">Finance Act 2026 · Tax Year 2027 · Free</div>
+          <h1>Pakistan Tax & Zakat Calculators for 2026-27</h1>
+          <p>Work out income tax on your salary, take-home pay, Zakat and withholding tax using the current FBR rates. No sign-up, and nothing you enter leaves your browser.</p>
           <div className="hero-stats">
-            {[["9","Calculators"],["2.5%","Zakat Rate"],["FY 26-27","Tax Year"],["100%","Free"]].map(([v,l]) => (
+            {[["10", "Calculators"], ["Rs 600k", "Tax-free limit"], ["2.5%", "Zakat rate"], ["2026-27", "Tax year"]].map(([v, l]) => (
               <div className="hero-stat" key={l}>
                 <span className="stat-val">{v}</span>
                 <span className="stat-lbl">{l}</span>
@@ -184,30 +124,32 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
-      {/* ── UPFRONT QUICK CALCULATOR — no click-through needed ── */}
+      {/* ── Quick calculator — answers the most common query without a click ── */}
       <section className="calc-layout" style={{ marginTop: -20 }}>
         <div>
           <div className="calc-card fade-in">
             <h2>Quick Income Tax Calculator</h2>
             <p className="section-desc" style={{ marginTop: -8, marginBottom: 16 }}>
-              Enter your salary below to see your tax instantly — no need to open another page.
+              Enter your salary to see your 2026-27 tax instantly.
             </p>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Income Period</label>
-                <select value={qPeriod} onChange={(e) => setQPeriod(e.target.value)}>
+                <label htmlFor="q-period">Income Period</label>
+                <select id="q-period" value={qPeriod} onChange={(e) => setQPeriod(e.target.value)}>
                   <option value="monthly">Monthly</option>
                   <option value="annual">Annual (Yearly)</option>
                 </select>
               </div>
               <div className="form-group">
-                <label>{qType === "salaried" ? "Gross Salary" : "Business Income"} (Rs)</label>
+                <label htmlFor="q-income">{qType === "salaried" ? "Taxable Salary" : "Business Income"} (Rs)</label>
                 <div className="input-prefix">
                   <span>Rs</span>
                   <input
+                    id="q-income"
                     type="number"
-                    placeholder={qPeriod === "monthly" ? "e.g. 150,000" : "e.g. 1,800,000"}
+                    inputMode="numeric"
+                    placeholder={qPeriod === "monthly" ? "e.g. 150000" : "e.g. 1800000"}
                     value={qIncome}
                     onChange={(e) => setQIncome(e.target.value)}
                   />
@@ -220,13 +162,7 @@ export default function Home({ navigate }) {
               <div className="radio-group">
                 {[["salaried", "👔 Salaried"], ["business", "🏪 Business / Self-Employed"]].map(([v, l]) => (
                   <label key={v} className="radio-option">
-                    <input
-                      type="radio"
-                      name="qIncomeType"
-                      value={v}
-                      checked={qType === v}
-                      onChange={() => setQType(v)}
-                    />
+                    <input type="radio" name="qIncomeType" value={v} checked={qType === v} onChange={() => setQType(v)} />
                     {l}
                   </label>
                 ))}
@@ -234,18 +170,11 @@ export default function Home({ navigate }) {
             </div>
 
             <button className="btn-calc" onClick={quickCalculate}>Calculate Tax →</button>
-            <button
-              className="btn-reset"
-              onClick={() => { setQIncome(""); setQResult(null); }}
-            >
-              Reset
-            </button>
+            <button className="btn-reset" onClick={() => { setQIncome(""); setQResult(null); }}>Reset</button>
 
             <p style={{ marginTop: 14 }}>
-              Need monthly slab breakdowns, EOBI/SESSI deductions, or multiple tax years?{" "}
-              <a href="/income-tax" onClick={go("/income-tax")}>
-                Open the full Income Tax Calculator →
-              </a>
+              Want the slab-by-slab working or a 2025-26 comparison?{" "}
+              <Link to="/income-tax">Open the full income tax calculator →</Link>
             </p>
           </div>
         </div>
@@ -255,7 +184,7 @@ export default function Home({ navigate }) {
             {qResult ? (
               <>
                 <div className="result-header">
-                  <h3>Estimated Tax</h3>
+                  <h3>Estimated Tax (2026-27)</h3>
                   <div className="result-main-amount">
                     {qPeriod === "monthly" ? fmt(qResult.monthlyTax) : fmt(qResult.tax)}
                   </div>
@@ -264,22 +193,10 @@ export default function Home({ navigate }) {
                   </div>
                 </div>
                 <div className="result-body">
-                    <div className="result-row highlight">
-                    <span className="label">Monthly Income After Tax</span>
-                    <span className="value">{fmt(qResult.monthly)}</span>
-                  </div>
-                  <div className="result-row">
-                    <span className="label">Gross Annual Income</span>
-                    <span className="value">{fmt(qResult.annual)}</span>
-                  </div>
-                  <div className="result-row tax-row">
-                    <span className="label">Annual Tax</span>
-                    <span className="value">{fmt(qResult.tax)}</span>
-                  </div>
-                  <div className="result-row highlight">
-                    <span className="label">Net Annual Income</span>
-                    <span className="value">{fmt(qResult.netAnnual)}</span>
-                  </div>
+                  <div className="result-row highlight"><span className="label">Monthly Income After Tax</span><span className="value">{fmt(qResult.monthly)}</span></div>
+                  <div className="result-row"><span className="label">Annual Income</span><span className="value">{fmt(qResult.annual)}</span></div>
+                  <div className="result-row tax-row"><span className="label">Annual Tax</span><span className="value">{fmt(qResult.tax)}</span></div>
+                  <div className="result-row highlight"><span className="label">Annual Income After Tax</span><span className="value">{fmt(qResult.netAnnual)}</span></div>
                 </div>
               </>
             ) : (
@@ -292,95 +209,51 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
-      {/* ── TOP AD ── */}
-      {/* <div className="container">
-        <AdSlot size="responsive" className="ad-slot-728" />
-      </div> */}
-
-      {/* ── CALC GRID ── */}
       <section className="calc-grid-section">
         <div className="section-eyebrow">All Calculators</div>
-        <h2 className="section-title">What else do you want to calculate?</h2>
-        <p className="section-desc">Free, private and accurate. Results appear instantly in your browser — nothing is stored.</p>
+        <h2 className="section-title">What do you want to calculate?</h2>
+        <p className="section-desc">Every calculator runs in your browser — nothing you enter is sent or stored.</p>
         <div className="calc-grid">
           {calcs.map(c => (
-            <a
-              key={c.path}
-              href={c.path}
-              className={`calc-tile ${c.type}`}
-              onClick={go(c.path)}
-            >
+            <Link key={c.path} to={c.path} className={`calc-tile ${c.type}`}>
               <div className="tile-badge">{c.badge}</div>
-              <div className="tile-icon">{c.icon}</div>
+              <div className="tile-icon" aria-hidden="true">{c.icon}</div>
               <h3>{c.title}</h3>
               <p>{c.desc}</p>
               <div className="tile-arrow">Calculate now →</div>
-            </a>
+            </Link>
           ))}
         </div>
       </section>
 
-      {/* ── MID AD ── */}
-      {/* <div className="container">
-        <AdSlot size="responsive" />
-      </div> */}
-
-      {/* ── HOW IT WORKS / WHY TRUST THESE NUMBERS — real content depth ── */}
       <section className="calc-grid-section">
-        <div className="section-eyebrow">Why PkTaxCalc</div>
-        <h2 className="section-title">Built specifically for Pakistan's FY 2026-27 rules</h2>
+        <div className="section-eyebrow">Why PK Tax Calc</div>
+        <h2 className="section-title">Built around Pakistan's 2026-27 rules</h2>
         <p className="section-desc">
-          PkTaxCalc gives salaried employees, business owners, and freelancers
-          in Pakistan a fast way to check their numbers for FY 2026-27 —
-          income tax, Zakat on cash, gold and silver, salary deductions like
-          EOBI and Provident Fund, and withholding tax across more than 20
-          transaction types, all free and with no account required.
+          Generic salary calculators are often out of date or built for another country. Ours use the
+          Finance Act 2026 slab tables, FBR's withholding rates for filers and non-filers, the EOBI
+          contribution rules on Pakistani payslips, and tola-based Zakat Nisab — and each page shows the date
+          its rates were last checked and where they come from.
         </p>
         <p className="section-desc">
-          Most generic salary or tax calculators online are either outdated or
-          built for a different country's tax code. PkTaxCalc is updated
-          directly against Finance Bill 2026, FBR's published slab tables, and
-          the EOBI/PESSI/SESSI contribution rates that actually apply to
-          Pakistani payslips — so the numbers you get match what your employer
-          or FBR would calculate.
-        </p>
-
-        <h3 style={{ marginTop: 24 }}>How the calculators stay current</h3>
-        <p className="section-desc">
-          Every year's federal budget changes income tax slabs, exemption
-          limits, and withholding rates. When Finance Bill 2026 was announced
-          on June 12, 2026, we rebuilt the slab tables the same week —
-          including the new 32% bracket for income between Rs 5.6 million and
-          Rs 7 million, and the removal of the 9% surcharge above Rs 10
-          million. You can still switch back to the prior tax year if you're
-          reconciling an old payslip.
-        </p>
-
-        <h3 style={{ marginTop: 24 }}>Who uses these calculators</h3>
-        <p className="section-desc">
-          Salaried employees use the Salary and Income Tax calculators to
-          check what their employer should be deducting each month. Freelancers
-          on Upwork, Fiverr, and Payoneer use the Freelancer Tax calculator to
-          plan for the PSEB reduced rate. Business owners and landlords use
-          the Withholding Tax calculator across contracts, rent, dividends,
-          and property transactions. And anyone holding cash, gold, silver, or
-          savings uses the Zakat calculators each Ramadan to work out what's
-          due once Nisab is crossed.
+          The 2026-27 budget changed salaried tax above Rs 2.2 million: the 23% and 30% rates fell to 20% and
+          25%, new 29% and 32% bands were added, and the surcharge above Rs 10 million was removed. The
+          income tax and freelancer calculators still let you switch to 2025-26 if you're checking an old
+          payslip or return. See <Link to="/about">how we check our rates</Link>.
         </p>
       </section>
 
-      {/* ── FEATURES STRIP ── */}
       <section className="features-strip">
         <div className="features-strip-inner">
           {[
-            { icon:"✅", h:"Accurate Tax Slabs",   p:"All slabs from Finance Bill 2026. Updated within 24 hrs of every budget announcement." },
-            { icon:"🔒", h:"Fully Private",   p:"Calculations run in your browser. Your income figures are never transmitted or stored." },
-            { icon:"📱", h:"Mobile First",    p:"Works perfectly on phones — because most Pakistanis calculate on the go." },
-            { icon:"🆓", h:"Always Free",     p:"No subscription, no sign-up, no paywall." },
+            { icon: "✅", h: "Current rates", p: "Finance Act 2026 slabs and Tax Year 2027 withholding rates, with a review date on every page." },
+            { icon: "🔒", h: "Private", p: "Calculations run in your browser. Your figures are never sent or stored." },
+            { icon: "📱", h: "Mobile first", p: "Designed for phones, where most people check their tax." },
+            { icon: "🆓", h: "Free", p: "No subscription, no sign-up, no paywall." },
           ].map(f => (
             <div className="feature-item" key={f.h}>
-              <div className="feature-icon">{f.icon}</div>
-              <h4>{f.h}</h4>
+              <div className="feature-icon" aria-hidden="true">{f.icon}</div>
+              <h3 style={{ fontSize: "0.9rem", fontWeight: 800, color: "var(--ink)", marginBottom: 6 }}>{f.h}</h3>
               <p>{f.p}</p>
             </div>
           ))}
@@ -388,62 +261,33 @@ export default function Home({ navigate }) {
       </section>
 
       <section className="calc-grid-section">
-        <div className="section-eyebrow">Learn & Save Taxes</div>
-        <h2 className="section-title">Latest Tax Guides</h2>
-        <p className="section-desc">Learn about income tax, FBR filing, Zakat and financial planning in Pakistan.</p>
+        <div className="section-eyebrow">Guides</div>
+        <h2 className="section-title">Tax and Zakat guides</h2>
+        <p className="section-desc">Plain-English explanations with worked examples in rupees.</p>
 
         <div className="calc-grid">
-          {blogPosts.map(blog => (
-            <a key={blog.path} href={blog.path} className="calc-tile" onClick={go(blog.path)}>
-              <div className="tile-icon">📝</div>
-              <h3>{blog.title}</h3>
-              <p>Read our complete guide and examples.</p>
-              <div className="tile-arrow">Read article →</div>
-            </a>
+          {guides.map(g => (
+            <Link key={g.path} to={g.path} className="calc-tile">
+              <div className="tile-icon" aria-hidden="true">📝</div>
+              <h3>{g.title}</h3>
+              <p>{g.desc}</p>
+              <div className="tile-arrow">Read guide →</div>
+            </Link>
           ))}
         </div>
 
         <div style={{ marginTop: 32, textAlign: "center" }}>
-          <a
+          <Link
+            to="/blogs"
             className="btn-calc"
-            style={{ width: "auto", padding: "14px 28px", display: "inline-block", textAlign: "center" }}
-            href="/blogs"
-            onClick={go("/blogs")}
+            style={{ width: "auto", padding: "14px 28px", display: "inline-block", textAlign: "center", textDecoration: "none" }}
           >
-            View All Articles
-          </a>
+            View all guides
+          </Link>
         </div>
       </section>
 
-      {/* ── FAQ ── */}
-      <section className="faq-section">
-        <div className="faq-inner">
-          <div className="section-eyebrow">FAQ</div>
-          <h2 className="section-title" style={{ marginBottom: 32 }}>Common questions</h2>
-          {faqs.map((f, i) => (
-            <div key={i} className="faq-item" itemScope itemType="https://schema.org/Question">
-              <div
-                className={`faq-q${openFaq === i ? " open" : ""}`}
-                onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                itemProp="name"
-              >
-                {f.q}
-                <span className="faq-chevron">▼</span>
-              </div>
-              {openFaq === i && (
-                <div className="faq-a" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
-                  <span itemProp="text">{f.a}</span>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── BOTTOM AD ── */}
-      {/* <div className="container" style={{ paddingBottom: 48 }}>
-        <AdSlot size="responsive" />
-      </div> */}
+      <FaqSection faqs={faqs} title="Common questions" />
     </div>
   );
 }

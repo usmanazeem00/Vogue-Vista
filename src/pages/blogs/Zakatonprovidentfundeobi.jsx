@@ -1,5 +1,7 @@
 import React from "react";
-import { Helmet } from "react-helmet-async";
+import { Link } from "../../lib/nav";
+import { FaqSection, ReviewNote } from "../../components/Content";
+import { ROUTE_META } from "../../routeMeta";
 
 const faqs = [
   {
@@ -24,86 +26,13 @@ const faqs = [
   }
 ];
 
-export default function ZakatOnProvidentFundEobi({ navigate }) {
-  const pageUrl = "https://pktaxcalc.com/blog/zakat-on-provident-fund-eobi";
+export default function ZakatOnProvidentFundEobi() {
 
-  const go = (path) => (e) => {
-    e.preventDefault();
-    navigate(path);
-  };
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebPage",
-        "@id": pageUrl,
-        url: pageUrl,
-        name: "Is Provident Fund or EOBI Money Subject to Zakat? | Pakistan Guide",
-        description:
-          "Whether locked-in retirement savings like Provident Fund and EOBI count toward your Zakat calculation in Pakistan, and when they become Zakatable after withdrawal.",
-        breadcrumb: {
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://pktaxcalc.com" },
-            { "@type": "ListItem", position: 2, name: "Guides", item: "https://pktaxcalc.com/blogs" },
-            { "@type": "ListItem", position: 3, name: "Zakat on Provident Fund & EOBI", item: pageUrl }
-          ]
-        }
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: faqs.map(f => ({
-          "@type": "Question",
-          name: f.q,
-          acceptedAnswer: { "@type": "Answer", text: f.a }
-        }))
-      }
-    ]
-  };
 
   return (
     <>
-      <Helmet>
-        <title>Is Provident Fund or EOBI Money Subject to Zakat?</title>
-        <meta
-          name="description"
-          content="Whether locked-in retirement savings like Provident Fund and EOBI count toward your Zakat in Pakistan, and when they become Zakatable after withdrawal."
-        />
-        <link rel="canonical" href={pageUrl} />
-        <meta property="og:title" content="Is Provident Fund or EOBI Money Subject to Zakat?" />
-        <meta
-          property="og:description"
-          content="A practical guide to whether retirement savings like PF and EOBI count in your Zakat calculation, and when that changes."
-        />
-        <meta property="og:url" content={pageUrl} />
-        <meta property="og:type" content="article" />
-        <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
-      </Helmet>
 
-      <nav aria-label="Breadcrumb" className="breadcrumb-nav">
-        <a href="/" onClick={go("/")}>Home</a>
-        <span aria-hidden="true"> / </span>
-        <a href="/blogs" onClick={go("/blogs")}>Guides</a>
-        <span aria-hidden="true"> / </span>
-        <span>Zakat on Provident Fund & EOBI</span>
-      </nav>
-
-      <style>{`
-        .breadcrumb-nav {
-          background: var(--brand-dark, #0e3b2c);
-          padding: 10px 24px;
-          font-size: 0.85rem;
-          color: rgba(255, 255, 255, 0.65);
-        }
-        .breadcrumb-nav a {
-          color: rgba(255, 255, 255, 0.85);
-          text-decoration: none;
-        }
-        .breadcrumb-nav a:hover {
-          text-decoration: underline;
-        }
-      `}</style>
 
       <section className="page-hero">
         <div className="page-hero-inner">
@@ -176,59 +105,35 @@ export default function ZakatOnProvidentFundEobi({ navigate }) {
           <p>
             If you've recently received a Provident Fund or EOBI payout and want to see how it
             affects what you owe, use our{" "}
-            <a href="/zakat" onClick={go("/zakat")}>
+            <Link to="/zakat">
               <strong>Zakat Calculator</strong>
-            </a>{" "}
+            </Link>{" "}
             to combine it with your other cash, gold, and savings. If you're still contributing and
             want to see how PF affects your monthly take-home pay, the{" "}
-            <a href="/salary" onClick={go("/salary")}>
+            <Link to="/salary">
               <strong>Salary Calculator</strong>
-            </a>{" "}
+            </Link>{" "}
             breaks that down too.
           </p>
         </div>
 
         <div className="calc-card">
-          <h2>FAQ</h2>
-          {faqs.map((f, i) => (
-            <div key={i} style={{ marginBottom: 20 }} itemScope itemType="https://schema.org/Question">
-              <h3 itemProp="name" style={{ fontSize: "1.05rem" }}>{f.q}</h3>
-              <p itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
-                <span itemProp="text">{f.a}</span>
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <div className="calc-card">
           <h2>Related Guides</h2>
           <ul className="related-links">
-            <li>
-              <a href="/blog/zakat-guide" onClick={go("/blog/zakat-guide")}>
-                Zakat on Gold, Cash &amp; Savings
-              </a>
-            </li>
-            <li>
-              <a href="/blog/salary-deduction-breakdown" onClick={go("/blog/salary-deduction-breakdown")}>
-                Salary Breakdown: Tax + EOBI + PF + SESSI
-              </a>
-            </li>
-            <li>
-              <a href="/blog/salary-tax-guide" onClick={go("/blog/salary-tax-guide")}>
-                How to Calculate Salary Tax in Pakistan
-              </a>
-            </li>
+            <li><Link to="/blog/zakat-guide">How to calculate Zakat step by step</Link></li>
+            <li><Link to="/blog/zakat-nisab">Zakat Nisab 2026 in rupees</Link></li>
+            <li><Link to="/blog/salary-deduction-breakdown">Salary deductions: tax, EOBI and provident fund</Link></li>
           </ul>
         </div>
 
-        <p className="reviewed-note" style={{ marginTop: 20, fontSize: "0.85rem", opacity: 0.7 }}>
-          Last reviewed: July 2026. This article explains general reasoning commonly used by
-          Hanafi-school scholars on retirement savings and Zakat — individual Provident Fund trust
-          structures and personal circumstances vary. It is educational content, not a religious
-          ruling; consult a qualified Islamic scholar or your local Darul Ifta for guidance specific
-          to your situation.
-        </p>
+        <ReviewNote updated={ROUTE_META["/blog/zakat-on-provident-fund-eobi"].updated}>
+          This article explains reasoning commonly used by Hanafi scholars on retirement savings and Zakat.
+          Provident fund trust rules and personal circumstances vary — it is educational content, not a
+          religious ruling; consult a qualified scholar or Darul Ifta for your situation.
+        </ReviewNote>
       </div>
+
+      <FaqSection faqs={faqs} title="Provident fund and Zakat questions" />
     </>
   );
 }
